@@ -1,0 +1,157 @@
+# SeaDronesSee ODv2: verified data notes
+
+Everything here was checked on 2026-10-24 against the downloaded files, unless a line says
+otherwise. Counts cover the labelled official splits (train + val), which
+`scripts/prepare_data.py` turns into `data/processed/frames.csv` and `boxes.csv`.
+
+## Source and licence
+
+- Download: the "Object Detection v2" button on <https://seadronessee.cs.uni-tuebingen.de/dataset>
+  POSTs to `/dataset/ODv2_redirecter`, which redirects to the public Nextcloud share
+  `https://cloud.cs.uni-tuebingen.de/index.php/s/ZZxX65FGnQ8zjBP`. The share can be read over WebDAV
+  (`https://cloud.cs.uni-tuebingen.de/public.php/webdav/`, user = share token, empty password).
+- **Licence:** "Code is MIT license, dataset is Creative Commons CC0 1.0 Universal (CC0 1.0)"
+  ([Ben93kie/SeaDronesSee README](https://github.com/Ben93kie/SeaDronesSee)). Derived artifacts may
+  be published; images still never go into git (CLAUDE.md §2).
+- Share contents:
+
+  | Path | Size |
+  |---|---|
+  | `Compressed Version/images/{train,val,test}` (JPEG) | 6.34 GB, 1.07 GB, 2.54 GB |
+  | `Compressed Version/annotations/instances_{train,val}.json` | 10.0 MB, 1.7 MB |
+  | `Uncompressed Version/images/{train,val,test}` (PNG) | 78.9 GB, 13.6 GB, 33.5 GB |
+  | `Uncompressed Version/annotations/instances_{train,val,test_nogt}.json` | 10.0 MB, 1.7 MB, 1.4 MB |
+  | `Readme.md`, `sample_submission_odv2.json` | |
+
+- The share's `Readme.md` says test annotations are withheld, and that test-set metadata is only in
+  the uncompressed version.
+- The compressed and uncompressed train/val annotation files are **identical except
+  `file_name`** (`<id>.jpg` vs `<id>.png`). Compressed JPEGs keep full resolution (3840×2160 checked
+  on 5 frames).
+- COCO `info`: year 2022, version "2", date_created 2022-08-15.
+- SHA-256 of the annotation files:
+
+  | File | SHA-256 |
+  |---|---|
+  | compressed/instances_train.json | `5706b042f6b6c50267ed06076b8c27594ff4da76569edbd99ed53ed8bfa1db95` |
+  | compressed/instances_val.json | `9e965c832263e6b9b9dd299637833e5b93924ecf9a1780b16fbd7c53e4a63f5e` |
+  | uncompressed/instances_train.json | `d7309081bdd84975f1783279b4f02bfff829d8effa6e2a4857630f82c982a75c` |
+  | uncompressed/instances_val.json | `9d64e077cc8c5d8c53e8f106ec292123300a6d93fed7f1c5c1464b600f9ce6a9` |
+  | uncompressed/instances_test_nogt.json | `d9ee6d4c4da466ac3ab7555807ff8573cb3e7302e4fd2d218d7e5391c09514e5` |
+
+## Counts and categories
+
+- train: 8,930 images, 57,760 boxes. val: 1,547 images, 9,630 boxes. test: 3,750 images, no boxes.
+  No image id appears in both train and val.
+- Categories (id: name): 0 `ignored`, 1 `swimmer`, 2 `boat`, 3 `jetski`, 4 `life_saving_appliances`,
+  5 `buoy`.
+
+  | Category | train boxes | val boxes |
+  |---|---|---|
+  | swimmer | 37,096 | 6,206 |
+  | boat | 13,022 | 2,214 |
+  | jetski | 2,330 | 320 |
+  | life_saving_appliances | 923 | 330 |
+  | buoy | 4,389 | 560 |
+  | ignored | 0 | 0 |
+
+- Annotation keys: `id`, `image_id`, `bbox`, `area`, `category_id`. There is no `iscrowd` or ignore
+  flag. `bbox` is COCO `[x, y, w, h]` in pixels from the top-left corner.
+- **Ignored regions are blackened in the pixels**, not annotated. The paper says ignored regions such
+  as boats on land were annotated, and that unwanted regions can be removed "by blackening"
+  (Varga et al. 2022, §3.2–4). In ODv2 no box uses category 0, and image 3885 shows solid black
+  rectangles. `has_ignore_regions` therefore has to come from a pass over the pixels (not done yet).
+- The paper's ODv1 classes (swimmer, floater, life jacket, swimmer†, floater†, boat) differ from
+  ODv2's. ODv2's `swimmer` presumably merges people in water with and without life jackets; this is
+  unverified.
+
+## Image records
+
+- Image keys: `id`, `file_name`, `width`, `height`, `source`, `meta` (always present, possibly
+  empty), `date_time` (7,376 train / 1,288 val) and `frame` (Trinity images only: the original file
+  name, e.g. `DSC01420.JPG`, `IMG_0317.png`).
+- `source` is `{drone, folder_name, video, frame_no}` in train/val and a bare drone string in test.
+  `folder_name` identifies the video (or `rgb` / `multispectral` for the Trinity stills).
+- Image-level `date_time` is **local time** with sub-second precision. For example image 3388 has
+  `date_time` 14:16:21 and `meta.datetime(utc)` 12:16:22, i.e. CEST = UTC+2. Consecutive extracted
+  frames are about 0.5 s apart; the paper says at most 3 fps were extracted from 30 fps video.
+
+## Metadata schemas
+
+Two `meta` schemas exist; every other image has `meta == {}`.
+
+**DJI flight log** (all `mavic_4k` and `m210_4k` frames). Keys: `image_name`, `datetime(utc)`,
+`latitude`, `longitude`, `height_above_takeoff(meter)`, `speed(m/s)`, `xspeed(m/s)`, `yspeed(m/s)`,
+`zspeed(m/s)`, `compass_heading(degrees)`, `gimbal_heading(degrees)`, `gimbal_pitch(degrees)`.
+`image_name` names the flight-log record (consecutive frames can share one), and `datetime(utc)` has
+1 s resolution. The paper says metadata is logged at 10 Hz from the barometer, IMU, GPS and gimbal
+and matched to frames by nearest neighbour.
+
+**MicaSense** (`trinity_multispectral`). Keys: `date_time`, `gps_latitude_ref`,
+`gps_longitude_ref`, `altitude`, `gimbal_pitch`, `speed`, `xspeed`, `yspeed`, `zspeed` (always −1,
+i.e. missing). `gps_latitude` and `gps_longitude` are present on only 208 of 475 frames; the refs
+are NaN when GPS is missing.
+
+- **Altitude** is barometric height above take-off, in metres. There are no zero or negative values
+  (minimum 4.9 m); the parser still treats non-finite or ≤ 0 values as missing.
+- **Gimbal pitch** is degrees below the horizon: "α = 90° corresponds to a top-down view, and α = 0°
+  to a horizontally facing camera" (paper §3.1). This was confirmed visually: frame 5248 (89.9°, 91 m)
+  is top-down, 4472 (45.4°, 9 m) is oblique, and 3885 (1.6°, 17 m) shows the horizon. A few values
+  are slightly negative (minimum −7.5°), i.e. looking just above the horizon.
+
+## Camera groups
+
+Assigned by drone and image size (`configs/data/default.yaml`). Cameras come from the paper's
+Table 2 unless noted otherwise.
+
+| Group | Drone, size | Camera | Frames train / val | Metadata | Altitude | Swimmer boxes |
+|---|---|---|---|---|---|---|
+| `mavic_4k` | mavic, 3840×2160 | Hasselblad L1D-20c (Mavic 2 Pro), 30 fps video | 5,122 / 937 | DJI | 5.6–132.0 m | 25,400 |
+| `m210_4k` | m210, 3840×2160 | not recorded per frame (paper lists Zenmuse X5 and XT2 at this size) | 678 / 93 | DJI | 4.9–61.0 m | 1,276 |
+| `m210_1080p` | m210, 1920×1080 | Zenmuse Z30 zoom (from folder names); not in the paper | 1,576 / 258 | none | — | 13,273 |
+| `trinity_rgb` | trinity, 5456×3632 and 3632×5456 | Sony UMC-R10C stills (Trinity F90+) | 1,142 / 196 | none, no time | — | 2,612 |
+| `trinity_multispectral` | trinity, 1225–1234 × 926–935 | MicaSense RedEdge-MX, RGB channels only | 412 / 63 | MicaSense | 52.6–259.4 m | 741 |
+
+- Only `mavic_4k`, `m210_4k` and `trinity_multispectral` have altitude and pitch.
+- `trinity_multispectral` reports `gimbal_pitch` 90.0 on every frame (a fixed nadir mount). The 267
+  frames without GPS are dated 2021-08-27, while the rest of the group is dated 2020-08-27/28; its
+  camera clock is probably unreliable.
+- Horizontal FOVs are not in the files. GSD needs them (CLAUDE.md §7 step 4); this is open.
+
+## Capture days and videos
+
+| Date | Site (median GPS) | Frames by group | Swimmer boxes |
+|---|---|---|---|
+| 2020-08-25 | Lake Constance (47.673 N, 9.269 E) | mavic_4k 270, m210_4k 75 | 315 |
+| 2020-08-27 | Lake Constance | mavic_4k 492, m210_4k 696, multispectral 186 | 3,612 |
+| 2020-08-28 | Lake Constance | mavic_4k 290, multispectral 22 | 1,595 |
+| 2021-08-19 | North Sea (53.722 N, 7.164 E) | mavic_4k 1,041 | 1,615 |
+| 2021-08-20 | North Sea | mavic_4k 2,446 | 10,774 |
+| 2021-08-21 | North Sea | mavic_4k 1,520, m210_1080p 1,834 | 22,457 |
+| 2021-08-27 (suspect clock) | no GPS | multispectral 267 | 322 |
+| none | — | trinity_rgb 1,338 | 2,612 |
+
+- The 4K groups hold 6,830 frames from 35 videos. Within a day, the Mavic and the M210 flew
+  interleaved (for example on 2020-08-27), so both filmed the same exercise.
+- **The official train/val split is not session-disjoint.** 30 of the 35 videos have frames in both
+  (e.g. `NorthSea_Fri_DJI_0112`: 353 train, 60 val), which confirms the concern in CLAUDE.md §7.
+- Folder names are not unique on their own: m210 `DJI_0001` (2020-08-25) and `DJI_0001_d3`
+  (2020-08-27) are different videos.
+
+## Nadir frames are scarce
+
+Most quadcopter footage is oblique: 4K pitch has a median of about 31° (off-nadir about 59°).
+Frames within a tolerance of nadir (off-nadir = 90° − pitch):
+
+| Tolerance | `mavic_4k` frames / swimmer boxes / videos | `m210_4k` frames / swimmer boxes |
+|---|---|---|
+| ±5° | 109 / 217 / 2 | 0 / 0 |
+| ±10° | 296 / 903 / 3 | 24 / 0 |
+| ±15° | 348 / 1,081 / 6 | 26 / 0 |
+| ±20° | 589 / 2,331 / 9 | 51 / 23 |
+| ±30° | 802 / 3,343 / 10 | 59 / 29 |
+
+At the default ±10° (CLAUDE.md §7 step 3), nadir 4K frames with swimmers come from only three videos
+on three days: `DJI_0064` (2020-08-27, 19 frames at about 91 m), `NorthSea_Thu_DJI_0107`
+(2021-08-19) and `NorthSea_Sat_DJI_0131` (2021-08-21). A session-disjoint A/B/T split restricted to
+these frames is not workable. This is open decision "Oblique frames" in CLAUDE.md §25.

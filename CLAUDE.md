@@ -884,6 +884,12 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
+- **Oblique frames (blocks M1 splits and M2).** Only 296 `mavic_4k` frames from 3 videos are within ±10° of nadir; 4K pitch has a median of about 31° (`docs/data_notes.md`). Options:
+  - (a) A tilted pinhole camera model over a flat sea. It gives per-pixel GSD for every frame with altitude and pitch, and ground-plane rectification (a homography) produces nadir-equivalent views. Detector training views and libraries could then come from oblique frames up to an off-nadir limit.
+  - (b) Strict nadir with a wider tolerance (±20–30°: 589–802 frames from 9–10 videos), accepting GSD errors of up to about 2× across a frame.
+  - (c) Add a second dataset with nadir imagery and altitude.
+- **Session unit.** Options: per video; clustered on time gaps within each camera group (the current §7 text); or per capture day across all camera groups. Mavic and M210 filmed the same exercises in the same hours, which argues for day-level sessions across groups. That gives only about 6 timestamped sessions, plus `trinity_rgb` with no timestamps.
+- **Image version.** Compressed JPEG (train + val 7.4 GB, full resolution) vs PNG (92.5 GB). The local disk has about 23 GB free.
 - Detector framework and its licence.
 - Swimmer class definition: merge any subclasses? Treat life-saving appliances as distractors?
 - Boundary rule for swimmers straddling cells.

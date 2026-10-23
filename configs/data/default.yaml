@@ -1,0 +1,28 @@
+# prepare-data (CLAUDE.md §7). Field names, cameras and counts: docs/data_notes.md.
+# The compressed (JPEG) and uncompressed (PNG) annotation files are identical apart from the
+# file-name extension; use the ones matching the image version on disk.
+annotations:
+  train: data/raw/seadronessee_odv2/compressed/annotations/instances_train.json
+  val: data/raw/seadronessee_odv2/compressed/annotations/instances_val.json
+out_dir: data/processed
+camera_groups:
+  - name: mavic_4k  # DJI Mavic 2 Pro, Hasselblad L1D-20c video frames; DJI flight-log meta
+    drone: mavic
+    width_px: [3840, 3840]
+    height_px: [2160, 2160]
+  - name: m210_4k  # DJI Matrice 210 video frames; camera not recorded; DJI flight-log meta
+    drone: m210
+    width_px: [3840, 3840]
+    height_px: [2160, 2160]
+  - name: m210_1080p  # Zenmuse Z30 zoom (per folder names); no meta at all
+    drone: m210
+    width_px: [1920, 1920]
+    height_px: [1080, 1080]
+  - name: trinity_rgb  # Trinity F90+, Sony UMC-R10C stills, landscape and portrait; no meta
+    drone: trinity
+    width_px: [3632, 5456]
+    height_px: [3632, 5456]
+  - name: trinity_multispectral  # MicaSense RedEdge-MX RGB channels, ~1230x933; MicaSense meta
+    drone: trinity
+    width_px: [1200, 1260]
+    height_px: [900, 960]
