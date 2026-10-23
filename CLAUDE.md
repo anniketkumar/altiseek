@@ -15,7 +15,7 @@ Update as milestones complete (§21).
 | Milestone | Status |
 |---|---|
 | M0 Repo & tooling | done (2026-10-24) |
-| M1 Data | not started |
+| M1 Data | in progress: frame table, camera groups and the `mavic_4k` GSD model done; sessions, splits and leakage check wait on §25 decisions |
 | M2 Detector | not started |
 | M3 Level design | not started |
 | M4 Worlds & renderer | not started |
@@ -207,7 +207,7 @@ altiseek/
 ```
 
 **Stage entry points in `scripts/`**, in pipeline order:
-1. prepare-data
+1. prepare-data, fit-camera (focal length per camera group from the sea horizon, §7 step 4)
 2. train-detector, eval-detector
 3. design-levels
 4. build-libraries, generate-worlds
@@ -879,6 +879,8 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D9 | Python 3.12 everywhere (`requires-python = ">=3.12,<3.13"`) | PX4 recommends ROS 2 Jazzy on Ubuntu 24.04, whose system Python (hence rclpy) is 3.12; Colab runtime 2026.07 is 3.12.13 and Kaggle builds on the Colab image; local dev has 3.12.10. Evidence in `docs/env.md` | Fixed |
 | D10 | Tooling: uv ≥ 0.13.4 with a committed `uv.lock`; hatchling; ruff for lint and format, run inside pytest; GitHub Actions CI on Ubuntu and Windows | `pytest` alone enforces style; pyproject stays the single place dependencies are declared, the lockfile pins transitive ones; uv < 0.13.4 trusts a compromised CA (GHSA-hq85-5cpj-mr62) | Fixed |
 | D11 | Config system: PyYAML + pydantic v2 in `altiseek.config`. A `_base_` key gives inheritance and cross-group composition; dotted CLI overrides; schemas forbid unknown keys and are frozen | Lighter and more explicit than Hydra/OmegaConf; misspelt keys fail loudly; the resolved config serialises for run metadata (§18) | Default |
+| D12 | `mavic_4k` camera model: f = 3029 px (95% CI 2932–3225), i.e. HFOV 64.7° and nadir GSD = 3.30 × 10⁻⁴ m/px per metre of altitude; gimbal pitch bias −0.38°. Fitted from the open-sea horizon (`fit-camera`), not from box sizes | §7 step 4's box-size fit cannot separate object size from focal length; the horizon gives f directly. The fit confirms the Mavic 2 Pro's full-width 4K mode. Details in `docs/data_notes.md` | Fixed until re-measured |
+| D13 | Runtime deps numpy 2.0.2 (Colab's version), Pillow 12.3.0, matplotlib 3.11.2 | Needed for M1 imaging and figures; matching Colab avoids reinstalls in cloud sessions | Fixed |
 
 ---
 
@@ -886,7 +888,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 - **Oblique frames (blocks M1 splits and M2).** Only 296 `mavic_4k` frames from 3 videos are within ±10° of nadir; 4K pitch has a median of about 31° (`docs/data_notes.md`). Options:
   - (a) A tilted pinhole camera model over a flat sea. It gives per-pixel GSD for every frame with altitude and pitch, and ground-plane rectification (a homography) produces nadir-equivalent views. Detector training views and libraries could then come from oblique frames up to an off-nadir limit.
-  - (b) Strict nadir with a wider tolerance (±20–30°: 589–802 frames from 9–10 videos), accepting GSD errors of up to about 2× across a frame.
+  - (b) Strict nadir with a wider tolerance (±20–30°: 589–802 frames from 9–10 videos), accepting that GSD varies across a frame by a factor of 1.7 (±20°) to 2.3 (±30°) from bottom to top row.
   - (c) Add a second dataset with nadir imagery and altitude.
 - **Session unit.** Options: per video; clustered on time gaps within each camera group (the current §7 text); or per capture day across all camera groups. Mavic and M210 filmed the same exercises in the same hours, which argues for day-level sessions across groups. That gives only about 6 timestamped sessions, plus `trinity_rgb` with no timestamps.
 - **Image version.** Compressed JPEG (train + val 7.4 GB, full resolution) vs PNG (92.5 GB). The local disk has about 23 GB free.

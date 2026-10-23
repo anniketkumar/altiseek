@@ -116,7 +116,54 @@ Table 2 unless noted otherwise.
 - `trinity_multispectral` reports `gimbal_pitch` 90.0 on every frame (a fixed nadir mount). The 267
   frames without GPS are dated 2021-08-27, while the rest of the group is dated 2020-08-27/28; its
   camera clock is probably unreliable.
-- Horizontal FOVs are not in the files. GSD needs them (CLAUDE.md §7 step 4); this is open.
+- Horizontal FOVs are not in the files. They are measured below for `mavic_4k` only.
+
+## GSD model (CLAUDE.md §7 step 4)
+
+`scripts/fit_camera.py` writes `data/processed/camera_models.json` and per-frame detections to
+`data/processed/horizon_samples.csv`, and draws [docs/figures/horizon_fit_mavic_4k.png](figures/horizon_fit_mavic_4k.png).
+
+- **Method.** Box sizes cannot give the FOV: a box's pixel size is the object's unknown physical
+  size times the focal length over the distance. The open-sea horizon has no such ambiguity. A
+  camera pitched down by α at height h sees the horizon f·tan(α + b − dip(h)) pixels above the
+  centre, where b is a constant gimbal pitch bias. A robust (Theil–Sen) line through
+  (tan(α − dip), offset) gives f as its slope and b as intercept / f. CIs come from a bootstrap
+  over videos.
+- **Frames used:**
+  - `mavic_4k` on the North Sea only; the Lake Constance horizons are shorelines.
+  - Logged pitch 1–17°.
+  - Pitch steady within 0.3° for ±2 s. Metadata is nearest-neighbour matched at 10 Hz, so a moving
+    gimbal logs a lagging pitch; one frame mid-sweep was 5° off.
+  - At most 15 frames per video.
+- **Horizon detection:**
+  - Blackened regions plus an 8 px JPEG halo are masked.
+  - At least 8 of 32 strips must agree, and they must be at least 75% of the strips that can see
+    the line.
+  - |roll| ≤ 3°.
+- **Result:** 118 frames examined, 91 accepted, 8 videos on 3 days.
+
+  | Quantity | Estimate | 95% CI |
+  |---|---|---|
+  | Focal length f | 3029 px | 2932–3225 px |
+  | HFOV at 3840 px | 64.7° | 61.5–66.4° |
+  | Gimbal pitch bias b | −0.38° | −1.21 to −0.11° |
+  | Residual MAD | 8.5 px | |
+
+- **Nadir GSD = altitude × 3.30 × 10⁻⁴ m/px** (k = 1/f; CI 3.10–3.41 × 10⁻⁴). That is 0.99 cm/px at
+  30 m and 3.3 cm/px at 100 m.
+- **Consistency.** The zero-bias median f per video is 2738–3089 px on all three days, so the
+  camera mode did not change. (`NorthSea_Fri_DJI_0110` is left out of that range: at 1.6° pitch its
+  zero-bias estimate is dominated by the bias.)
+- **Mode check.** The Mavic 2 Pro records 4K either from the full sensor width or as an HQ crop.
+  DJI's published lens data (28 mm equivalent, about 77° diagonal) gives f ≈ 2900–2985 px for full
+  width and ≈ 4130–4250 px for the crop. These spec numbers are derived, not read from the files.
+  The fit confirms the full-width mode.
+- Lens distortion is ignored; detection uses the central 80% of the width.
+- **Not modelled yet:**
+  - `m210_4k`: no open-sea footage. The paper lists Zenmuse X5 and XT2 at 3840×2160.
+  - `trinity_multispectral`: the manufacturer's spec for the RedEdge-MX is 47.2° HFOV, unverified
+    here.
+  - `m210_1080p` and `trinity_rgb`: no altitude.
 
 ## Capture days and videos
 
@@ -155,3 +202,13 @@ At the default ±10° (CLAUDE.md §7 step 3), nadir 4K frames with swimmers come
 on three days: `DJI_0064` (2020-08-27, 19 frames at about 91 m), `NorthSea_Thu_DJI_0107`
 (2021-08-19) and `NorthSea_Sat_DJI_0131` (2021-08-21). A session-disjoint A/B/T split restricted to
 these frames is not workable. This is open decision "Oblique frames" in CLAUDE.md §25.
+
+A tilted frame does not have one GSD. With f = 3029 px, the along-view GSD from the bottom row to
+the top row of a frame tilted off-nadir by the tolerance, relative to the nadir value
+(`altiseek.geometry.camera.pixel_gsd_mpp`):
+
+| Off-nadir | Bottom row | Centre | Top row |
+|---|---|---|---|
+| 10° | 0.91 | 1.03 | 1.17 |
+| 20° | 0.89 | 1.13 | 1.50 |
+| 30° | 0.92 | 1.33 | 2.11 |

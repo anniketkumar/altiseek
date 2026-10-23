@@ -24,7 +24,9 @@ Moving to another Python version means a Decision Log entry and a change to `req
 | pytest | 9.1.1 | Config in `pyproject.toml` |
 
 Direct dependencies are pinned exactly in `pyproject.toml`, the single place they are declared;
-`uv.lock` is generated from it and pins the transitive dependencies. CI (`.github/workflows/ci.yml`)
+`uv.lock` is generated from it and pins the transitive dependencies. Packages that Colab/Kaggle
+preinstall are pinned to Colab's version where one is known (numpy 2.0.2, from the runtime FAQ), so
+installing this package in a cloud session does not replace them. CI (`.github/workflows/ci.yml`)
 runs `uv sync --locked` and `uv run pytest` on Ubuntu 24.04 and Windows.
 
 ## Local setup

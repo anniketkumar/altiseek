@@ -10,8 +10,12 @@ readme = "README.md"
 authors = [{ name = "Aniket Kumar" }]
 # One Python version on Windows, WSL2 and cloud notebooks (CLAUDE.md §5, docs/env.md).
 requires-python = ">=3.12,<3.13"
-# Direct dependencies are pinned exactly; uv.lock pins the transitive ones.
+# Direct dependencies are pinned exactly; uv.lock pins the transitive ones. Where a package is
+# preinstalled on Colab/Kaggle (docs/env.md), pin the same version so cloud installs keep it.
 dependencies = [
+    "matplotlib==3.11.2",
+    "numpy==2.0.2",
+    "pillow==12.3.0",
     "pydantic==2.14.1",
     "pyyaml==6.0.3",
 ]

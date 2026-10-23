@@ -5,6 +5,26 @@ annotations:
   train: data/raw/seadronessee_odv2/compressed/annotations/instances_train.json
   val: data/raw/seadronessee_odv2/compressed/annotations/instances_val.json
 out_dir: data/processed
+figures_dir: docs/figures
+images:
+  version: compressed
+  root: data/raw/seadronessee_odv2/compressed/images
+  webdav_url: https://cloud.cs.uni-tuebingen.de/public.php/webdav
+  share_token: ZZxX65FGnQ8zjBP  # public ODv2 share (docs/data_notes.md)
+horizon_fit:
+  camera_groups: [mavic_4k]  # the only 4K group with open-sea (North Sea) footage
+  latitude_deg: [53.0, 54.5]  # North Sea site; Lake Constance horizons are shorelines
+  # Horizon in view (VFOV/2 is about 20 deg). Steady low pitches (e.g. 1.6 deg in
+  # NorthSea_Fri_DJI_0110) separate the gimbal bias from the focal length.
+  pitch_deg: [1.0, 17.0]
+  steady_window_s: 2.0
+  steady_tol_deg: 0.3
+  frames_per_video: 15
+  min_inlier_strips: 8  # of 32
+  min_inlier_fraction: 0.75
+  max_roll_deg: 3.0
+  bootstrap_reps: 2000
+  seed: 20261024
 camera_groups:
   - name: mavic_4k  # DJI Mavic 2 Pro, Hasselblad L1D-20c video frames; DJI flight-log meta
     drone: mavic
