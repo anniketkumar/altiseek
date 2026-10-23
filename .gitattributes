@@ -1,0 +1,8 @@
+# LF everywhere: the same files are used on Windows, WSL2 and cloud notebooks.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.mp4 binary

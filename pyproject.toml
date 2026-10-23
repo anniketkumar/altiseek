@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "altiseek"
+dynamic = ["version"]
+description = "Learning where, and how high, to look for people at sea: altitude-aware drone search in simulation."
+readme = "README.md"
+authors = [{ name = "Aniket Kumar" }]
+# One Python version on Windows, WSL2 and cloud notebooks (CLAUDE.md §5, docs/env.md).
+requires-python = ">=3.12,<3.13"
+# Direct dependencies are pinned exactly; uv.lock pins the transitive ones.
+dependencies = [
+    "pydantic==2.14.1",
+    "pyyaml==6.0.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.17.2",
+]
+
+[tool.hatch.version]
+path = "src/altiseek/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/altiseek"]
+
+[tool.uv]
+# Older uv releases trust a compromised CA (GHSA-hq85-5cpj-mr62).
+required-version = ">=0.13.4"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # import sorting
+    "B",   # bugbear
+    "UP",  # pyupgrade
+    "ANN", # type hints on every signature
+    "C4",  # comprehensions
+    "SIM", # simplifications
+    "PTH", # pathlib over os.path
+    "PT",  # pytest style
+    "NPY", # numpy
+    "RUF", # ruff-specific
+]
+ignore = [
+    "ANN401", # Any is allowed where it is the honest type, e.g. raw YAML values
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+xfail_strict = true
+filterwarnings = ["error"]

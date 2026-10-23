@@ -1,0 +1,31 @@
+# Data and derived artifacts never go into git (CLAUDE.md §2): raw datasets, crops,
+# libraries, rendered worlds, caches, sensor models, checkpoints and run outputs.
+/data/
+/runs/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Credentials
+.env
+kaggle.json
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
