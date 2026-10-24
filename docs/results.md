@@ -265,9 +265,21 @@ pixels and on the rest, swimmers in brackets:
 
 ## Level design (M3)
 
-All runs read split B. Unless stated, the settings are `configs/levels/design.yaml`: R = 640,
-HFOV 80°, area 300 m, finest level ≥ 0.8 and coarsest ≤ 0.3. D24 settles the measure: centre
-recall, from `700e0ff3455259e8`. D7 is still the owner's choice (CLAUDE.md §25).
+**Chosen (D7):** the "coarsest ≤ 0.65, rank 5" design below, with a 500 s battery instead of the
+542 s design-levels proposed: that was exactly the cost of a full L1 sweep. The table is
+`configs/levels/default.yaml`:
+
+| Level | Footprint | Altitude | GSD | Stride | Views per world | Centre recall (B) | Full sweep |
+|---|---|---|---|---|---|---|---|
+| L1 | 50 m (20 cells) | 29.8 m | 7.8 cm/px | 10 cells | 121 | 0.87 | 542 s |
+| L2 | 75 m (30 cells) | 44.7 m | 11.7 cm/px | 15 cells | 49 | 0.81 | 278 s |
+| L3 | 100 m (40 cells) | 59.6 m | 15.6 cm/px | 20 cells | 25 | 0.75 | 170 s |
+| L4 | 120 m (48 cells) | 71.5 m | 18.8 cm/px | 24 cells | 16 | 0.71 | 122 s |
+| L5 | 150 m (60 cells) | 89.4 m | 23.4 cm/px | 30 cells | 9 | 0.65 | 78 s |
+
+The runs that led to it all read split B. Unless stated, the settings were R = 640, HFOV 80°, area
+300 m, finest level ≥ 0.8 and coarsest ≤ 0.3. D24 fixed the measure: centre recall, from
+`700e0ff3455259e8`.
 
 | Detector | Evaluation | Recall | Rules changed | Result |
 |---|---|---|---|---|

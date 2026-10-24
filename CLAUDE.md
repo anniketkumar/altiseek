@@ -17,7 +17,7 @@ Update as milestones complete (§21).
 | M0 Repo & tooling | done (2026-10-24) |
 | M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
 | M2 Detector | done (2026-10-25): detectors `700e0ff3455259e8` (GSD-stratified views, D23) and `78aba879cc50e025` evaluated on B and T over 2–30 cm/px, every bin populated, and registered (`docs/results.md`). Which goes forward is open (§25) |
-| M3 Level design | in progress: on B's D25 centre-recall curve, designs exist only with a looser coarsest rule (≤ 0.65 as specified; ≤ 0.6 with R = 512 or a 360 m area). Candidates in `docs/results.md`; D7 is the owner's choice (§25) |
+| M3 Level design | done (2026-10-25): five levels at 30–89 m over 2.5 m cells, battery 500 s, coarsest rule loosened to ≤ 0.65 (D7, `configs/levels/default.yaml`); re-check at M6 |
 | M4 Worlds & renderer | not started |
 | M5 Detection cache | not started |
 | M6 Sensor models | not started |
@@ -277,7 +277,7 @@ The simulated camera models the detector's effective input resolution (an onboar
 
 **Design procedure** (after M2, before building any cache)
 1. Measure swimmer recall vs GSD on real B frames resampled across a sweep (e.g. 2–30 cm/px).
-2. Choose 3–5 levels whose recall spans roughly ≥0.8 at the finest level to ≤0.3 at the coarsest, with useful intermediate levels in between.
+2. Choose 3–5 levels whose recall spans roughly ≥0.8 at the finest level to ≤0.3 at the coarsest, with useful intermediate levels in between. (D7: B's measured curve reaches only about 0.65 at a usable coarse footprint, so the coarsest rule is ≤ 0.65.)
    - If the coarse levels have near-zero recall, the tradeoff collapses: the agent will simply stay low. Raise R or shrink the coarse footprints.
    - If even the coarsest level has high recall, there is no tradeoff either. Lower R or enlarge the footprints.
 3. Choose cell size c so every footprint is an integer number of cells.
@@ -531,7 +531,7 @@ A world is a lightweight **spec**, not a giant image. The renderer composes what
 - Plus a dwell time t_obs per observation.
 - Energy = time in hover-equivalent units, with a multiplier on climbing.
 - Battery = energy budget.
-- **Starting points:** v_h = 10 m/s, v_v = 3 m/s, t_obs = 2 s, climb multiplier 1.5, battery 600 s hover-equivalent. Then adjust using the §8 rule. In the worked example, full L1 coverage costs about 650 s (infeasible) and full L4 coverage under about 120 s (cheap).
+- **Starting points:** v_h = 10 m/s, v_v = 3 m/s, t_obs = 2 s, climb multiplier 1.5, battery 600 s hover-equivalent. Then adjust using the §8 rule. D7 sets the battery to 500 s. In the worked example, full L1 coverage costs about 650 s (infeasible) and full L4 coverage under about 120 s (cheap).
 
 **Observation** (dict)
 - **Map tensor** (C × G × G, float32):
@@ -883,7 +883,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D4 | Session-disjoint splits A/B/T | Leakage control | Fixed |
 | D5 | Auto-declare at τ_declare for main comparisons | Isolates search behaviour; learned declare is an ablation | Default |
 | D6 | Re-look rule: first observation per (cell, level) | Deterministic detector; revisit once conditional recall is measured | Provisional |
-| D7 | Camera resolution and level table | Decided at M3 from the measured recall-vs-GSD curve | Pending |
+| D7 | Camera, cells, levels and battery (§8). **Camera:** R = 640, HFOV 80°. **Area:** 300 m of 2.5 m cells (120 × 120). **Levels:** five, with footprints of 50/75/100/120/150 m (20/30/40/48/60 cells; stride half the footprint) at 29.8/44.7/59.6/71.5/89.4 m, i.e. 7.8–23.4 cm/px; B centre recall 0.87/0.81/0.75/0.71/0.65. **Battery:** 500 s. **Rule:** the coarsest level needs recall ≤ 0.65, not §8's ≤ 0.3. Owner's choice, 2026-10-25; the table is `configs/levels/default.yaml` | B's centre recall (D24, D25) falls only from 0.87 at 8 cm/px to 0.56 at 30 cm/px, so ≤ 0.3 is out of reach, and at ≤ 0.6 no whole-cell footprint tiles 300 m. This candidate keeps R at the detector's input size, puts L1 at the detector's best GSD and changes only the coarsest rule. design-levels proposed a 542 s battery, the cost of a full L1 sweep; 500 s keeps §14's example ratio, while a full L5 sweep costs 78 s | Provisional: re-check at M6 with r_ℓ and f_ℓ from rendered worlds |
 | D8 | Project name: AltiSeek (working title was SeaSearch) | Names the new idea (the drone chooses its own altitude); "Seasearch" is already a UK marine-survey programme | Fixed |
 | D9 | Python 3.12 and 3.13 (`requires-python = ">=3.12,<3.14"`); CI tests both. Revised 2026-10-24 from "3.12 everywhere" | ROS 2 Jazzy on Ubuntu 24.04 (PX4's recommendation) fixes 3.12 for the ROS nodes (rclpy is system Python); local dev has 3.12.10. A Kaggle probe kernel found **3.13.15**: the image builds on a Colab runtime newer than the 3.12-based 2026.07. Evidence in `docs/env.md` | Revised |
 | D10 | Tooling: uv ≥ 0.13.4 with a committed `uv.lock`; hatchling; ruff for lint and format, run inside pytest; GitHub Actions CI on Ubuntu and Windows | `pytest` alone enforces style; pyproject stays the single place dependencies are declared, the lockfile pins transitive ones; uv < 0.13.4 trusts a compromised CA (GHSA-hq85-5cpj-mr62) | Fixed |
@@ -907,10 +907,6 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- **Level table (D7, blocks M3).** With every B video in every coarse bin (D25), B's centre recall falls from 0.87 at 8 cm/px to 0.56 at 30 cm/px, so no design meets coarsest ≤ 0.3 (`docs/results.md`).
-  - Designs exist with coarsest ≤ 0.65 (R = 640, area 300 m), or with coarsest ≤ 0.6 plus a 360 m area or R = 512. At ≤ 0.6 with R = 640 and 300 m, no whole-cell footprint falls in the 170–192 m needed.
-  - To choose: the coarsest rule, R, area, the level table and the battery.
-  - Re-check the chosen table at M6, with r_ℓ and f_ℓ measured on rendered sensor-fit worlds.
 - θ_lib (M4) off-nadir limit for libraries.
 - Boundary rule for swimmers straddling cells.
 - Known vs unknown K as the default.

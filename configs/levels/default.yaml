@@ -1,0 +1,11 @@
+# Altitude levels (CLAUDE.md §8, D7). Chosen at M3 from detector 700e0ff3455259e8's centre recall
+# on split B (D24, D25): design-levels with coarsest_max_recall 0.65, candidate 5 of 76. Footprints
+# and strides are in cells; altitude and GSD follow from the camera (configs/camera, R 640, HFOV 80).
+cell_m: 2.5
+grid_cells: 120  # a 300 m x 300 m search area
+levels:
+  - {name: L1, footprint_cells: 20, stride_cells: 10}  # 50 m wide, 29.8 m up, 7.8 cm/px, recall 0.87
+  - {name: L2, footprint_cells: 30, stride_cells: 15}  # 75 m, 44.7 m, 11.7 cm/px, 0.81
+  - {name: L3, footprint_cells: 40, stride_cells: 20}  # 100 m, 59.6 m, 15.6 cm/px, 0.75
+  - {name: L4, footprint_cells: 48, stride_cells: 24}  # 120 m, 71.5 m, 18.8 cm/px, 0.71
+  - {name: L5, footprint_cells: 60, stride_cells: 30}  # 150 m, 89.4 m, 23.4 cm/px, 0.65

@@ -1,6 +1,8 @@
-# Energy and time model (CLAUDE.md §14). Starting points; the battery is set at M3 (D7).
+# Energy and time model (CLAUDE.md §14). Speeds and dwell are the §14 starting points.
 horizontal_speed_mps: 10.0
 vertical_speed_mps: 3.0
 dwell_s: 2.0
 climb_multiplier: 1.5
-battery_s: 600.0
+# D7: a full L1 sweep costs 542 s, a full L5 sweep 78 s. 500 s keeps §14's example ratio (600 s
+# against a 650 s finest sweep), so covering everything at the finest level does not fit.
+battery_s: 500.0
