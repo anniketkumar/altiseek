@@ -11,14 +11,16 @@ from altiseek.detector.views import (
     CLASSES,
     CameraModel,
     Label,
+    allocate_views,
+    can_serve,
     coverage,
-    finest_usable_gsd_mpp,
     footprint_m,
     frame_camera,
     labels_for,
     object_centres_m,
     random_windows,
     rotate_quarter,
+    servable,
     tile_windows,
     yolo_lines,
 )
@@ -56,6 +58,29 @@ def test_tiles_do_not_overlap_and_cover_the_footprint():
     for (xa, ya), (xb, yb) in itertools.pairwise(corners):
         assert abs(xa - xb) >= 8.0 - 1e-9 or abs(ya - yb) >= 8.0 - 1e-9
     assert all(coverage(NADIR, t, 60.0) >= 0.5 for t in tiles)
+
+
+def test_can_serve_agrees_with_the_tiles():
+    for camera in (NADIR, TILTED):
+        for gsd in (0.005, 0.02, 0.05, 0.2, 1.0):
+            expected = bool(tile_windows(camera, gsd, 640, 60.0, 0.25))
+            assert can_serve(camera, gsd, 640, 60.0, 0.25) == expected
+    # 32 m views over a 38 m x 21 m footprint: two tiles, each 40% covered.
+    assert can_serve(NADIR, 0.05, 640, 60.0, 0.25)
+    assert not can_serve(NADIR, 0.05, 640, 60.0, 0.5)
+    assert servable(NADIR, (0.005, 0.02, 0.05, 0.2), 640, 60.0, 0.25) == frozenset({1, 2})
+
+
+def test_allocate_views_deals_round_robin_with_a_cap():
+    capped = allocate_views([10, 11, 12], 7, 2, np.random.default_rng(3))
+    assert sorted(capped.values()) == [2, 2, 2]  # 6 of the 7 views
+    spread = allocate_views(list(range(100)), 7, 2, np.random.default_rng(3))
+    assert sum(spread.values()) == 7
+    assert set(spread.values()) == {1}
+    uneven = allocate_views([1, 2, 3], 5, 3, np.random.default_rng(3))
+    assert sorted(uneven.values()) == [1, 2, 2]
+    assert allocate_views([1, 2, 3], 5, 3, np.random.default_rng(3)) == uneven
+    assert allocate_views([], 5, 3, np.random.default_rng(3)) == {}
 
 
 def test_random_windows_are_seeded_and_object_centred():
@@ -102,10 +127,3 @@ def test_quarter_turns_move_labels_with_the_image():
         rows, cols = np.nonzero(rotated[..., 0])
         assert (moved.x_min, moved.x_max) == (cols.min(), cols.max() + 1)
         assert (moved.y_min, moved.y_max) == (rows.min(), rows.max() + 1)
-
-
-def test_finest_usable_gsd():
-    assert finest_usable_gsd_mpp(NADIR, 60.0) == pytest.approx(30.0 / 3029.0)
-    # 45 deg pitch: the bottom rows are about 25 deg off nadir, so 20 deg excludes the frame.
-    assert finest_usable_gsd_mpp(TILTED, 20.0) == float("inf")
-    assert finest_usable_gsd_mpp(TILTED, 60.0) > 30.0 / 3029.0

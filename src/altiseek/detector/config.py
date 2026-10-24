@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import numpy as np
+
 from altiseek.config import Config
 from altiseek.data.config import DataConfig
 from altiseek.imaging.config import CameraSpec
@@ -20,12 +22,17 @@ class ViewSettings(Config):
 
 
 class TrainViews(Config):
-    """Random training views (split A)."""
+    """Random training views (split A), stratified by GSD (D23)."""
 
-    #: Target GSDs are drawn log-uniformly from this range, metres per pixel.
+    #: The GSD range, metres per pixel, cut into ``gsd_bins`` bins of equal width in log-GSD.
+    #: A view's GSD is drawn log-uniformly within its bin.
     gsd_range_mpp: tuple[float, float]
-    gsds_per_frame: int
-    views_per_gsd: int
+    gsd_bins: int
+    #: Views per bin for the train and the internal-validation subsets ...
+    views_per_bin: int
+    val_views_per_bin: int
+    #: ... dealt over the frames that can serve the bin's centre GSD, at most this many each.
+    max_views_per_frame: int
     #: Share of views centred near an object.
     object_share: float
     #: Camera-pipeline augmentation: blur sigma and JPEG quality drawn uniformly per view.
@@ -33,12 +40,18 @@ class TrainViews(Config):
     jpeg_quality: tuple[int, int]
     seed: int
 
+    @property
+    def gsd_edges_mpp(self) -> tuple[float, ...]:
+        """The ``gsd_bins + 1`` bin edges, metres per pixel."""
+        return tuple(float(e) for e in np.geomspace(*self.gsd_range_mpp, self.gsd_bins + 1))
+
 
 class EvalViews(Config):
     """Tiled evaluation views (splits B and T), one set per GSD bin."""
 
     gsd_bins_mpp: tuple[float, ...]
-    #: Per split and bin: at most this many frames, spread evenly over the split's frames ...
+    #: Per split and bin: at most this many of the frames that can serve the bin, spread evenly
+    #: over them by image id ...
     frames_per_bin: int
     #: ... and at most this many tiles per frame (a seeded random subset).
     views_per_frame: int

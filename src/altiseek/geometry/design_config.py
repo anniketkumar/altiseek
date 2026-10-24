@@ -1,6 +1,7 @@
 """Schema for ``configs/levels/design.yaml``: the design-levels search (CLAUDE.md §8)."""
 
 from pathlib import Path
+from typing import Literal
 
 from altiseek.config import Config
 from altiseek.env.energy import EnergyModel
@@ -15,6 +16,9 @@ class LevelDesign(Config):
     #: eval-detector's per-bin metrics; recall is read from rows of ``recall_split``.
     recall_csv: Path
     recall_split: str
+    #: The recall column: IoU matching (``recall``) or centre distance (``recall_centre``), which
+    #: is closer to the cell-level recall of the sensor model (§10).
+    recall_metric: Literal["recall", "recall_centre"]
     area_m: float
     cell_options_m: tuple[float, ...]
     level_counts: tuple[int, ...]

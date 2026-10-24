@@ -5,6 +5,7 @@ energy:
   _base_: ../env/energy.yaml
 recall_csv: data/detector/eval/metrics.csv
 recall_split: B  # level design reads real B frames (§8 step 1)
+recall_metric: recall  # or recall_centre (§25: open)
 area_m: 300.0
 cell_options_m: [2.5, 5.0, 10.0]
 level_counts: [3, 4, 5]

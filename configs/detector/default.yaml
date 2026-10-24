@@ -6,12 +6,14 @@ camera:
 views:
   camera_groups: [mavic_4k]
   max_off_nadir_deg: 60.0  # theta_train (D14); most footage is 45-75 deg off nadir
-  min_coverage: 0.5
+  min_coverage: 0.25  # the rest of a view is fill; coarse GSDs need it (D23)
   supersample: 4
 train_views:
   gsd_range_mpp: [0.02, 0.30]  # the level-design sweep range (CLAUDE.md §8)
-  gsds_per_frame: 3
-  views_per_gsd: 2
+  gsd_bins: 12  # equal in log-GSD, views stratified over them (D23)
+  views_per_bin: 600
+  val_views_per_bin: 100
+  max_views_per_frame: 3
   object_share: 0.6
   blur_sigma_px: [0.0, 0.8]
   jpeg_quality: [70, 95]

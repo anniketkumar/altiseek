@@ -4,11 +4,13 @@ Each view is a :class:`~altiseek.geometry.rectify.ViewWindow` on the water below
 camera, rendered by :func:`~altiseek.geometry.rectify.rectify`. Training views are placed at
 random, with a share centred on objects; evaluation views tile the frame's usable footprint
 without overlap, so every object is counted once. A window is used only if enough of it has valid
-source pixels (``min_coverage``). Labels are the annotated boxes projected into the view, kept
-when the box centre falls on a valid pixel.
+source pixels (``min_coverage``); the rest of the view is fill. Both choose, per GSD bin, among
+the frames that can serve it (:func:`can_serve`), so coarse bins are not starved (D23). Labels are
+the annotated boxes projected into the view, kept when the box centre falls on a valid pixel.
 """
 
 import math
+from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
 
@@ -77,14 +79,10 @@ def coverage(
     return float(ok.mean())
 
 
-def tile_windows(
-    camera: TiltedCamera,
-    gsd_mpp: float,
-    size_px: int,
-    max_off_nadir_deg: float,
-    min_coverage: float,
+def _tiles(
+    camera: TiltedCamera, gsd_mpp: float, size_px: int, max_off_nadir_deg: float
 ) -> list[ViewWindow]:
-    """Non-overlapping windows over the frame's usable footprint, aligned to its bounding box."""
+    """Non-overlapping windows over the bounding box of the frame's usable footprint."""
     points = footprint_m(camera, gsd_mpp, max_off_nadir_deg)
     if len(points) == 0:
         return []
@@ -94,12 +92,67 @@ def tile_windows(
     # Centre the tiling on the footprint's bounding box.
     x0 = (x_lo + x_hi) / 2 - nx * side / 2
     y0 = (y_lo + y_hi) / 2 - ny * side / 2
-    windows = [
+    return [
         ViewWindow(x0 + i * side, y0 + j * side, gsd_mpp, size_px)
         for j in range(ny)
         for i in range(nx)
     ]
-    return [w for w in windows if coverage(camera, w, max_off_nadir_deg) >= min_coverage]
+
+
+def tile_windows(
+    camera: TiltedCamera,
+    gsd_mpp: float,
+    size_px: int,
+    max_off_nadir_deg: float,
+    min_coverage: float,
+) -> list[ViewWindow]:
+    """Non-overlapping windows over the frame's usable footprint, aligned to its bounding box,
+    that reach ``min_coverage``."""
+    return [
+        w
+        for w in _tiles(camera, gsd_mpp, size_px, max_off_nadir_deg)
+        if coverage(camera, w, max_off_nadir_deg) >= min_coverage
+    ]
+
+
+def can_serve(
+    camera: TiltedCamera,
+    gsd_mpp: float,
+    size_px: int,
+    max_off_nadir_deg: float,
+    min_coverage: float,
+) -> bool:
+    """Whether the frame has a view at ``gsd_mpp``: one of its tiles reaches ``min_coverage``."""
+    return any(
+        coverage(camera, w, max_off_nadir_deg) >= min_coverage
+        for w in _tiles(camera, gsd_mpp, size_px, max_off_nadir_deg)
+    )
+
+
+def servable(
+    camera: TiltedCamera,
+    gsds_mpp: Sequence[float],
+    size_px: int,
+    max_off_nadir_deg: float,
+    min_coverage: float,
+) -> frozenset[int]:
+    """Indices of the GSDs in ``gsds_mpp`` at which the frame has a view (:func:`can_serve`)."""
+    return frozenset(
+        k
+        for k, gsd in enumerate(gsds_mpp)
+        if can_serve(camera, gsd, size_px, max_off_nadir_deg, min_coverage)
+    )
+
+
+def allocate_views(
+    eligible: Sequence[int], n_views: int, max_per_frame: int, rng: np.random.Generator
+) -> dict[int, int]:
+    """Views per frame for one GSD bin: ``n_views`` dealt round-robin over the ``eligible`` frame
+    ids in a seeded random order, at most ``max_per_frame`` each, so a bin with few frames gets
+    fewer views rather than many near-copies."""
+    order = [eligible[k] for k in rng.permutation(len(eligible))]
+    total = min(n_views, max_per_frame * len(order))
+    return dict(Counter(order[k % len(order)] for k in range(total)))
 
 
 def random_windows(
@@ -191,13 +244,3 @@ def rotate_quarter(
         # Counter-clockwise: a point (x, y) moves to (y, n - x) in pixel-corner coordinates.
         out = [Label(b.class_id, b.y_min, n - b.x_max, b.y_max, n - b.x_min) for b in out]
     return np.ascontiguousarray(np.rot90(image, k=turns % 4)), out
-
-
-def finest_usable_gsd_mpp(
-    camera: TiltedCamera, max_off_nadir_deg: float, step_px: int = 32
-) -> float:
-    """The finest native GSD among frame pixels within the off-nadir limit (inf if none)."""
-    rows, cols = np.mgrid[0 : camera.height_px : step_px, 0 : camera.width_px : step_px]
-    u, v = cols.ravel().astype(np.float64), rows.ravel().astype(np.float64)
-    near = camera.off_nadir_deg(u, v) <= max_off_nadir_deg
-    return float(camera.native_gsd_mpp(u[near], v[near]).min()) if near.any() else math.inf

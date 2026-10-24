@@ -29,11 +29,12 @@ from altiseek.geometry.level_design import Candidate, candidates, unmet_recall_r
 from altiseek.registry.run import write_metadata
 
 
-def read_curve(path: Path, split: str) -> list[tuple[float, float]]:
-    """``(gsd_mpp, recall)`` rows of one split, skipping bins without a finite recall."""
+def read_curve(path: Path, split: str, metric: str) -> list[tuple[float, float]]:
+    """``(gsd_mpp, recall)`` rows of one split from column ``metric``, skipping bins without a
+    finite value."""
     with path.open(newline="", encoding="utf-8") as fh:
         rows = [r for r in csv.DictReader(fh) if r["split"] == split]
-    curve = [(float(r["gsd_mpp"]), float(r["recall"])) for r in rows]
+    curve = [(float(r["gsd_mpp"]), float(r[metric])) for r in rows]
     return [(g, r) for g, r in curve if math.isfinite(r)]
 
 
@@ -56,16 +57,15 @@ def describe(c: Candidate) -> str:
     return "\n".join(lines)
 
 
-def no_design(reasons: Sequence[str]) -> str:
+def no_design(reasons: Sequence[str], curve_name: str) -> str:
+    title = f"# No feasible level design ({curve_name})\n\n"
     if not reasons:
         return (
-            "# No feasible level design\n\nRecall at both ends is reachable, but no set of "
-            "whole-cell footprints has recall falling at every level and a battery that fits "
-            "the coverage rule (§8).\n"
+            f"{title}Recall at both ends is reachable, but no set of whole-cell footprints has "
+            "recall falling at every level and a battery that fits the coverage rule (§8).\n"
         )
-    return (
-        "# No feasible level design\n\nThe measured curve cannot meet these rules (§8):\n\n"
-        + "".join(f"- {r}\n" for r in reasons)
+    return f"{title}The measured curve cannot meet these rules (§8):\n\n" + "".join(
+        f"- {r}\n" for r in reasons
     )
 
 
@@ -78,7 +78,7 @@ def plot(
         [100 * g for g, _ in curve],
         [r for _, r in curve],
         marker="o",
-        label=f"measured ({cfg.recall_split})",
+        label=f"measured ({cfg.recall_split}, {cfg.recall_metric})",
     )
     title = f"R = {cfg.camera.resolution_px}, HFOV {cfg.camera.hfov_deg:g} deg"
     if best is None:
@@ -114,9 +114,10 @@ def main(argv: Sequence[str] | None = None) -> None:
     args = parser.parse_args(argv)
     cfg = load_config(args.config, LevelDesign, args.overrides)
 
-    curve = read_curve(cfg.recall_csv, cfg.recall_split)
+    curve = read_curve(cfg.recall_csv, cfg.recall_split, cfg.recall_metric)
+    curve_name = f"{cfg.recall_metric} on {cfg.recall_split}"
     if len(curve) < 2:
-        raise SystemExit(f"no recall curve for split {cfg.recall_split} in {cfg.recall_csv}")
+        raise SystemExit(f"no {curve_name} curve in {cfg.recall_csv}")
     found = candidates(
         area_m=cfg.area_m,
         cell_options_m=cfg.cell_options_m,
@@ -138,11 +139,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     plot(curve, best, cfg, figure)
     if best is None:
         reasons = unmet_recall_rules(curve, cfg.finest_min_recall, cfg.coarsest_max_recall)
-        report.write_text(no_design(reasons), encoding="utf-8")
+        report.write_text(no_design(reasons, curve_name), encoding="utf-8")
         proposal.unlink(missing_ok=True)  # never leave an earlier run's proposal behind
     else:
         report.write_text(
-            f"# Level design candidates ({len(found)} feasible)\n\n"
+            f"# Level design candidates ({len(found)} feasible, {curve_name})\n\n"
             + "\n\n".join(f"## {i + 1}\n\n{describe(c)}" for i, c in enumerate(found[: args.top]))
             + "\n",
             encoding="utf-8",

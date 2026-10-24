@@ -4,7 +4,8 @@ view at an operating threshold, by GSD bin and object size.
 Detections are matched to ground truth of the same class one-to-one, greedily by descending
 score: by IoU >= 0.5 for AP50, recall and precision, and by centre distance (default 1 m on the
 ground) as a second criterion, because IoU is unstable for objects a few pixels wide. AP is the
-COCO 101-point interpolated area under the precision-recall curve.
+COCO 101-point interpolated area under the precision-recall curve. Views may be partly fill
+(D23), so false positives are counted per full view of valid pixels.
 """
 
 import itertools
@@ -31,6 +32,8 @@ class ViewResult:
     image_id: int
     truth: tuple[Label, ...]
     detections: tuple[Detection, ...]
+    #: Share of the view's pixels with valid source; the rest is fill.
+    valid_share: float = 1.0
 
 
 def iou(a: Label | Detection, b: Label | Detection) -> float:
@@ -110,10 +113,39 @@ def average_precision(scores: Sequence[float], hits: Sequence[bool], n_truth: in
 
 
 @dataclass(frozen=True)
+class ViewCounts:
+    """One view's counts at threshold ``tau``: truth boxes, and true and false positives by IoU
+    and by centre matching."""
+
+    n_truth: int
+    tp: int
+    fp: int
+    tp_centre: int
+    fp_centre: int
+
+
+def view_counts(view: ViewResult, class_id: int, tau: float, radius_m: float = 1.0) -> ViewCounts:
+    """Counts of ``class_id`` at ``tau``; centre matching within ``radius_m`` on the ground."""
+    above = [d for d in view.detections if d.score >= tau]
+    _, hits, _ = match(view.truth, above, class_id)
+    radius_px = radius_m / view.gsd_mpp
+    _, hits_c, _ = match(view.truth, above, class_id, iou_min=None, radius_px=radius_px)
+    return ViewCounts(
+        n_truth=sum(t.class_id == class_id for t in view.truth),
+        tp=sum(hits),
+        fp=len(hits) - sum(hits),
+        tp_centre=sum(hits_c),
+        fp_centre=len(hits_c) - sum(hits_c),
+    )
+
+
+@dataclass(frozen=True)
 class Summary:
-    """Swimmer metrics over a set of views at threshold ``tau``."""
+    """Swimmer metrics over a set of views at threshold ``tau``. ``valid_views`` sums the views'
+    valid shares; false positives are per full view of valid pixels."""
 
     n_views: int
+    valid_views: float
     n_truth: int
     ap50: float
     recall: float
@@ -126,27 +158,27 @@ class Summary:
 def summarise(
     views: Sequence[ViewResult], class_id: int, tau: float, radius_m: float = 1.0
 ) -> Summary:
-    """AP50 over all scores; recall, precision and FP/view at ``tau`` (IoU and centre matching)."""
+    """AP50 over all scores; recall, precision and FP per valid view at ``tau`` (IoU and centre
+    matching)."""
     scores: list[float] = []
     hits: list[bool] = []
-    n_truth = tp = fp = tp_c = fp_c = 0
     for v in views:
         s, h, _ = match(v.truth, v.detections, class_id)
         scores += s
         hits += h
-        n_truth += sum(t.class_id == class_id for t in v.truth)
-        above = [d for d in v.detections if d.score >= tau]
-        _, h_tau, _ = match(v.truth, above, class_id)
-        tp, fp = tp + sum(h_tau), fp + len(h_tau) - sum(h_tau)
-        _, h_c, _ = match(v.truth, above, class_id, iou_min=None, radius_px=radius_m / v.gsd_mpp)
-        tp_c, fp_c = tp_c + sum(h_c), fp_c + len(h_c) - sum(h_c)
+    counts = [view_counts(v, class_id, tau, radius_m) for v in views]
+    n_truth = sum(c.n_truth for c in counts)
+    tp, fp = sum(c.tp for c in counts), sum(c.fp for c in counts)
+    tp_c, fp_c = sum(c.tp_centre for c in counts), sum(c.fp_centre for c in counts)
+    valid = sum(v.valid_share for v in views)
     return Summary(
         n_views=len(views),
+        valid_views=valid,
         n_truth=n_truth,
         ap50=average_precision(scores, hits, n_truth),
         recall=tp / n_truth if n_truth else math.nan,
         precision=tp / (tp + fp) if tp + fp else math.nan,
-        fp_per_view=fp / len(views) if views else math.nan,
+        fp_per_view=fp / valid if valid else math.nan,
         recall_centre=tp_c / n_truth if n_truth else math.nan,
         precision_centre=tp_c / (tp_c + fp_c) if tp_c + fp_c else math.nan,
     )
