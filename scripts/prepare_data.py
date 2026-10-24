@@ -1,5 +1,7 @@
 """prepare-data: build the SeaDronesSee frame and box tables (CLAUDE.md §7).
 
+Missing annotation files are fetched from the dataset's WebDAV share first.
+
 Run from the repository root:
 
     uv run python scripts/prepare_data.py [--config configs/data/default.yaml] [key=value ...]
@@ -15,6 +17,7 @@ from typing import Any
 from altiseek.config import load_config
 from altiseek.data.config import DataConfig
 from altiseek.data.frames import Box, Frame, load_odv2
+from altiseek.data.images import fetch_annotations
 from altiseek.data.tables import write_csv
 from altiseek.registry.run import write_metadata
 
@@ -50,6 +53,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     args = parser.parse_args(argv)
     config = load_config(args.config, DataConfig, args.overrides)
 
+    fetched = fetch_annotations(config.images, config.annotations.values())
+    if fetched:
+        print(f"fetched {fetched} annotation files from the share")
     frames, boxes = load_odv2(config.annotations, config.camera_groups)
     config.out_dir.mkdir(parents=True, exist_ok=True)
     outputs = {"frames": config.out_dir / "frames.csv", "boxes": config.out_dir / "boxes.csv"}

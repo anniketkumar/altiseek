@@ -35,14 +35,32 @@ def image_url(source: ImageSource, frame: Frame) -> str:
     return source.webdav_url.rstrip("/") + "/" + "/".join(quote(p) for p in parts)
 
 
+def annotation_url(source: ImageSource, file_name: str) -> str:
+    """WebDAV URL of an annotation file (e.g. ``instances_train.json``) of the image version."""
+    parts = (VERSION_DIRS[source.version], "annotations", file_name)
+    return source.webdav_url.rstrip("/") + "/" + "/".join(quote(p) for p in parts)
+
+
+def fetch_annotations(source: ImageSource, paths: Iterable[Path]) -> int:
+    """Download each missing annotation file, named by its local file name; return how many."""
+    fetched = 0
+    for path in paths:
+        if not path.exists():
+            save_atomic(path, _get(source, annotation_url(source, path.name), 300.0, 4))
+            fetched += 1
+    return fetched
+
+
 def download(
     source: ImageSource, frame: Frame, timeout_s: float = 120.0, attempts: int = 4
 ) -> bytes:
     """The encoded image of ``frame`` from the share, retrying with exponential backoff."""
+    return _get(source, image_url(source, frame), timeout_s, attempts)
+
+
+def _get(source: ImageSource, url: str, timeout_s: float, attempts: int) -> bytes:
     token = base64.b64encode(f"{source.share_token}:".encode()).decode()
-    request = urllib.request.Request(
-        image_url(source, frame), headers={"Authorization": f"Basic {token}"}
-    )
+    request = urllib.request.Request(url, headers={"Authorization": f"Basic {token}"})
     for attempt in range(attempts - 1):
         try:
             with urllib.request.urlopen(request, timeout=timeout_s) as response:

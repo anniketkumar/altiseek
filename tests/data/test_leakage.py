@@ -1,5 +1,8 @@
 """Cross-split candidate search and the calibration pair sets."""
 
+from dataclasses import replace
+from datetime import timedelta
+
 import numpy as np
 import pytest
 
@@ -10,7 +13,10 @@ from altiseek.data.leakage import (
     correlation,
     cross_split_pairs,
     random_pairs,
+    video_runs,
 )
+
+from ._frames import FRAME, T0
 
 RNG = np.random.default_rng(0)
 THUMBS = {i: RNG.normal(size=(32, 32)).astype(np.float16) for i in range(6)}
@@ -51,6 +57,29 @@ def test_consecutive_and_random_pairs():
     assert random_pairs([0], [4], 3, 1, HASHES, THUMBS) == random_pairs(
         [0], [4], 3, 1, HASHES, THUMBS
     )
+
+
+def test_video_runs_split_on_time_gaps_and_skip_non_video_frames():
+    def at(image_id, seconds, folder="V", **changes):
+        return replace(
+            FRAME,
+            image_id=image_id,
+            source_folder=folder,
+            timestamp=T0 + timedelta(seconds=seconds),
+            **changes,
+        )
+
+    frames = [
+        at(3, 1.0),
+        at(1, 0.0),
+        at(2, 0.5),
+        at(4, 5.0),
+        at(5, 5.5),
+        at(6, 9.0),  # alone: no run
+        at(7, 0.2, folder="W"),
+        at(8, 0.6, folder="W", timestamp_source="meta"),  # not a video timestamp
+    ]
+    assert video_runs(frames, max_gap_s=1.0) == {"mavic_4k/V/1": [1, 2, 3], "mavic_4k/V/4": [4, 5]}
 
 
 def test_aligned_and_pairwise_hamming_agree():

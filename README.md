@@ -30,3 +30,22 @@ uv run pytest   # unit tests, plus ruff lint and format checks
 
 Datasets, rendered worlds, caches, checkpoints and run outputs live under `data/` and `runs/`, which
 are never committed.
+
+## Reproducing the data stage (M1)
+
+Each command reads `configs/data/default.yaml`, accepts `key=value` overrides, and writes its outputs
+and a metadata record (git commit, package versions, config, file hashes) under `data/processed/`.
+Run them from the repository root, in order:
+
+```bash
+uv run python scripts/prepare_data.py   # fetch annotations if missing; frame and box tables
+uv run python scripts/fit_camera.py     # focal length from the sea horizon (fetches ~120 frames)
+uv run python scripts/make_splits.py    # capture-day sessions and the A/B/T split
+uv run python scripts/scan_images.py    # one resumable pass over all 10,477 images (1-2 h)
+uv run python scripts/check_leakage.py  # cross-split near-duplicate search; non-zero exit on failure
+```
+
+The data are [SeaDronesSee](https://seadronessee.cs.uni-tuebingen.de/) Object Detection v2
+(Varga et al., WACV 2022), released under CC0 1.0. Images are fetched on demand from the dataset's
+public share, and only near-nadir frames are kept on disk. Verified dataset facts, the camera model,
+the splits and the leakage-check result are in [docs/data_notes.md](docs/data_notes.md).

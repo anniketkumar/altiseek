@@ -6,7 +6,14 @@ import numpy as np
 from PIL import Image
 
 from altiseek.data.config import ImageSource
-from altiseek.data.images import fetch_images, image_path, image_url, load_rgb
+from altiseek.data.images import (
+    annotation_url,
+    fetch_annotations,
+    fetch_images,
+    image_path,
+    image_url,
+    load_rgb,
+)
 
 from ._frames import FRAME
 
@@ -27,6 +34,15 @@ def test_path_and_url_follow_the_share_layout(tmp_path):
         image_url(source(tmp_path), frame)
         == "https://example.org/public.php/webdav/Compressed%20Version/images/train/0.jpg"
     )
+
+
+def test_annotation_url_and_existing_files_are_not_fetched(tmp_path):
+    assert annotation_url(source(tmp_path), "instances_val.json") == (
+        "https://example.org/public.php/webdav/Compressed%20Version/annotations/instances_val.json"
+    )
+    present = tmp_path / "instances_val.json"
+    present.write_text("{}", encoding="utf-8")
+    assert fetch_annotations(source(tmp_path), [present]) == 0
 
 
 def test_existing_images_are_not_fetched(tmp_path):
