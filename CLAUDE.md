@@ -16,7 +16,7 @@ Update as milestones complete (§21).
 |---|---|
 | M0 Repo & tooling | done (2026-10-24) |
 | M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
-| M2 Detector | in progress: shared resampling, rectification, view generation, Kaggle runner, training wrapper and inference API built; first training run next |
+| M2 Detector | in progress: pipeline built and piloted on Kaggle; full training + evaluation run `altiseek-detector-v1` under way (D21) |
 | M3 Level design | not started |
 | M4 Worlds & renderer | not started |
 | M5 Detection cache | not started |
@@ -894,13 +894,19 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D19 | Detector: Ultralytics YOLO (`ultralytics==8.4.184`, AGPL-3.0). The repository is licensed **AGPL-3.0-only** (`LICENSE`) | Owner's choice, 2026-10-24. Fastest path: strong small-object models, an optional P2 (higher-resolution) head, and resumable training built in. AGPL obliges the repo to share the licence | Fixed |
 | D20 | Cloud GPU is Kaggle (account `aniketkumarpradhan`, 2× T4). Kernels are pushed, monitored and collected with the Kaggle CLI. They fetch images from the dataset share directly instead of uploading them | The share serves about 10 images/s to Kaggle versus about 2.5/s to the laptop. The CLI lets jobs run without manual notebook use. Tokens stay in `~/.kaggle/`, never in the repo | Fixed |
 | D18 | Images: the compressed JPEG version (full resolution), streamed. `scan-images` reads each image once and keeps only near-nadir (≤ 30°) `mavic_4k` frames on disk | 7.4 GB vs 92.5 GB as PNG; the laptop has about 23 GB free and no Kaggle account is set up yet. Later stages re-fetch what they need; cloud notebooks fetch from the share directly | Fixed |
+| D21 | Detector v1 setup:
+- **Views:** θ_train = 60°. Target GSDs log-uniform in 2–30 cm/px, clipped per frame to its finest usable GSD; 3 GSDs × 2 windows per frame, 60% centred on objects; a random quarter turn, blur σ ∈ [0, 0.8] px and JPEG quality ∈ [70, 95], the JPEG write being the camera pipeline's JPEG step.
+- **Training:** YOLO11s (COCO-pretrained), 640 px, batch 32, ≤ 100 epochs, patience 20. Mosaic, scale, rotation and copy-paste augmentation are off; flips on. Internal validation is session 2020-08-28, used for early stopping, model selection and τ only. τ is the F1-optimal swimmer threshold on internal-validation views.
+- **Evaluation:** 12 GSD bins over 2–30 cm/px; ≤ 120 frames per split and bin, ≤ 4 tiles per frame; the default camera pipeline (blur 0.3 px, JPEG 90); IoU ≥ 0.5 and ≤ 1 m centre matching.
+- **Telemetry:** Ultralytics telemetry is off.
+| Views keep GSD exact (scale and mosaic augmentation would change it). Quarter turns: nadir views have no up. θ_train = 60° keeps most of the 45–75° footage partly usable; whether a stricter limit helps is an ablation | Default |
+| D22 | Classes: the five ODv2 classes are trained. `swimmer` is the target; `boat`, `jetski`, `life_saving_appliances` and `buoy` are distractors. ODv2 already merges people in water with and without life jackets into `swimmer` | Training on all classes helps separate swimmers from distractors (§9); the search uses swimmer detections only | Fixed |
 
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- θ_train (M2) and θ_lib (M4) off-nadir limits.
-- Swimmer class definition: merge any subclasses? Treat life-saving appliances as distractors?
+- θ_lib (M4) off-nadir limit for libraries.
 - Boundary rule for swimmers straddling cells.
 - Known vs unknown K as the default.
 - MaskablePPO vs a custom PPO.
