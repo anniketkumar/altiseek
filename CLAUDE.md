@@ -16,8 +16,8 @@ Update as milestones complete (§21).
 |---|---|
 | M0 Repo & tooling | done (2026-10-24) |
 | M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
-| M2 Detector | in progress: pipeline built and piloted on Kaggle; full training + evaluation run `altiseek-detector-v1` under way (D21) |
-| M3 Level design | tooling built (`design-levels`, energy model, level tables); decisions wait for M2's recall curve |
+| M2 Detector | in progress: detector `78aba879cc50e025` trained, evaluated on B and T, and registered (`docs/results.md`). B's curve ends at 13 cm/px and 0.5% of training views are coarser than 16 cm/px: too little for M3 (§25) |
+| M3 Level design | tooling built (`design-levels`, energy model, level tables); the first run, on detector `78aba879cc50e025`, finds no feasible design (`docs/results.md`); D7 pending |
 | M4 Worlds & renderer | not started |
 | M5 Detection cache | not started |
 | M6 Sensor models | not started |
@@ -824,6 +824,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 - Logged gimbal pitch lags the camera while the gimbal moves, because metadata is matched to frames by nearest timestamp.
 - ODv2 blackens ignore regions in the pixels. Their edges, with JPEG ringing, look like strong image edges.
 - Using different resampling for training and rendering creates a hidden domain gap.
+- View sampling that rejects draws (a minimum coverage) silently skews the GSD mix toward fine GSDs. Check the views per GSD bin.
 
 **Belief, reward and training**
 - A deterministic detector without a re-look rule lets the agent farm certainty by re-observing the same cells.
@@ -902,6 +903,10 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
+- **Level-design curve (blocks M3 and D7).** The first `design-levels` run finds no feasible design (`docs/results.md`).
+  - Coarse GSDs: the training views and B's evaluation have almost nothing above 13–16 cm/px. More needs a lower `min_coverage` (letterboxed views), GSD-stratified frame choice in make-views and eval-detector, and a retrain.
+  - Which recall to design on: IoU recall, or centre recall, which is closer to the cell-level r_ℓ of §10.
+  - Whether finest-level recall ≥ 0.8 is reachable on B at all: its best bin has 0.62 (IoU) or 0.80 (centre).
 - θ_lib (M4) off-nadir limit for libraries.
 - Boundary rule for swimmers straddling cells.
 - Known vs unknown K as the default.

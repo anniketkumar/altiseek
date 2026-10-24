@@ -1,0 +1,58 @@
+[
+  {
+    "kind": "detector",
+    "artifact_id": "78aba879cc50e025",
+    "sha256": "78aba879cc50e025c09f5475f6a179438f48b6cfe7c405c6a0b9dee2b90b0308",
+    "location": "kaggle:aniketkumarpradhan/altiseek-detector-v2:detector/train/weights/best.pt",
+    "parents": {
+      "split_id": "783b4403804291a2",
+      "camera_models_sha256": "088bbec5d55e0f4f",
+      "code_commit": "ae30740a74bb98aff5835ae45b70ae769b83aef1"
+    },
+    "created_utc": "2026-10-24T11:05:53+00:00",
+    "notes": {
+      "init_weights": "yolo11s.pt",
+      "classes": [
+        "swimmer",
+        "boat",
+        "jetski",
+        "life_saving_appliances",
+        "buoy"
+      ],
+      "imgsz": 640,
+      "tau": 0.4622959494590759,
+      "overall": {
+        "val": {
+          "n_views": 1825,
+          "n_truth": 1969,
+          "ap50": 0.8496042432827995,
+          "recall": 0.8643981716607415,
+          "precision": 0.8574307304785894,
+          "fp_per_view": 0.15506849315068494,
+          "recall_centre": 0.919756221432199,
+          "precision_centre": 0.9123425692695214
+        },
+        "B": {
+          "n_views": 1207,
+          "n_truth": 1741,
+          "ap50": 0.5802397555215175,
+          "recall": 0.5577254451464676,
+          "precision": 0.7150220913107511,
+          "fp_per_view": 0.32062966031483014,
+          "recall_centre": 0.7271682940838599,
+          "precision_centre": 0.9322533136966127
+        },
+        "T": {
+          "n_views": 636,
+          "n_truth": 298,
+          "ap50": 0.8833844847494969,
+          "recall": 0.8389261744966443,
+          "precision": 0.9124087591240876,
+          "fp_per_view": 0.03773584905660377,
+          "recall_centre": 0.889261744966443,
+          "precision_centre": 0.9671532846715328
+        }
+      }
+    }
+  }
+]
