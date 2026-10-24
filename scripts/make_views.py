@@ -143,7 +143,7 @@ def render_frame(task: Task) -> tuple[int, list[ViewRecord]]:
 def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Render training and validation views.")
     parser.add_argument("--config", type=Path, default=Path("configs/detector/default.yaml"))
-    parser.add_argument("--limit", type=int, default=None, help="first N frames only (smoke test)")
+    parser.add_argument("--every", type=int, default=1, help="every Nth frame only (pilot runs)")
     parser.add_argument("--workers", type=int, default=os.cpu_count() or 1)
     parser.add_argument("overrides", nargs="*", help="config overrides, dotted.key=value")
     args = parser.parse_args(argv)
@@ -164,8 +164,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         return "val" if row.session_id in cfg.internal_val_sessions else "train"
 
     chosen = [(f, s) for f in sorted(frames, key=lambda f: f.image_id) if (s := subset(f))]
-    if args.limit is not None:
-        chosen = chosen[: args.limit]
+    chosen = chosen[:: args.every]
 
     yolo_dir = cfg.views_dir / "yolo"
     for kind in ("images", "labels"):
