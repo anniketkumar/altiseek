@@ -8,7 +8,7 @@ from PIL import Image
 from altiseek.data.config import ImageSource
 from altiseek.data.images import fetch_images, image_path, image_url, load_rgb
 
-from .test_camera_fit import FRAME
+from ._frames import FRAME
 
 
 def source(root):

@@ -72,7 +72,7 @@ CV and RL are coupled through the belief map. The policy never sees pixels, but 
 
 **Non-goals** (do not drift into these without a Decision Log entry)
 - Learning low-level flight control. PX4 flies; policies choose high-level moves.
-- Oblique or gimballed cameras. The camera is nadir with fixed yaw.
+- Oblique or gimballed cameras. The simulated camera is nadir with fixed yaw. Oblique *source* frames are used only after ground-plane rectification into nadir-equivalent views (D14).
 - Targets moving during an episode.
 - Multiple drones.
 - End-to-end RL from pixels.
@@ -207,7 +207,7 @@ altiseek/
 ```
 
 **Stage entry points in `scripts/`**, in pipeline order:
-1. prepare-data, fit-camera (focal length per camera group from the sea horizon, §7 step 4)
+1. prepare-data, fit-camera (focal length from the sea horizon, §7 step 4), make-splits, scan-images (one streaming pass over every image: hashes, ignore regions), check-leakage
 2. train-detector, eval-detector
 3. design-levels
 4. build-libraries, generate-worlds
@@ -236,26 +236,26 @@ Record verified values, exact metadata field names and counts in `docs/data_note
   - roughly 1230×930 multispectral images.
 
 **Steps**
-1. **Frame table.** One row per image: image_id, path, width, height, camera_group, altitude_m, gimbal_pitch_deg, GPS, timestamp, per-class annotation counts, has_ignore_regions.
+1. **Frame table.** One row per image: image_id, path, width, height, camera_group, altitude_m, gimbal_pitch_deg, GPS, timestamp, per-class annotation counts. `has_ignore_regions` comes from the image scan (`image_scan/stats.csv`), because ODv2 blackens ignore regions in the pixels instead of annotating them.
 2. **Camera groups.**
    - Assign by resolution, plus metadata where available.
    - Use only groups with reliable altitude for anything that needs GSD.
-   - Default: the 3840×2160 group only.
-3. **Nadir filter.**
-   - Keep frames whose gimbal pitch is within a tolerance of straight down. Start at ±10°.
-   - Log how many frames survive per altitude band.
-   - Oblique frames have non-uniform GSD and break the camera model. If too few frames survive, widen the tolerance and log the decision.
+   - Default: the 3840×2160 group only. In practice only `mavic_4k`, the one group with a fitted camera model (D12).
+3. **Off-nadir handling** (D14; replaces the original ±10° nadir filter, which kept only 296 frames from 3 videos).
+   - Every frame with altitude, pitch and a camera model gets per-pixel GSD from the tilted pinhole model over a flat sea (`geometry/camera.py`).
+   - Stages that need a uniform GSD rectify the ground plane (a homography) into nadir-equivalent views. They use only pixels within an off-nadir limit (θ_train for detector views in M2, a stricter θ_lib for libraries in M4) and only where the native GSD is ≤ the target.
+   - Log frame counts per off-nadir band.
 4. **GSD model per camera group.**
-   - Native GSD = altitude × k, with k = 2·tan(HFOV/2) / image_width.
-   - If HFOV is unknown, estimate k empirically: plot the median box size (px) of swimmers and buoys against altitude, and fit size_px ≈ object_size_m / (k · altitude).
+   - Native GSD = altitude × k, with k = 2·tan(HFOV/2) / image_width = 1/f, at nadir.
+   - The HFOV is not in the files, and box sizes cannot separate object size from focal length. f is therefore fitted from the open-sea horizon (`fit-camera`, D12).
    - Record k, the fit plot and the residuals.
-5. **Sessions.** Frames are extracted from video, so consecutive frames are near-duplicates. Assign `session_id` by clustering on timestamp gaps (and GPS) within each camera group.
-6. **Splits.** Pool all labelled images; do not assume the official train/val split is session-disjoint. Split by session into:
+5. **Sessions** (D15). One session per capture day, across all camera groups: the drones of a campaign filmed the same exercise in the same hours. Frames without a trustworthy day form an undated session per camera group, tied to their campaign.
+6. **Splits** (D16). Pool all labelled images; the official train/val split is not session-disjoint. Split by session into:
    - **A** — detector training and internal validation (the largest share).
    - **B** — sensor-model fitting, plus imagery for RL training and validation worlds.
    - **T** — test only: test worlds, final calibration evaluation, fidelity check.
-   Stratify by altitude band and class presence. Report counts per split × altitude band × class.
-7. **Leakage check.** Run a perceptual-hash near-duplicate search across splits. It must pass before any training.
+   Stratify by altitude band and swimmer presence, using an exhaustive search over session assignments. B and T come only from the open-sea campaign. Report counts per split × altitude band × class.
+7. **Leakage check** (D17). A perceptual-hash near-duplicate search across splits, confirmed by thumbnail correlation. Thresholds come from known duplicates (consecutive video frames). It must pass before any training.
 
 **Done when:** `docs/data_notes.md` holds the verified field names, camera groups, GSD model, split statistics and the leakage-check result.
 
@@ -318,7 +318,8 @@ Use the identical function for detector training views, real-frame evaluation an
 
 **Training data** (split A only)
 - **Real frames only**, resampled to target GSDs drawn across the simulator's GSD range, with jitter.
-  - Use only source frames whose native GSD ≤ the target GSD.
+  - Oblique frames are ground-plane rectified into nadir-equivalent views first (D14), using pixels within θ_train of nadir.
+  - Use only source pixels whose native GSD (across and along the view) ≤ the target GSD.
   - Prefer source frames whose resampled size covers most of the R×R view.
   - Crop R×R windows; letterbox when the resampled frame is smaller than R in one dimension.
 - **Never train on pasted composites.** The detector would learn paste artefacts and inflate recall inside the simulator. Disable copy-paste augmentation.
@@ -398,12 +399,12 @@ A world is a lightweight **spec**, not a giant image. The renderer composes what
 
 **Libraries** (built separately per split; never mix splits)
 - **Backgrounds.**
-  - Sea patches from nadir frames with native GSD ≤ g₀.
+  - Sea patches from rectified regions within θ_lib of nadir (D14) with native GSD ≤ g₀.
   - Patches must contain no annotated objects or ignore regions, with a safety margin.
   - Store appearance statistics (Lab mean/std, texture energy).
   - Cluster patches into *appearance conditions*, e.g. calm/dark, glare, choppy.
 - **Object crops.**
-  - Swimmers (targets), plus boats, buoys, jetskis and life-saving appliances (distractors), from frames with native GSD ≤ g₀.
+  - Swimmers (targets), plus boats, buoys, jetskis and life-saving appliances (distractors), from rectified regions within θ_lib of nadir with native GSD ≤ g₀.
   - Each crop stores a small water margin, a feathered soft alpha mask, its physical size (from GSD) and its source session.
 
 **World spec**
@@ -783,6 +784,8 @@ This avoids motion blur and synchronisation problems.
 - flat sea;
 - static targets;
 - composited worlds;
+- detector training and world imagery include ground-plane-rectified oblique frames (D14);
+- only six capture days, so splits are coarse and the same volunteers may appear on several days;
 - the independence approximation in the belief map.
 
 ---
@@ -816,6 +819,9 @@ Each milestone depends on the ones before it. Don't start the next one until the
 - Crops or backgrounds from the detector's training split inside evaluation worlds inflate recall.
 - Training the detector on pasted composites teaches it paste artefacts.
 - Missing or zero altitude, oblique frames and mixed cameras all produce wrong GSDs.
+- Rectified oblique views are not true nadir views. 3D objects lean away from the camera, and the water reflects more sky at grazing angles. The fidelity check measures the effect; keep θ_lib strict.
+- Logged gimbal pitch lags the camera while the gimbal moves, because metadata is matched to frames by nearest timestamp.
+- ODv2 blackens ignore regions in the pixels. Their edges, with JPEG ringing, look like strong image edges.
 - Using different resampling for training and rendering creates a hidden domain gap.
 
 **Belief, reward and training**
@@ -881,18 +887,18 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D11 | Config system: PyYAML + pydantic v2 in `altiseek.config`. A `_base_` key gives inheritance and cross-group composition; dotted CLI overrides; schemas forbid unknown keys and are frozen | Lighter and more explicit than Hydra/OmegaConf; misspelt keys fail loudly; the resolved config serialises for run metadata (§18) | Default |
 | D12 | `mavic_4k` camera model: f = 3029 px (95% CI 2932–3225), i.e. HFOV 64.7° and nadir GSD = 3.30 × 10⁻⁴ m/px per metre of altitude; gimbal pitch bias −0.38°. Fitted from the open-sea horizon (`fit-camera`), not from box sizes | §7 step 4's box-size fit cannot separate object size from focal length; the horizon gives f directly. The fit confirms the Mavic 2 Pro's full-width 4K mode. Details in `docs/data_notes.md` | Fixed until re-measured |
 | D13 | Runtime deps numpy 2.0.2 (Colab's version), Pillow 12.3.0, matplotlib 3.11.2 | Needed for M1 imaging and figures; matching Colab avoids reinstalls in cloud sessions | Fixed |
+| D14 | Oblique source frames are used through a tilted pinhole model over a flat sea and ground-plane rectification into nadir-equivalent views. Off-nadir limits are θ_train (detector views, set in M2) and a stricter θ_lib (libraries, set in M4). This replaces the ±10° nadir filter of §7 step 3 | Nadir-only keeps 296 `mavic_4k` frames from 3 videos, too few for session-disjoint splits; the median 4K pitch is about 31°. Rectification is exact for a flat sea with a known camera model (D12). The cost is an appearance gap (lean of 3D objects, sky reflection), which the fidelity check measures | Fixed |
+| D15 | Session = capture day across all camera groups. Frames without a trusted day get `undated:<group>` sessions: `trinity_rgb` (no timestamps) and MicaSense frames without GPS (their clock dates them to 2021-08-27, when nothing else flew). Both are assigned to campaign `lake_constance_2020` | The Mavic and M210 filmed the same exercises in the same hours, so a finer unit would leak swimmers, boats and sea state across splits. The paper flew the Trinity only at Lake Constance in 2020 | Fixed |
+| D16 | Split by exhaustive search over session blocks: target shares A/B/T = 0.6/0.25/0.15 of usable (`mavic_4k`) frames, stratified by altitude band (0/20/40/60/200 m) × swimmer presence. Undated sessions are tied to their campaign. B and T only from `north_sea_2021`. B and T need ≥ 100 near-nadir (≤ 30°) swimmer boxes. Result: A = Lake Constance 2020 + 2021-08-20, B = 2021-08-21, T = 2021-08-19 (`split_id` 783b4403804291a2) | Sensor models are fitted on B worlds and judged on T worlds, so both must come from the target domain (open sea); the lake adds variety to detector training only. B feeds more stages than T, and unequal targets also break the tie between swapping two days | Fixed |
+| D17 | Leakage check: 64-bit DCT perceptual hash of a 32×32 masked-luma thumbnail; candidate if the hash distance ≤ H, near-duplicate if the thumbnail correlation is also ≥ R. H and R are the 95th/5th percentiles over consecutive video frames (known duplicates). False alarms are measured on the full lake × sea search | Open-water scenes look alike, so a hash alone over-reports. Deriving thresholds from known duplicates keeps them independent of the cross-split result | Fixed |
+| D18 | Images: the compressed JPEG version (full resolution), streamed. `scan-images` reads each image once and keeps only near-nadir (≤ 30°) `mavic_4k` frames on disk | 7.4 GB vs 92.5 GB as PNG; the laptop has about 23 GB free and no Kaggle account is set up yet. Later stages re-fetch what they need; cloud notebooks fetch from the share directly | Fixed |
 
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- **Oblique frames (blocks M1 splits and M2).** Only 296 `mavic_4k` frames from 3 videos are within ±10° of nadir; 4K pitch has a median of about 31° (`docs/data_notes.md`). Options:
-  - (a) A tilted pinhole camera model over a flat sea. It gives per-pixel GSD for every frame with altitude and pitch, and ground-plane rectification (a homography) produces nadir-equivalent views. Detector training views and libraries could then come from oblique frames up to an off-nadir limit.
-  - (b) Strict nadir with a wider tolerance (±20–30°: 589–802 frames from 9–10 videos), accepting that GSD varies across a frame by a factor of 1.7 (±20°) to 2.3 (±30°) from bottom to top row.
-  - (c) Add a second dataset with nadir imagery and altitude.
-- **Session unit.** Options: per video; clustered on time gaps within each camera group (the current §7 text); or per capture day across all camera groups. Mavic and M210 filmed the same exercises in the same hours, which argues for day-level sessions across groups. That gives only about 6 timestamped sessions, plus `trinity_rgb` with no timestamps.
-- **Image version.** Compressed JPEG (train + val 7.4 GB, full resolution) vs PNG (92.5 GB). The local disk has about 23 GB free.
-- Detector framework and its licence.
+- Detector framework and its licence (decide together with the repository licence).
+- θ_train (M2) and θ_lib (M4) off-nadir limits.
 - Swimmer class definition: merge any subclasses? Treat life-saving appliances as distractors?
 - Boundary rule for swimmers straddling cells.
 - Known vs unknown K as the default.

@@ -212,3 +212,77 @@ the top row of a frame tilted off-nadir by the tolerance, relative to the nadir 
 | 10° | 0.91 | 1.03 | 1.17 |
 | 20° | 0.89 | 1.13 | 1.50 |
 | 30° | 0.92 | 1.33 | 2.11 |
+
+**Resolution (D14):** oblique frames are used through ground-plane rectification into
+nadir-equivalent views, with per-pixel GSD from the tilted camera model. `mavic_4k` frames per
+off-nadir band (90° − pitch, at the image centre) and split, as frames / swimmer boxes:
+
+| Off-nadir | A | B | T | All frames |
+|---|---|---|---|---|
+| 0–10° | 19 / 38 | 161 / 634 | 116 / 231 | 296 |
+| 10–20° | 129 / 375 | 134 / 996 | 30 / 57 | 293 |
+| 20–30° | 94 / 475 | 70 / 505 | 49 / 32 | 213 |
+| 30–45° | 326 / 1,347 | 200 / 1,792 | 41 / 72 | 567 |
+| 45–60° | 1,285 / 6,435 | 485 / 3,366 | 277 / 546 | 2,047 |
+| 60–75° | 954 / 5,587 | 276 / 1,587 | 407 / 596 | 1,637 |
+| 75–90° | 560 / 342 | 151 / 295 | 115 / 80 | 826 |
+| 90–100° | 131 / 2 | 43 / 9 | 6 / 1 | 180 |
+
+Frames beyond 90° look above the horizon. Most of the footage is 45–75° off nadir, so θ_train (M2)
+decides how much of it the detector sees.
+
+## Sessions and splits
+
+`scripts/make_splits.py` writes `data/processed/splits.csv`, `sessions.csv` and `split_tables.md`.
+The `split_id` is **783b4403804291a2**.
+
+- **Sessions (D15):** one per capture day across all camera groups, plus undated sessions for
+  frames without a trustworthy day. Both undated sessions are assigned to the 2020 Lake Constance
+  campaign.
+
+  | Session | Campaign | Frames | Split |
+  |---|---|---|---|
+  | 2020-08-25 | lake_constance_2020 | 345 | A |
+  | 2020-08-27 | lake_constance_2020 | 1,374 | A |
+  | 2020-08-28 | lake_constance_2020 | 312 | A |
+  | 2021-08-19 | north_sea_2021 | 1,041 | **T** |
+  | 2021-08-20 | north_sea_2021 | 2,446 | A |
+  | 2021-08-21 | north_sea_2021 | 3,354 | **B** |
+  | undated:trinity_multispectral | lake_constance_2020 | 267 | A |
+  | undated:trinity_rgb | lake_constance_2020 | 1,338 | A |
+
+- **Assignment (D16):**
+  - The search is exhaustive over 4 blocks (81 assignments; 12 feasible).
+  - Targets are A/B/T = 0.6/0.25/0.15 of `mavic_4k` frames, stratified by altitude band ×
+    swimmer presence.
+  - Constraints: B and T come only from `north_sea_2021`, and each has ≥ 100 near-nadir swimmer
+    boxes.
+  - Loss 0.101; the runner-up has 0.117.
+  - Achieved `mavic_4k` shares: A 57.7%, B 25.1%, T 17.2%.
+- **Counts:** `mavic_4k` frames and boxes per split × altitude band × class:
+
+  | Split | Altitude | Frames | With swimmers | swimmer | boat | jetski | life_saving_appliances | buoy |
+  |---|---|---|---|---|---|---|---|---|
+  | A | 0–20 m | 827 | 333 | 969 | 1,787 | 55 | 4 | 677 |
+  | A | 20–40 m | 1,305 | 1,280 | 6,711 | 2,099 | 427 | 0 | 1,031 |
+  | A | 40–60 m | 1,111 | 1,063 | 5,919 | 2,539 | 443 | 64 | 914 |
+  | A | 60–200 m | 255 | 165 | 1,002 | 858 | 146 | 4 | 302 |
+  | **A** | all | 3,498 | 2,841 | 14,601 | 7,283 | 1,071 | 72 | 2,924 |
+  | B | 0–20 m | 231 | 197 | 1,792 | 272 | 116 | 0 | 40 |
+  | B | 20–40 m | 697 | 660 | 4,747 | 991 | 386 | 613 | 362 |
+  | B | 40–60 m | 335 | 196 | 1,039 | 693 | 156 | 151 | 205 |
+  | B | 60–200 m | 257 | 257 | 1,606 | 421 | 120 | 231 | 91 |
+  | **B** | all | 1,520 | 1,310 | 9,184 | 2,377 | 778 | 995 | 698 |
+  | T | 0–20 m | 745 | 578 | 1,151 | 77 | 345 | 0 | 79 |
+  | T | 20–40 m | 142 | 84 | 168 | 27 | 35 | 1 | 11 |
+  | T | 40–60 m | 72 | 68 | 132 | 3 | 0 | 0 | 5 |
+  | T | 60–200 m | 82 | 82 | 164 | 0 | 0 | 0 | 0 |
+  | **T** | all | 1,041 | 812 | 1,615 | 107 | 380 | 1 | 95 |
+
+  Near-nadir (≤ 30°) `mavic_4k` swimmer boxes: A 888, B 2,135, T 320. All frames by group: A has
+  every `m210_4k`, `trinity_rgb` and `trinity_multispectral` frame; B has every `m210_1080p` frame.
+- **Caveats:**
+  - Only six capture days exist, so the splits are coarse. The same volunteers may appear on
+    several days of a campaign; day-level splitting removes shared scenes, not shared people.
+  - T is dominated by low altitudes (72% of its frames are below 20 m) and has almost no
+    distractors. Distractor-heavy test scenarios will reuse a small set of T distractor crops.

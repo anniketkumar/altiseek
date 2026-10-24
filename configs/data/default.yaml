@@ -25,6 +25,37 @@ horizon_fit:
   max_roll_deg: 3.0
   bootstrap_reps: 2000
   seed: 20261024
+sessions:
+  sites:
+    - {name: lake_constance, latitude_deg: [47.0, 48.0], longitude_deg: [8.5, 10.0]}
+    - {name: north_sea, latitude_deg: [53.0, 54.5], longitude_deg: [6.5, 8.0]}
+  undated_campaign:  # the paper flew the Trinity F90+ only at Lake Constance in 2020
+    trinity_rgb: lake_constance_2020
+    trinity_multispectral: lake_constance_2020
+splits:
+  # B feeds sensor fitting, RL training/validation worlds and level design; T only the final
+  # evaluation. Unequal B/T targets also break the tie between swapping two days.
+  target_share: {A: 0.6, B: 0.25, T: 0.15}
+  usable_camera_groups: [mavic_4k]  # the only group with a fitted camera model (D12)
+  altitude_bands_m: [0, 20, 40, 60, 200]
+  near_nadir_deg: 30.0
+  min_near_nadir_swimmers: 100
+  tie_undated_to_campaign: true
+  # Sensor models are fitted on B worlds and judged on T worlds: both from open sea. Lake
+  # Constance adds variety to detector training (A) only.
+  eval_campaigns: [north_sea_2021]
+leakage:
+  calibration_quantile: 0.95
+  positive_max_gap_s: 1.0
+  negative_campaigns: [lake_constance_2020, north_sea_2021]
+  negative_samples: 20000
+  seed: 20261024
+scan:
+  workers: 24  # the share answers each request after ~3 s; throughput scales with workers
+  chunk_size: 200
+  keep:  # near-nadir frames that worlds/libraries (M4) can use; everything else is discarded
+    camera_groups: [mavic_4k]
+    max_off_nadir_deg: 30.0
 camera_groups:
   - name: mavic_4k  # DJI Mavic 2 Pro, Hasselblad L1D-20c video frames; DJI flight-log meta
     drone: mavic
