@@ -198,6 +198,7 @@ altiseek/
 │   ├── eval/                   protocol runner, metrics, statistics
 │   ├── viz/                    episode replays, figures
 │   └── registry/               artifact IDs, manifest, run metadata
+├── registry/manifest.json      committed artifact manifest: IDs, parents, storage locations (§18)
 ├── ros2_ws/src/altiseek_ros/   ROS 2 nodes, launch files, Gazebo world exporter and assets
 ├── notebooks/                  thin cloud-GPU notebooks that call src/ (detector training, cache generation)
 ├── scripts/                    one CLI entry point per stage
@@ -208,7 +209,7 @@ altiseek/
 
 **Stage entry points in `scripts/`**, in pipeline order:
 1. prepare-data, fit-camera (focal length from the sea horizon, §7 step 4), make-splits, scan-images (one streaming pass over every image: hashes, ignore regions), check-leakage
-2. train-detector, eval-detector
+2. make-views, train-detector, eval-detector, register-detector (`kaggle-job` runs stages on Kaggle, D20)
 3. design-levels
 4. build-libraries, generate-worlds
 5. build-cache, validate-cache
