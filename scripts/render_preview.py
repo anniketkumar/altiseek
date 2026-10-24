@@ -75,7 +75,7 @@ def main(argv: Sequence[str] | None = None) -> None:
                 variant=0,
                 settings=render_cfg.variants,
             )
-            marked = np.ascontiguousarray(view)
+            marked = np.array(view)
             for obj in truth:
                 cv2.circle(
                     marked,
@@ -86,7 +86,7 @@ def main(argv: Sequence[str] | None = None) -> None:
                 )
             panels.append(np.asarray(Image.fromarray(marked).resize((PANEL_PX, PANEL_PX))))
         raster = Raster(spec.gsd_mpp, composed.shape[1], composed.shape[0])
-        thumb = np.ascontiguousarray(
+        thumb = np.array(
             Image.fromarray(composed).resize((PANEL_PX, PANEL_PX), Image.Resampling.BOX)
         )
         for obj in spec.objects:

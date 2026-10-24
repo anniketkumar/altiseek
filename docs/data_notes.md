@@ -387,3 +387,44 @@ frame, through each frame's tilted camera model (D12, D14):
 
 T has fewer swimmers per frame than B (1.6 against 6.0) but closer together: most of its
 swimmers come in pairs or small groups.
+
+## World libraries (build-libraries, D26, D27)
+
+`scripts/build_libraries.py` cut every 4th `mavic_4k` frame of each video (2 s apart) into
+nadir-equivalent pixels at g0 = 5 cm/px, within θ_lib = 45° of nadir. Libraries live under
+`data/libraries/<split>/` and stay out of git:
+
+| Split | Library | Frames (videos) | Background patches | Swimmers | Distractors |
+|---|---|---|---|---|---|
+| B | `6b541bb0ff9d062a` | 300 (4) | 1,378 | 692 | 87: 31 boats, 36 buoys, 9 jetskis, 11 life-saving appliances |
+| T | `181004cb84b676f1` | 141 (4) | 567 | 83 | **none** |
+
+**Appearance conditions**, k-means on B patches (Lab mean, L spread, texture), numbered dark to
+bright; T patches go to the nearest B centroid. Values are the mean over each condition's patches:
+
+| Condition | Look | B patches | B: L, a, b, L spread, texture | T patches | T: L, a, b, L spread, texture |
+|---|---|---|---|---|---|
+| 0 | dark, calm | 413 | 44.0, −10.7, 14.1, 1.5, 3.2 | 386 | 52.8, −16.9, 20.5, 3.2, 7.5 |
+| 1 | lighter, hazy, calm | 803 | 51.0, −6.0, 8.7, 2.0, 5.4 | 59 | 59.0, −10.3, 12.0, 7.4, 21.0 |
+| 2 | bright, glinting chop | 162 | 58.3, −2.3, 2.6, 11.1, 37.1 | 122 | 65.1, −6.0, 7.0, 12.1, 34.7 |
+
+T's water is greener and brighter than B's in every condition: a different day (2021-08-19
+against 2021-08-21).
+
+**Crop outcomes** (objects in the chosen frames):
+
+| Class | Kept | Another object inside the paste | Blackened pixels | Outside the 45° footprint |
+|---|---|---|---|---|
+| B swimmer | 692 | 361 | 73 | 916 |
+| B boat | 31 | 95 | 21 | 206 |
+| B jetski | 9 | 62 | 3 | 96 |
+| B life-saving appliance | 11 | 139 | 27 | 57 |
+| B buoy | 36 | 0 | 2 | 89 |
+| T swimmer | 83 | 35 | 0 | 141 |
+| T boat, jetski | 0 | 0 | 0 | 22 |
+
+- Most objects lie outside the footprint because most footage is 45–75° off nadir.
+- Boats, jetskis and life-saving appliances usually sit next to swimmers (rescue scenes), so their
+  pastes would also carry an unlabelled swimmer and are rejected.
+- **T has no usable distractor:** its 22 boats and jetskis in the chosen frames all lie beyond
+  45°, so test worlds have no distractors.

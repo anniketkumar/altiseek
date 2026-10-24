@@ -113,5 +113,174 @@
         }
       }
     }
+  },
+  {
+    "kind": "library",
+    "artifact_id": "6b541bb0ff9d062a",
+    "sha256": "6b541bb0ff9d062ac94d4ceb94c3cb1ae46cf414d047db8795a4f3c4bdd565ef",
+    "location": "local:data/libraries/B",
+    "parents": {
+      "split_id": "783b4403804291a2",
+      "camera_models_sha256": "51f2a0a523a66842",
+      "code_commit": "2aae40b762e8c5635662c0cb615628c2a2619ea3"
+    },
+    "created_utc": "2026-10-24T19:59:55+00:00",
+    "notes": {
+      "split": "B",
+      "frames": 300,
+      "videos": 4,
+      "backgrounds": 1378,
+      "backgrounds_per_condition": [
+        413,
+        803,
+        162
+      ],
+      "objects": {
+        "boat": 31,
+        "buoy": 36,
+        "jetski": 9,
+        "life_saving_appliances": 11,
+        "swimmer": 692
+      },
+      "crop_outcomes": {
+        "boat: blackened": 21,
+        "boat: neighbour": 95,
+        "boat: ok": 31,
+        "boat: outside the usable footprint": 206,
+        "buoy: blackened": 2,
+        "buoy: ok": 36,
+        "buoy: outside the usable footprint": 89,
+        "jetski: blackened": 3,
+        "jetski: neighbour": 62,
+        "jetski: ok": 9,
+        "jetski: outside the usable footprint": 96,
+        "life_saving_appliances: blackened": 27,
+        "life_saving_appliances: neighbour": 139,
+        "life_saving_appliances: ok": 11,
+        "life_saving_appliances: outside the usable footprint": 57,
+        "swimmer: blackened": 73,
+        "swimmer: neighbour": 361,
+        "swimmer: ok": 692,
+        "swimmer: outside the usable footprint": 916
+      }
+    }
+  },
+  {
+    "kind": "library",
+    "artifact_id": "181004cb84b676f1",
+    "sha256": "181004cb84b676f138644efbe9354cc1d56ddf557745757e31188b75aac6d7ab",
+    "location": "local:data/libraries/T",
+    "parents": {
+      "split_id": "783b4403804291a2",
+      "camera_models_sha256": "51f2a0a523a66842",
+      "code_commit": "2aae40b762e8c5635662c0cb615628c2a2619ea3",
+      "conditions_library": "6b541bb0ff9d062a"
+    },
+    "created_utc": "2026-10-24T20:02:05+00:00",
+    "notes": {
+      "split": "T",
+      "frames": 141,
+      "videos": 4,
+      "backgrounds": 567,
+      "backgrounds_per_condition": [
+        386,
+        59,
+        122
+      ],
+      "objects": {
+        "swimmer": 83
+      },
+      "crop_outcomes": {
+        "boat: outside the usable footprint": 10,
+        "jetski: outside the usable footprint": 12,
+        "swimmer: neighbour": 35,
+        "swimmer: ok": 83,
+        "swimmer: outside the usable footprint": 141
+      }
+    }
+  },
+  {
+    "kind": "world_set",
+    "artifact_id": "b294a2e2121c0546",
+    "sha256": "b294a2e2121c054610b1140d8c0d2027128a3ff1bcbb2be5c89fd929cc84f4bb",
+    "location": "local:data/worlds/sensor-fit",
+    "parents": {
+      "library_id": "6b541bb0ff9d062a",
+      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+    },
+    "created_utc": "2026-10-24T20:03:46+00:00",
+    "notes": {
+      "world_set": "sensor-fit",
+      "world_set_id": "b294a2e2121c0546",
+      "split": "B",
+      "library_id": "6b541bb0ff9d062a",
+      "worlds": 40,
+      "families": 8,
+      "targets": 76,
+      "distractors": 338
+    }
+  },
+  {
+    "kind": "world_set",
+    "artifact_id": "68bb835a22d7ee13",
+    "sha256": "68bb835a22d7ee13e0089c823da4e043f80750053ffcb67dd580ae35f7303959",
+    "location": "local:data/worlds/rl-train",
+    "parents": {
+      "library_id": "6b541bb0ff9d062a",
+      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+    },
+    "created_utc": "2026-10-24T20:03:57+00:00",
+    "notes": {
+      "world_set": "rl-train",
+      "world_set_id": "68bb835a22d7ee13",
+      "split": "B",
+      "library_id": "6b541bb0ff9d062a",
+      "worlds": 160,
+      "families": 8,
+      "targets": 314,
+      "distractors": 1314
+    }
+  },
+  {
+    "kind": "world_set",
+    "artifact_id": "1265961a26d03ba7",
+    "sha256": "1265961a26d03ba708902a0b7db6539708f497e9b02401d688038cec7845e1b3",
+    "location": "local:data/worlds/rl-val",
+    "parents": {
+      "library_id": "6b541bb0ff9d062a",
+      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+    },
+    "created_utc": "2026-10-24T20:04:00+00:00",
+    "notes": {
+      "world_set": "rl-val",
+      "world_set_id": "1265961a26d03ba7",
+      "split": "B",
+      "library_id": "6b541bb0ff9d062a",
+      "worlds": 40,
+      "families": 8,
+      "targets": 79,
+      "distractors": 327
+    }
+  },
+  {
+    "kind": "world_set",
+    "artifact_id": "b0b51543d08d1d9e",
+    "sha256": "b0b51543d08d1d9e64ae6b6ed637376cc2bb30274417af92d7f90c16fda83285",
+    "location": "local:data/worlds/test",
+    "parents": {
+      "library_id": "181004cb84b676f1",
+      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+    },
+    "created_utc": "2026-10-24T20:04:05+00:00",
+    "notes": {
+      "world_set": "test",
+      "world_set_id": "b0b51543d08d1d9e",
+      "split": "T",
+      "library_id": "181004cb84b676f1",
+      "worlds": 80,
+      "families": 8,
+      "targets": 163,
+      "distractors": 0
+    }
   }
 ]
