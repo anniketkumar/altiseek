@@ -17,7 +17,7 @@ Update as milestones complete (§21).
 | M0 Repo & tooling | done (2026-10-24) |
 | M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
 | M2 Detector | done (2026-10-25): detectors `700e0ff3455259e8` (GSD-stratified views, D23) and `78aba879cc50e025` evaluated on B and T over 2–30 cm/px, every bin populated, and registered (`docs/results.md`). Which goes forward is open (§25) |
-| M3 Level design | in progress: no feasible design on B under IoU or centre recall (`docs/results.md`); D7 waits on the decisions in §25 |
+| M3 Level design | in progress: on B's D25 centre-recall curve, designs exist only with a looser coarsest rule (≤ 0.65 as specified; ≤ 0.6 with R = 512 or a 360 m area). Candidates in `docs/results.md`; D7 is the owner's choice (§25) |
 | M4 Worlds & renderer | not started |
 | M5 Detection cache | not started |
 | M6 Sensor models | not started |
@@ -907,10 +907,10 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- **Level-design rules (blocks M3 and D7).** With centre recall (D24), no design is feasible on B: recall stays at 0.64 or higher up to 30 cm/px, so no level meets the coarsest rule (`docs/results.md`).
-  - Each split's coarse end is one scene. At 25% coverage only frames flown high can fill a coarse view, so one video supplies 98–100% of B's swimmers at 25–30 cm/px. At 5% coverage, all four B videos can serve 30 cm/px (838 frames).
-  - D25 lowers the evaluation coverage to 5% (Kaggle run `altiseek-eval-coarse`), checked against the ≥ 25% tiles wherever both exist.
-  - If the coarse end then still stays above 0.3: loosen the coarsest rule, or extend the sweep beyond 30 cm/px, which few frames can serve.
+- **Level table (D7, blocks M3).** With every B video in every coarse bin (D25), B's centre recall falls from 0.87 at 8 cm/px to 0.56 at 30 cm/px, so no design meets coarsest ≤ 0.3 (`docs/results.md`).
+  - Designs exist with coarsest ≤ 0.65 (R = 640, area 300 m), or with coarsest ≤ 0.6 plus a 360 m area or R = 512. At ≤ 0.6 with R = 640 and 300 m, no whole-cell footprint falls in the 170–192 m needed.
+  - To choose: the coarsest rule, R, area, the level table and the battery.
+  - Re-check the chosen table at M6, with r_ℓ and f_ℓ measured on rendered sensor-fit worlds.
 - θ_lib (M4) off-nadir limit for libraries.
 - Boundary rule for swimmers straddling cells.
 - Known vs unknown K as the default.

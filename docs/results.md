@@ -9,7 +9,12 @@ stage named with it, and each figure is that stage's own plot.
 |---|---|---|
 | [horizon_fit_mavic_4k.png](figures/horizon_fit_mavic_4k.png) | fit-camera | `mavic_4k` focal length fitted from the sea horizon (D12) |
 | [leakage_calibration.png](figures/leakage_calibration.png) | check-leakage | Near-duplicate thresholds and their calibration (D17) |
-| [eval_vs_gsd_700e0ff3_d23.png](figures/eval_vs_gsd_700e0ff3_d23.png) | eval-detector | Swimmer recall, precision and false positives per valid view vs GSD, detector `700e0ff3455259e8` |
+| [eval_vs_gsd_700e0ff3_d25.png](figures/eval_vs_gsd_700e0ff3_d25.png) | eval-detector | Swimmer recall, precision and false positives per valid view vs GSD, detector `700e0ff3455259e8`, 5% tiles (D25) |
+| [level_design_700e0ff3_d25.png](figures/level_design_700e0ff3_d25.png) | design-levels | B centre recall (D25) against the §8 limits: no feasible design |
+| [level_design_700e0ff3_d25_c065.png](figures/level_design_700e0ff3_d25_c065.png) | design-levels | The same curve with coarsest ≤ 0.65: best-ranked design |
+| [level_design_700e0ff3_d25_a360.png](figures/level_design_700e0ff3_d25_a360.png) | design-levels | Area 360 m, coarsest ≤ 0.6: best-ranked design |
+| [level_design_700e0ff3_d25_r512.png](figures/level_design_700e0ff3_d25_r512.png) | design-levels | R = 512, coarsest ≤ 0.6: best-ranked design |
+| [eval_vs_gsd_700e0ff3_d23.png](figures/eval_vs_gsd_700e0ff3_d23.png) | eval-detector | Swimmer recall, precision and false positives per valid view vs GSD, detector `700e0ff3455259e8`, 25% tiles (D23) |
 | [eval_vs_gsd_78aba879_d23.png](figures/eval_vs_gsd_78aba879_d23.png) | eval-detector | The same for detector `78aba879cc50e025`, re-evaluated under D23 |
 | [eval_vs_gsd_78aba879_d21.png](figures/eval_vs_gsd_78aba879_d21.png) | eval-detector | `78aba879cc50e025` under the superseded D21 evaluation |
 | [level_design_700e0ff3_iou.png](figures/level_design_700e0ff3_iou.png) | design-levels | B IoU recall of `700e0ff3455259e8` against the §8 limits |
@@ -161,22 +166,145 @@ Recall (IoU) at τ. Size is √(width × height) of the box in view pixels; swim
   the annotations rather than at either model ([data notes](data_notes.md#annotation-offsets)). In
   image 10465 every box in the frame is offset from its swimmer by about half a box.
 
+## Evaluation with 5% tiles (D25)
+
+Detector `700e0ff3455259e8` again, with evaluation tiles needing only 5% valid pixels, so frames
+flown lower can serve the coarse bins (Kaggle run `altiseek-eval-coarse`, commit `349ad86`). τ is
+0.377. The frames per bin and tiles per frame are as in D23.
+
+| Split | Views | Valid views | Swimmers | AP50 | Recall | Centre recall | Precision | Centre precision | FP / valid view |
+|---|---|---|---|---|---|---|---|---|---|
+| val | 3,450 | 1,565 | 5,556 | 0.73 | 0.76 | 0.87 | 0.81 | 0.93 | 0.64 |
+| B | 3,161 | 1,351 | 6,895 | 0.38 | 0.47 | 0.74 | 0.59 | 0.92 | 1.69 |
+| T | 2,433 | 830 | 1,741 | 0.61 | 0.60 | 0.73 | 0.79 | 0.96 | 0.34 |
+
+**B**
+
+| GSD (cm/px) | Views (valid) | Swimmers | Centre recall | Recall | Precision | FP / valid view | AP50 |
+|---|---|---|---|---|---|---|---|
+| 2 | 443 (213) | 132 | 0.64 | 0.45 | 0.59 | 0.19 | 0.42 |
+| 3 | 440 (261) | 337 | 0.72 | 0.58 | 0.76 | 0.23 | 0.61 |
+| 4 | 410 (204) | 417 | 0.78 | 0.57 | 0.67 | 0.57 | 0.54 |
+| 5 | 393 (183) | 495 | 0.80 | 0.59 | 0.69 | 0.73 | 0.55 |
+| 6.5 | 300 (152) | 590 | 0.84 | 0.64 | 0.71 | 1.02 | 0.57 |
+| 8 | 277 (117) | 621 | 0.87 | 0.64 | 0.69 | 1.55 | 0.56 |
+| 10 | 233 (77) | 666 | 0.82 | 0.59 | 0.67 | 2.46 | 0.52 |
+| 13 | 158 (52) | 716 | 0.81 | 0.51 | 0.58 | 5.02 | 0.38 |
+| 16 | 137 (36) | 703 | 0.75 | 0.47 | 0.59 | 6.41 | 0.38 |
+| 20 | 130 (26) | 729 | 0.70 | 0.41 | 0.55 | 9.56 | 0.32 |
+| 25 | 120 (17) | 743 | 0.62 | 0.28 | 0.41 | 17.05 | 0.18 |
+| 30 | 120 (13) | 746 | 0.56 | 0.14 | 0.22 | 29.62 | 0.06 |
+
+**T**
+
+| GSD (cm/px) | Views (valid) | Swimmers | Centre recall | Recall | Precision | FP / valid view | AP50 |
+|---|---|---|---|---|---|---|---|
+| 2 | 424 (197) | 67 | 0.78 | 0.66 | 0.76 | 0.07 | 0.62 |
+| 3 | 340 (156) | 89 | 0.91 | 0.83 | 0.89 | 0.06 | 0.83 |
+| 4 | 284 (121) | 106 | 0.94 | 0.87 | 0.84 | 0.14 | 0.83 |
+| 5 | 262 (91) | 101 | 0.90 | 0.79 | 0.82 | 0.20 | 0.78 |
+| 6.5 | 178 (69) | 121 | 0.98 | 0.83 | 0.79 | 0.38 | 0.80 |
+| 8 | 163 (49) | 124 | 0.95 | 0.83 | 0.83 | 0.43 | 0.80 |
+| 10 | 151 (38) | 141 | 0.93 | 0.76 | 0.76 | 0.90 | 0.72 |
+| 13 | 133 (28) | 162 | 0.75 | 0.63 | 0.81 | 0.87 | 0.70 |
+| 16 | 132 (23) | 181 | 0.62 | 0.52 | 0.82 | 0.87 | 0.62 |
+| 20 | 126 (26) | 195 | 0.87 | 0.72 | 0.82 | 1.19 | 0.68 |
+| 25 | 120 (18) | 216 | 0.56 | 0.38 | 0.69 | 2.01 | 0.41 |
+| 30 | 120 (16) | 238 | 0.27 | 0.13 | 0.50 | 2.06 | 0.18 |
+
+**val** (internal validation, A)
+
+| GSD (cm/px) | Views (valid) | Swimmers | Centre recall | Recall | Precision | FP / valid view | AP50 |
+|---|---|---|---|---|---|---|---|
+| 2 | 480 (267) | 115 | 0.95 | 0.90 | 0.72 | 0.15 | 0.89 |
+| 3 | 480 (268) | 212 | 0.99 | 0.91 | 0.81 | 0.17 | 0.88 |
+| 4 | 480 (232) | 263 | 0.98 | 0.95 | 0.89 | 0.13 | 0.95 |
+| 5 | 458 (229) | 414 | 0.95 | 0.89 | 0.87 | 0.24 | 0.86 |
+| 6.5 | 386 (186) | 516 | 0.93 | 0.87 | 0.87 | 0.35 | 0.84 |
+| 8 | 274 (135) | 539 | 0.91 | 0.85 | 0.87 | 0.50 | 0.83 |
+| 10 | 231 (93) | 580 | 0.92 | 0.86 | 0.87 | 0.81 | 0.82 |
+| 13 | 151 (58) | 586 | 0.88 | 0.80 | 0.88 | 1.11 | 0.81 |
+| 16 | 135 (40) | 586 | 0.82 | 0.75 | 0.86 | 1.71 | 0.75 |
+| 20 | 130 (26) | 586 | 0.79 | 0.70 | 0.82 | 3.41 | 0.69 |
+| 25 | 125 (16) | 586 | 0.78 | 0.58 | 0.69 | 9.40 | 0.47 |
+| 30 | 120 (13) | 573 | 0.75 | 0.39 | 0.47 | 18.77 | 0.22 |
+
+### Videos and coverage
+
+Swimmers per bin on B, from `views.csv`. Centre / IoU recall on tiles with at least 25% valid
+pixels and on the rest, swimmers in brackets:
+
+| GSD (cm/px) | Tiles ≥ 25% valid | Tiles < 25% valid | Videos | Largest video |
+|---|---|---|---|---|
+| 2 | 0.65 / 0.45 (128) | 0.50 / 0.50 (4) | 4 | 85% |
+| 3 | 0.73 / 0.60 (328) | 0.22 / 0.11 (9) | 4 | 48% |
+| 4 | 0.82 / 0.59 (390) | 0.26 / 0.19 (27) | 4 | 36% |
+| 5 | 0.81 / 0.61 (467) | 0.64 / 0.29 (28) | 4 | 35% |
+| 6.5 | 0.87 / 0.67 (530) | 0.57 / 0.40 (60) | 4 | 29% |
+| 8 | 0.90 / 0.68 (534) | 0.67 / 0.43 (87) | 4 | 30% |
+| 10 | 0.85 / 0.62 (505) | 0.73 / 0.52 (161) | 4 | 28% |
+| 13 | 0.84 / 0.54 (533) | 0.71 / 0.40 (183) | 4 | 29% |
+| 16 | 0.83 / 0.53 (253) | 0.70 / 0.44 (450) | 4 | 30% |
+| 20 | 0.82 / 0.49 (224) | 0.65 / 0.37 (505) | 4 | 35% |
+| 25 | 0.76 / 0.42 (106) | 0.60 / 0.25 (637) | 4 | 36% |
+| 30 | 0.62 / 0.22 (97) | 0.56 / 0.13 (649) | 4 | 36% |
+
+- **Every B bin from 4 to 30 cm/px now draws on all four videos,** none supplying more than 36%.
+  Under D23, one video supplied 98–100% of the swimmers at 25–30 cm/px.
+- **Low-coverage tiles score lower in aggregate, but not within a video.** The two kinds of tile come
+  from different frames: full coarse tiles mostly from the one high-altitude video, low-coverage
+  tiles from all four. Within single videos the difference goes both ways, −0.46 to +0.11 in
+  centre recall at 10–30 cm/px; the largest gaps rest on 12–17 swimmers. Weighted by swimmers, it
+  averages about −0.03.
+- **Scenes differ a lot at coarse GSDs.** Centre recall at 30 cm/px is 0.36 in
+  `NorthSea_Sat_DJI_0131`, 0.40 in `_0126`, 0.62 in `_0122` and 0.62–0.69 in `_0129`.
+- **T's coarse bins are still one video** (`NorthSea_Thu_DJI_0107` above 16 cm/px). T only
+  reports results and plays no part in level design.
+- **FP per valid view is noisy at coarse GSDs:** at 30 cm/px, B's 120 views add up to 13 full views
+  of valid pixels.
+
 ## Level design (M3)
 
-All runs read split B with `configs/levels/design.yaml`: R = 640, HFOV 80°, area 300 m, finest
-level ≥ 0.8 and coarsest ≤ 0.3. **No run finds a feasible design**, so D7 stays pending (CLAUDE.md
-§25). D24 settles the measure: centre recall, from `700e0ff3455259e8`.
+All runs read split B. Unless stated, the settings are `configs/levels/design.yaml`: R = 640,
+HFOV 80°, area 300 m, finest level ≥ 0.8 and coarsest ≤ 0.3. D24 settles the measure: centre
+recall, from `700e0ff3455259e8`. D7 is still the owner's choice (CLAUDE.md §25).
 
-| Detector | Evaluation | Recall | Unmet rule |
-|---|---|---|---|
-| `78aba879cc50e025` | D21 | IoU | Finest ≥ 0.8: best 0.62 at 5 cm/px. Coarsest ≤ 0.3: lowest 0.46, curve ends at 13 cm/px |
-| `78aba879cc50e025` | D23 | IoU | Finest ≥ 0.8: best 0.71 at 4 cm/px |
-| `78aba879cc50e025` | D23 | centre | Coarsest ≤ 0.3: lowest 0.64 at 30 cm/px |
-| `700e0ff3455259e8` | D23 | IoU | Finest ≥ 0.8: best 0.65 at 8 cm/px |
-| `700e0ff3455259e8` | D23 | centre | Coarsest ≤ 0.3: lowest 0.64, at 2 cm/px; the curve ends at 30 cm/px |
+| Detector | Evaluation | Recall | Rules changed | Result |
+|---|---|---|---|---|
+| `78aba879cc50e025` | D21 | IoU | — | None. Finest ≥ 0.8: best 0.62 at 5 cm/px. Coarsest ≤ 0.3: lowest 0.46, curve ends at 13 cm/px |
+| `78aba879cc50e025` | D23 | IoU | — | None. Finest ≥ 0.8: best 0.71 at 4 cm/px |
+| `78aba879cc50e025` | D23 | centre | — | None. Coarsest ≤ 0.3: lowest 0.64 at 30 cm/px |
+| `700e0ff3455259e8` | D23 | IoU | — | None. Finest ≥ 0.8: best 0.65 at 8 cm/px |
+| `700e0ff3455259e8` | D23 | centre | — | None. Coarsest ≤ 0.3: lowest 0.64 at 2 cm/px |
+| `700e0ff3455259e8` | D25 | centre | — | None. Coarsest ≤ 0.3: lowest 0.56 at 30 cm/px |
+| `700e0ff3455259e8` | D25 | centre | coarsest ≤ 0.4 or 0.5 | None, for the same reason |
+| `700e0ff3455259e8` | D25 | centre | coarsest ≤ 0.6 | None. Recall reaches 0.6 only past about 26.5 cm/px, i.e. footprints of 170–192 m, and no footprint in that range tiles 300 m in whole cells |
+| `700e0ff3455259e8` | D25 | centre | coarsest ≤ 0.65 | 76 designs |
+| `700e0ff3455259e8` | D25 | centre | coarsest ≤ 0.6, area 360 m | 79 designs |
+| `700e0ff3455259e8` | D25 | centre | coarsest ≤ 0.6, R = 512 | 176 designs |
+| `700e0ff3455259e8` | D25 | centre | coarsest ≤ 0.6, R = 480 | None (footprints and battery) |
 
-The two recall measures fail opposite rules. With IoU, no GSD is good enough for a finest level.
-With centre recall, no GSD up to 30 cm/px is poor enough for a coarsest level.
+**Candidate designs** on the D25 curve. "Rank" is design-levels' ranking: smallest largest recall
+step first, then fewest finest-level views. Each design is listed as its levels, footprint at
+GSD → centre recall:
+
+| Rules changed | Rank | Cell | Battery | Levels |
+|---|---|---|---|---|
+| coarsest ≤ 0.65 | 1 | 2.5 m | 364 s | 37.5 m at 5.9 cm/px → 0.82; 100 m at 15.6 → 0.75; 120 m at 18.8 → 0.71; 150 m at 23.4 → 0.65 |
+| coarsest ≤ 0.65 | 5 | 2.5 m | 542 s | 50 m at 7.8 cm/px → 0.87; 75 m at 11.7 → 0.81; 100 m at 15.6 → 0.75; 120 m at 18.8 → 0.71; 150 m at 23.4 → 0.65 |
+| coarsest ≤ 0.6, area 360 m | 1 | 2.5 m | 380 s | 80 m at 12.5 cm/px → 0.81; 120 m at 18.8 → 0.71; 180 m at 28.1 → 0.59 |
+| coarsest ≤ 0.6, area 360 m | 4 | 5 m | 411 s | 45 m at 7.0 cm/px → 0.85; 60 m at 9.4 → 0.83; 120 m at 18.8 → 0.71; 180 m at 28.1 → 0.59 |
+| coarsest ≤ 0.6, R = 512 | 1 | 2.5 m | 402 s | 60 m at 11.7 cm/px → 0.81; 75 m at 14.6 → 0.77; 100 m at 19.5 → 0.70; 120 m at 23.4 → 0.65; 150 m at 29.3 → 0.57 |
+| coarsest ≤ 0.6, R = 512 | 5 | 2.5 m | 600 s | 30 m at 5.9 cm/px → 0.82; 75 m at 14.6 → 0.77; 100 m at 19.5 → 0.70; 120 m at 23.4 → 0.65; 150 m at 29.3 → 0.57 |
+
+- **The ranking can skip the detector's best GSDs.** Several top-ranked designs start at
+  11.7–12.5 cm/px, although recall peaks at 8 cm/px (0.87), because evenly spaced recall steps
+  rank first.
+- **Every design spans a narrow recall range:** finest and coarsest level differ by at most about
+  0.26, against the 0.5 (0.8 → 0.3) that §8 asks for. False positives also rise with GSD (B, IoU matching: 1.6 per valid view at 8 cm/px,
+  6.4 at 16), so coarse levels give weaker evidence than recall alone shows.
+- **A level table chosen now should be re-checked at M6,** when r_ℓ and f_ℓ are measured on rendered
+  sensor-fit worlds.
 
 ## Superseded: `78aba879cc50e025` under D21
 
