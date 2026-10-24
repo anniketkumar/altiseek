@@ -1,0 +1,25 @@
+# World libraries (CLAUDE.md §11, D26): empty-sea patches and object crops, one library per split.
+data:
+  _base_: ../data/default.yaml
+camera_groups: [mavic_4k]
+splits: [B, T]  # B first: its patches define the appearance conditions
+max_off_nadir_deg: 45.0  # theta_lib (D26)
+gsd_mpp: 0.05  # g0 (D26)
+supersample: 4
+frame_stride: 4  # frames are 0.5 s apart: one every 2 s
+background:
+  patch_px: 256  # 12.8 m
+  tile_px: 1024  # 51.2 m
+  tile_coverage: 0.05
+  object_margin_m: 2.0
+  black_margin_px: 8
+objects:
+  classes: [swimmer, boat, jetski, life_saving_appliances, buoy]
+  allowance_min_m: 0.5  # absorbs boxes offset by about half a box (docs/data_notes.md)
+  allowance_box_factor: 0.5
+  ring_px: 6  # 0.3 m
+conditions:
+  clusters: 3
+  fit_split: B
+  seed: 20261025
+out_dir: data/libraries

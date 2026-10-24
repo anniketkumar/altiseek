@@ -12,6 +12,7 @@ from altiseek.geometry.design_config import LevelDesign
 from altiseek.geometry.level_design import coverage_energy_s
 from altiseek.geometry.levels import LevelTable
 from altiseek.imaging.config import CameraSpec
+from altiseek.world.config import LibraryConfig
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "configs"
 SCHEMAS: dict[str, type[Config]] = {
@@ -21,6 +22,7 @@ SCHEMAS: dict[str, type[Config]] = {
     "env/energy": EnergyModel,
     "levels": LevelTable,
     "levels/design": LevelDesign,
+    "world/library": LibraryConfig,
 }
 CONFIGS = sorted(CONFIG_DIR.rglob("*.yaml"))
 
