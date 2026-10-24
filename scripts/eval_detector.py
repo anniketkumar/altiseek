@@ -71,7 +71,7 @@ def servable_bins(probe: Probe) -> tuple[int, frozenset[int]]:
     vs = cfg.views
     camera = frame_camera(frame, model)
     return frame.image_id, servable(
-        camera, gsds, cfg.camera.resolution_px, vs.max_off_nadir_deg, vs.min_coverage
+        camera, gsds, cfg.camera.resolution_px, vs.max_off_nadir_deg, cfg.eval_views.min_coverage
     )
 
 
@@ -83,7 +83,7 @@ def render(task: Task) -> list[Rendered]:
     vs, size = cfg.views, cfg.camera.resolution_px
     out = []
     for gsd in gsds:
-        windows = tile_windows(camera, gsd, size, vs.max_off_nadir_deg, vs.min_coverage)
+        windows = tile_windows(camera, gsd, size, vs.max_off_nadir_deg, cfg.eval_views.min_coverage)
         rng = np.random.default_rng([cfg.eval_views.seed, frame.image_id, round(gsd * 1e4)])
         if len(windows) > cfg.eval_views.views_per_frame:
             keep = rng.choice(len(windows), cfg.eval_views.views_per_frame, replace=False)

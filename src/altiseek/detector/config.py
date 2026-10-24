@@ -16,7 +16,7 @@ class ViewSettings(Config):
     camera_groups: tuple[str, ...]
     #: theta_train: source pixels farther than this from straight down are not used (D14).
     max_off_nadir_deg: float
-    #: A view is used only if at least this share of it has valid source.
+    #: A training view is used only if at least this share of it has valid source.
     min_coverage: float
     supersample: int
 
@@ -50,6 +50,9 @@ class EvalViews(Config):
     """Tiled evaluation views (splits B and T), one set per GSD bin."""
 
     gsd_bins_mpp: tuple[float, ...]
+    #: A tile is used only if at least this share of it has valid source (D25: lower than for
+    #: training, so frames from more videos can serve the coarse bins).
+    min_coverage: float
     #: Per split and bin: at most this many of the frames that can serve the bin, spread evenly
     #: over them by image id ...
     frames_per_bin: int
