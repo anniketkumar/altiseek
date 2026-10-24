@@ -3,9 +3,9 @@ camera:
   _base_: ../camera/default.yaml
 energy:
   _base_: ../env/energy.yaml
-recall_csv: data/detector/eval/metrics.csv
+recall_csv: data/kaggle/altiseek-detector-v3/detector/eval/metrics.csv  # 700e0ff3455259e8 (D24)
 recall_split: B  # level design reads real B frames (§8 step 1)
-recall_metric: recall  # or recall_centre (§25: open)
+recall_metric: recall_centre  # centre matching within 1 m (D24)
 area_m: 300.0
 cell_options_m: [2.5, 5.0, 10.0]
 level_counts: [3, 4, 5]

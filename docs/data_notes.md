@@ -373,3 +373,17 @@ swimmers are about 8 px or larger and IoU is meaningful:
   still be the detectors' own loose boxes.
 - `views.csv` holds counts, not box positions. Telling a frame-wide offset apart from loose boxes
   needs the detections, for example the median offset between matched centres per frame.
+
+## Swimmer spacing
+
+Ground distance from each `mavic_4k` swimmer box centre to the nearest other swimmer in the same
+frame, through each frame's tilted camera model (D12, D14):
+
+| Split | Swimmers | Median nearest | No other swimmer within 2 m | 3 m | 5 m | 10 m |
+|---|---|---|---|---|---|---|
+| val (A, 2020-08-28) | 1,560 | 5.1 m | 97% | 86% | 51% | 23% |
+| B | 9,157 | 4.0 m | 71% | 59% | 39% | 10% |
+| T | 1,610 | 2.6 m | 77% | 37% | 5% | 1% |
+
+T has fewer swimmers per frame than B (1.6 against 6.0) but closer together: most of its
+swimmers come in pairs or small groups.

@@ -142,10 +142,21 @@ Recall (IoU) at τ. Size is √(width × height) of the box in view pixels; swim
 - **On B, centre recall stays at 0.64 or higher across 2–30 cm/px for both detectors,** while IoU
   recall falls to 0.12–0.23 at 30 cm/px. At coarse GSDs a swimmer is 2–3 px wide, where IoU is
   unstable (§9).
-- **val and T lose recall at coarse GSDs much faster than B.**
-  - B has 6.0 swimmer boxes per `mavic_4k` frame, often in tight groups, against 1.6 in T.
-  - A group is larger and more visible than one swimmer, which may hold up B's coarse recall. This
-    is not verified.
+- **val and T lose recall at coarse GSDs much faster than B, but each split's coarse end is one
+  scene.**
+  - Only frames flown high can fill a coarse view at 25% coverage, and few videos were flown high.
+  - Share of each bin's swimmers that come from its largest video (number of videos in brackets):
+
+    | Split | 2 cm/px | 5 | 10 | 16 | 20 | 25 | 30 |
+    |---|---|---|---|---|---|---|---|
+    | B | 82% (4) | 32% (4) | 34% (4) | 71% (3) | 84% (2) | 98% (2) | 100% (1) |
+    | T | 37% (4) | 50% (4) | 100% (2) | 100% (1) | 100% (1) | 100% (1) | 100% (1) |
+    | val | 94% (2) | 88% (2) | 80% (2) | 73% (2) | 100% (1) | 100% (1) | 100% (1) |
+
+  - B's coarse end is `NorthSea_Sat_DJI_0129`, about 88 m up; T's is `NorthSea_Thu_DJI_0107`.
+  - Tight groups do not explain B's flat curve. B's swimmers are less clustered than T's: the
+    median distance to the nearest other swimmer is 4.0 m in B against 2.6 m in T
+    ([data notes](data_notes.md#swimmer-spacing)).
 - **IoU and centre matching disagree in every B and T video, for both detectors,** which points at
   the annotations rather than at either model ([data notes](data_notes.md#annotation-offsets)). In
   image 10465 every box in the frame is offset from its swimmer by about half a box.
@@ -154,7 +165,7 @@ Recall (IoU) at τ. Size is √(width × height) of the box in view pixels; swim
 
 All runs read split B with `configs/levels/design.yaml`: R = 640, HFOV 80°, area 300 m, finest
 level ≥ 0.8 and coarsest ≤ 0.3. **No run finds a feasible design**, so D7 stays pending (CLAUDE.md
-§25).
+§25). D24 settles the measure: centre recall, from `700e0ff3455259e8`.
 
 | Detector | Evaluation | Recall | Unmet rule |
 |---|---|---|---|
