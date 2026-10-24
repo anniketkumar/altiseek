@@ -39,18 +39,20 @@ def main(argv: Sequence[str] | None = None) -> None:
         shutil.copytree(args.resume_from / "train", run_dir)
     last = run_dir / "weights" / "last.pt"
     m = cfg.model
-    if last.exists():
-        print(f"resuming from {last}", flush=True)
-        YOLO(str(last)).train(resume=True)
-    else:
+
+    def fit(device: str) -> None:
+        if last.exists():
+            print(f"resuming from {last} on device {device}", flush=True)
+            YOLO(str(last)).train(resume=True, device=device)
+            return
         YOLO(m.weights).train(
             data=str(cfg.views_dir / "yolo" / "data.yaml"),
             epochs=m.epochs,
             imgsz=cfg.camera.resolution_px,
-            batch=m.batch,
+            batch=m.batch,  # the total over all devices
             patience=m.patience,
             workers=m.workers,
-            device=args.device,
+            device=device,
             project=str(cfg.out_dir.resolve()),
             name="train",
             exist_ok=True,
@@ -69,6 +71,16 @@ def main(argv: Sequence[str] | None = None) -> None:
             save_period=5,
             plots=True,
         )
+
+    try:
+        fit(args.device)
+    except Exception as err:
+        # Multi-GPU (DDP) training runs in a subprocess; if it fails, continue on one GPU,
+        # resuming from its last checkpoint when there is one.
+        if "," not in args.device:
+            raise
+        print(f"multi-GPU training failed ({err!r}); continuing on GPU 0", flush=True)
+        fit("0")
 
     best = run_dir / "weights" / "best.pt"
     record = {
