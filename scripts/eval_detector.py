@@ -5,7 +5,8 @@ simulated camera pipeline (``camera.pipeline``), the same path the simulator wil
 and bin, at most ``frames_per_bin`` of the frames that can serve the bin (spread evenly by image
 id, D23) and ``views_per_frame`` tiles per frame (seeded) are used. The operating threshold tau
 is the F1-optimal swimmer threshold on the internal-validation sessions of A, and only there; B
-and T are then reported at that tau.
+and T are then reported at that tau. ``--tau`` fixes it instead, so that another evaluation (the
+M4 fidelity check) can use the same operating point.
 
 Writes ``<out_dir>/eval/metrics.csv`` (split x GSD bin), ``size_recall.csv`` (split x object size),
 ``views.csv`` (per-view swimmer counts at tau, for breakdowns by frame), ``eval.json`` and
@@ -130,6 +131,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument("--device", default="0")
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--batch", type=int, default=64)
+    parser.add_argument("--tau", type=float, default=None, help="fixed operating threshold")
     parser.add_argument("overrides", nargs="*", help="config overrides, dotted.key=value")
     args = parser.parse_args(argv)
     cfg = load_config(args.config, DetectorConfig, args.overrides)
@@ -204,7 +206,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     )
     results = [r for r, _ in collected]
 
-    tau = best_f1_threshold([r for r in results if r.split == "val"], SWIMMER)
+    tau = (
+        args.tau
+        if args.tau is not None
+        else best_f1_threshold([r for r in results if r.split == "val"], SWIMMER)
+    )
     out = cfg.out_dir / "eval"
     out.mkdir(parents=True, exist_ok=True)
     with (out / "views.csv").open("w", newline="", encoding="utf-8") as fh:
