@@ -3,8 +3,10 @@
 Reads eval-detector's swimmer recall per GSD bin on split B, searches level tables under the §8
 rules (``altiseek.geometry.level_design``), and writes ``<out>/candidates.md`` (the best designs),
 ``<out>/proposal.yaml`` (the best one, in the ``configs/levels/`` format) and
-``<out>/level_design.png``. Choosing the final table stays a reviewed decision (D7): copy the
-proposal to ``configs/levels/default.yaml`` and log it.
+``<out>/level_design.png`` (the curve and the best design's levels). Choosing the final table
+stays a reviewed decision (D7): copy the proposal to ``configs/levels/default.yaml`` and log it.
+If no design is feasible, ``candidates.md`` names the rules the curve cannot meet, the figure
+shows the curve alone, and the exit status is non-zero.
 
     uv run python scripts/design_levels.py [--config configs/levels/design.yaml] [--out data/levels]
 """
@@ -23,7 +25,7 @@ import yaml
 
 from altiseek.config import load_config
 from altiseek.geometry.design_config import LevelDesign
-from altiseek.geometry.level_design import Candidate, candidates
+from altiseek.geometry.level_design import Candidate, candidates, unmet_recall_rules
 from altiseek.registry.run import write_metadata
 
 
@@ -54,6 +56,55 @@ def describe(c: Candidate) -> str:
     return "\n".join(lines)
 
 
+def no_design(reasons: Sequence[str]) -> str:
+    if not reasons:
+        return (
+            "# No feasible level design\n\nRecall at both ends is reachable, but no set of "
+            "whole-cell footprints has recall falling at every level and a battery that fits "
+            "the coverage rule (§8).\n"
+        )
+    return (
+        "# No feasible level design\n\nThe measured curve cannot meet these rules (§8):\n\n"
+        + "".join(f"- {r}\n" for r in reasons)
+    )
+
+
+def plot(
+    curve: Sequence[tuple[float, float]], best: Candidate | None, cfg: LevelDesign, path: Path
+) -> None:
+    """The measured curve, the §8 recall limits and the best design's levels, if any."""
+    fig, ax = plt.subplots(figsize=(6.5, 4))
+    ax.plot(
+        [100 * g for g, _ in curve],
+        [r for _, r in curve],
+        marker="o",
+        label=f"measured ({cfg.recall_split})",
+    )
+    title = f"R = {cfg.camera.resolution_px}, HFOV {cfg.camera.hfov_deg:g} deg"
+    if best is None:
+        title += ": no feasible design"
+    else:
+        for lvl, g, r in zip(best.table.levels, best.gsd_mpp, best.recall, strict=True):
+            ax.scatter([100 * g], [r], color="red", zorder=3)
+            ax.annotate(lvl.name, (100 * g, r), textcoords="offset points", xytext=(5, 5))
+        title += f", cell {best.table.cell_m:g} m, battery {best.battery_s:.0f} s"
+    ax.axhline(cfg.finest_min_recall, color="grey", lw=0.8, ls="--", label="finest-level minimum")
+    ax.axhline(
+        cfg.coarsest_max_recall, color="grey", lw=0.8, ls=":", label="coarsest-level maximum"
+    )
+    ax.set_xscale("log")
+    ax.minorticks_off()
+    ax.set_xticks([100 * g for g, _ in curve], [f"{100 * g:g}" for g, _ in curve])
+    ax.set_ylim(0.0, 1.0)
+    ax.set_xlabel("simulated GSD (cm/px)")
+    ax.set_ylabel("swimmer recall")
+    ax.set_title(title, fontsize=9)
+    ax.legend(fontsize=8)
+    fig.tight_layout()
+    fig.savefig(path, dpi=130)
+    plt.close(fig)
+
+
 def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Propose altitude levels from the recall curve.")
     parser.add_argument("--config", type=Path, default=Path("configs/levels/design.yaml"))
@@ -79,56 +130,41 @@ def main(argv: Sequence[str] | None = None) -> None:
         coarse_share=cfg.coarse_share,
     )
     args.out.mkdir(parents=True, exist_ok=True)
+    best = found[0] if found else None
     report = args.out / "candidates.md"
-    if not found:
+    proposal = args.out / "proposal.yaml"
+    figure = args.out / "level_design.png"
+    outputs = {"candidates": report, "figure": figure}
+    plot(curve, best, cfg, figure)
+    if best is None:
+        reasons = unmet_recall_rules(curve, cfg.finest_min_recall, cfg.coarsest_max_recall)
+        report.write_text(no_design(reasons), encoding="utf-8")
+        proposal.unlink(missing_ok=True)  # never leave an earlier run's proposal behind
+    else:
         report.write_text(
-            "No design satisfies the rules. If coarse recall is near zero, raise R or shrink the "
-            "coarse footprints; if even the coarsest is high, lower R or enlarge them (§8).\n",
+            f"# Level design candidates ({len(found)} feasible)\n\n"
+            + "\n\n".join(f"## {i + 1}\n\n{describe(c)}" for i, c in enumerate(found[: args.top]))
+            + "\n",
             encoding="utf-8",
         )
-        raise SystemExit(f"no feasible design; see {report}")
-    best = found[0]
-    report.write_text(
-        f"# Level design candidates ({len(found)} feasible)\n\n"
-        + "\n\n".join(f"## {i + 1}\n\n{describe(c)}" for i, c in enumerate(found[: args.top]))
-        + "\n",
-        encoding="utf-8",
-    )
-    proposal = args.out / "proposal.yaml"
-    proposal.write_text(
-        yaml.safe_dump(
-            {**best.table.model_dump(mode="json"), "battery_s": best.battery_s}, sort_keys=False
-        ),
-        encoding="utf-8",
-    )
-
-    fig, ax = plt.subplots(figsize=(6.5, 4))
-    ax.plot([100 * g for g, _ in curve], [r for _, r in curve], marker="o", label="measured (B)")
-    for lvl, g, r in zip(best.table.levels, best.gsd_mpp, best.recall, strict=True):
-        ax.scatter([100 * g], [r], color="red", zorder=3)
-        ax.annotate(lvl.name, (100 * g, r), textcoords="offset points", xytext=(5, 5))
-    ax.axhline(cfg.finest_min_recall, color="grey", lw=0.8, ls="--")
-    ax.axhline(cfg.coarsest_max_recall, color="grey", lw=0.8, ls="--")
-    ax.set_xscale("log")
-    ax.set_xlabel("simulated GSD (cm/px)")
-    ax.set_ylabel("swimmer recall")
-    ax.set_title(
-        f"R = {cfg.camera.resolution_px}, HFOV {cfg.camera.hfov_deg:g} deg, "
-        f"cell {best.table.cell_m:g} m, battery {best.battery_s:.0f} s",
-        fontsize=9,
-    )
-    ax.legend(fontsize=8)
-    fig.tight_layout()
-    fig.savefig(args.out / "level_design.png", dpi=130)
-    plt.close(fig)
+        proposal.write_text(
+            yaml.safe_dump(
+                {**best.table.model_dump(mode="json"), "battery_s": best.battery_s},
+                sort_keys=False,
+            ),
+            encoding="utf-8",
+        )
+        outputs["proposal"] = proposal
     write_metadata(
         args.out / "design_levels.meta.json",
         stage="design-levels",
         config=cfg,
         inputs={"recall": cfg.recall_csv},
-        outputs={"candidates": report, "proposal": proposal},
+        outputs=outputs,
         extra={"feasible": len(found)},
     )
+    if best is None:
+        raise SystemExit(f"no feasible design; see {report}")
     print(describe(best))
 
 

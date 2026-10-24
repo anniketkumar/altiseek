@@ -145,3 +145,29 @@ def candidates(
         found,
         key=lambda c: (c.largest_recall_step, c.table.views_per_world(c.table.levels[0])),
     )
+
+
+def unmet_recall_rules(
+    curve: Sequence[tuple[float, float]], finest_min: float, coarsest_max: float
+) -> list[str]:
+    """The recall rules no level table can meet on ``curve``, one sentence each.
+
+    Interpolated recall stays within the measured values, so the finest level cannot beat the
+    best measured recall and the coarsest cannot go below the lowest. An empty list means both
+    ends are reachable, and only the footprint, ordering or battery rules can have failed.
+    """
+    best_gsd, best = max(curve, key=lambda p: p[1])
+    low_gsd, low = min(curve, key=lambda p: p[1])
+    reasons = []
+    if best < finest_min:
+        reasons.append(
+            f"finest-level recall >= {finest_min:g}: the best measured is {best:.2f} "
+            f"(at {100 * best_gsd:g} cm/px)"
+        )
+    if low > coarsest_max:
+        reasons.append(
+            f"coarsest-level recall <= {coarsest_max:g}: the lowest measured is {low:.2f} "
+            f"(at {100 * low_gsd:g} cm/px), and the curve ends at "
+            f"{100 * max(g for g, _ in curve):g} cm/px (recall is never extrapolated)"
+        )
+    return reasons

@@ -10,6 +10,7 @@ from altiseek.geometry.level_design import (
     choose_battery,
     footprint_options,
     recall_at,
+    unmet_recall_rules,
 )
 
 # Recall falls from 0.95 at 2 cm/px to 0.05 at 30 cm/px (logistic in log-GSD).
@@ -68,3 +69,24 @@ def test_candidates_respect_the_design_rules():
         assert 3 <= len(c.table.levels) <= 5
     steps = [c.largest_recall_step for c in found]
     assert steps == sorted(steps)
+
+
+def test_a_flat_short_curve_names_both_unmet_rules():
+    flat = [(0.02, 0.46), (0.05, 0.62), (0.08, 0.47), (0.13, 0.49)]
+    rules = {"finest_min": 0.8, "coarsest_max": 0.3}
+    assert not candidates(
+        area_m=300.0,
+        cell_options_m=[5.0],
+        level_counts=[3],
+        curve=flat,
+        resolution_px=640,
+        hfov_deg=80.0,
+        energy=ENERGY,
+        coarse_share=0.25,
+        **rules,
+    )
+    finest, coarsest = unmet_recall_rules(flat, **rules)
+    assert "0.62 (at 5 cm/px)" in finest
+    assert "0.46 (at 2 cm/px)" in coarsest
+    assert "ends at 13 cm/px" in coarsest
+    assert unmet_recall_rules(CURVE, **rules) == []
