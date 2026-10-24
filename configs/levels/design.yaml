@@ -1,0 +1,13 @@
+# design-levels search space (CLAUDE.md §8, M3). The recall curve comes from eval-detector (M2).
+camera:
+  _base_: ../camera/default.yaml
+energy:
+  _base_: ../env/energy.yaml
+recall_csv: data/detector/eval/metrics.csv
+recall_split: B  # level design reads real B frames (§8 step 1)
+area_m: 300.0
+cell_options_m: [2.5, 5.0, 10.0]
+level_counts: [3, 4, 5]
+finest_min_recall: 0.8
+coarsest_max_recall: 0.3
+coarse_share: 0.25  # full coverage at the coarsest level costs at most this share of the battery

@@ -1,0 +1,6 @@
+# Energy and time model (CLAUDE.md §14). Starting points; the battery is set at M3 (D7).
+horizontal_speed_mps: 10.0
+vertical_speed_mps: 3.0
+dwell_s: 2.0
+climb_multiplier: 1.5
+battery_s: 600.0
