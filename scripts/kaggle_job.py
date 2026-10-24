@@ -83,6 +83,10 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument("--wait", action="store_true", help="poll until done, then download")
     args = parser.parse_args(argv)
 
+    for run in args.run:
+        # Git Bash rewrites /tmp/... arguments into Windows paths; the kernel runs on Linux.
+        if re.search(r"(^|[\s=])[A-Za-z]:[/\\]", run):
+            sys.exit(f"Windows path in --run {run!r}: from Git Bash, set MSYS_NO_PATHCONV=1")
     commit = args.commit or git("rev-parse", "HEAD")
     if git("branch", "-r", "--contains", commit) == "":
         sys.exit(f"commit {commit} is not on the remote; push it first")
