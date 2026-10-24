@@ -33,6 +33,11 @@ Measured by the probe kernels on 2026-10-24:
   commit or print it.
 - The free GPU quota is about 30 h per week, and one session lasts at most 12 h, so long jobs must
   checkpoint and resume (CLAUDE.md §2).
+- A kernel attached as a source (`kernel_sources`) is mounted at
+  `/kaggle/input/notebooks/<user>/<slug>/`, holding that kernel's saved output (seen 2026-10-24).
+- `kaggle kernels logs -f` prints plain text while a kernel runs. The log saved with its output
+  (`<slug>.log`) is a JSON list of `{"stream_name", "time", "data"}` records.
+- The CLI cannot cancel a running kernel. Pushing again starts a new version alongside it.
 
 ## Dependencies
 

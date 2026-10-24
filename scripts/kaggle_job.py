@@ -11,8 +11,8 @@ runs each ``--run`` command in order. Bulky intermediates live under ``/tmp``. `
         --run "scripts/train_detector.py views_dir=/tmp/views out_dir=/kaggle/working/detector"
 
 From Git Bash, ``MSYS_NO_PATHCONV=1`` stops ``/tmp/...`` arguments being rewritten into Windows
-paths. ``--source <slug>`` attaches a previous kernel's output under ``/kaggle/input/<slug>/``
-(e.g. to resume training from its last checkpoint).
+paths. ``--source <slug>`` attaches a previous kernel's output under
+``/kaggle/input/notebooks/<user>/<slug>/`` (e.g. to resume training from its last checkpoint).
 """
 
 import argparse
