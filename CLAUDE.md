@@ -17,7 +17,7 @@ Update as milestones complete (§21).
 | M0 Repo & tooling | done (2026-10-24) |
 | M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
 | M2 Detector | in progress: pipeline built and piloted on Kaggle; full training + evaluation run `altiseek-detector-v1` under way (D21) |
-| M3 Level design | not started |
+| M3 Level design | tooling built (`design-levels`, energy model, level tables); decisions wait for M2's recall curve |
 | M4 Worlds & renderer | not started |
 | M5 Detection cache | not started |
 | M6 Sensor models | not started |
@@ -210,7 +210,7 @@ altiseek/
 **Stage entry points in `scripts/`**, in pipeline order:
 1. prepare-data, fit-camera (focal length from the sea horizon, §7 step 4), make-splits, scan-images (one streaming pass over every image: hashes, ignore regions), check-leakage
 2. make-views, train-detector, eval-detector, register-detector (`kaggle-job` runs stages on Kaggle, D20)
-3. design-levels
+3. design-levels (reads eval-detector's recall curve; proposes levels, cell size and battery)
 4. build-libraries, generate-worlds
 5. build-cache, validate-cache
 6. fit-sensor-models
