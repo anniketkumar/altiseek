@@ -15,8 +15,10 @@ background:
   black_margin_px: 8
 objects:
   classes: [swimmer, boat, jetski, life_saving_appliances, buoy]
-  allowance_min_m: 0.5  # absorbs boxes offset by about half a box (docs/data_notes.md)
-  allowance_box_factor: 0.5
+  # Offset boxes are frame-wide shifts (docs/data_notes.md), so the allowance is a fixed
+  # distance: 0.75 m covers the half-box offsets seen on 0.8-1.5 m swimmer boxes.
+  allowance_min_m: 0.75
+  allowance_box_factor: 0.0
   ring_px: 6  # 0.3 m
 conditions:
   clusters: 3

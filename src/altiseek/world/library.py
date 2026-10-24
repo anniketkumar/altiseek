@@ -16,10 +16,12 @@ holds another annotated object, are rejected. The detector never selects or move
 would favour the swimmers it already finds.
 """
 
+import json
 import math
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -28,6 +30,7 @@ from numpy.typing import NDArray
 from altiseek.data.frames import Box, Frame
 from altiseek.data.horizon import BLACK_LUMA, LUMA
 from altiseek.data.splits import SplitRow
+from altiseek.data.tables import read_csv
 from altiseek.detector.views import tile_windows
 from altiseek.geometry.camera import TiltedCamera
 from altiseek.geometry.rectify import ViewWindow, rectify
@@ -284,3 +287,44 @@ def object_crop(
         ),
         "ok",
     )
+
+
+@dataclass(frozen=True)
+class Library:
+    """A built library (``scripts/build_libraries.py``): its index tables and where its images
+    are."""
+
+    path: Path
+    library_id: str
+    split: str
+    gsd_mpp: float
+    #: Side of a background patch, and width of the fading water ring of a crop, pixels.
+    patch_px: int
+    ring_px: int
+    backgrounds: tuple[BackgroundRow, ...]
+    objects: tuple[ObjectRow, ...]
+    #: Per appearance condition: patch count and mean Lab statistics (``conditions.json``).
+    conditions: tuple[dict[str, float], ...]
+
+    @classmethod
+    def load(cls, path: str | Path) -> "Library":
+        path = Path(path)
+        meta = json.loads((path / "library.meta.json").read_text(encoding="utf-8"))
+        conditions = json.loads((path / "conditions.json").read_text(encoding="utf-8"))
+        return cls(
+            path=path,
+            library_id=meta["library_id"],
+            split=meta["split"],
+            gsd_mpp=meta["config"]["gsd_mpp"],
+            patch_px=meta["config"]["background"]["patch_px"],
+            ring_px=meta["config"]["objects"]["ring_px"],
+            backgrounds=tuple(read_csv(path / "backgrounds.csv", BackgroundRow)),
+            objects=tuple(read_csv(path / "objects.csv", ObjectRow)),
+            conditions=tuple(conditions["conditions"]),
+        )
+
+    def patch_path(self, patch_id: str) -> Path:
+        return self.path / "backgrounds" / f"{patch_id}.png"
+
+    def crop_path(self, crop_id: str) -> Path:
+        return self.path / "objects" / f"{crop_id}.png"

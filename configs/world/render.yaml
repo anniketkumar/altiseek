@@ -1,0 +1,12 @@
+# The simulated camera over composed worlds (CLAUDE.md §8, §11).
+camera:
+  _base_: ../camera/default.yaml
+levels:
+  _base_: ../levels/default.yaml
+variants:
+  count: 4  # K_var per view (M5)
+  shift_view_px: 0.75  # whole g0 pixels, under one view pixel
+  exposure: 0.05
+  white_balance: 0.03
+  glint: 0.2
+  glint_threshold: 200.0

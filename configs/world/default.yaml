@@ -1,0 +1,33 @@
+# World generation (CLAUDE.md §11, §16): scenario families over the D7 level table.
+levels:
+  _base_: ../levels/default.yaml
+libraries:
+  B: data/libraries/B
+  T: data/libraries/T
+prior:
+  mean_margin_m: 50.0
+  aspect: [0.3, 1.0]  # minor over major spread: an elongated drift to round
+  mixture_share: 0.2
+grid:  # the main grid of §16
+  prior_sigma_m:
+    sharp: [20.0, 40.0]
+    diffuse: [60.0, 120.0]
+  targets:
+    single: [1, 1]
+    group: [2, 4]
+  distractors:
+    low: [0, 3]
+    high: [10, 20]
+group_radius_m: 6.0
+lane_share: 0.5
+lane_half_width_m: 15.0
+min_condition_patches: 20
+patch_step_m: 10.0  # 12.8 m patches overlap their neighbours by 2.8 m
+clearance_m: 0.3
+scale_jitter: 0.05
+world_sets:  # small sets for M4; M5 fixes the counts against the cache's cost
+  - {name: sensor-fit, split: B, per_family: 5, seed_base: 1000000}
+  - {name: rl-train, split: B, per_family: 20, seed_base: 2000000}
+  - {name: rl-val, split: B, per_family: 5, seed_base: 3000000}
+  - {name: test, split: T, per_family: 10, seed_base: 4000000}
+out_dir: data/worlds
