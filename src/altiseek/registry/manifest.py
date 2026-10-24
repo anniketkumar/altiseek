@@ -1,5 +1,5 @@
-"""The artifact registry (CLAUDE.md §18): every detector, sensor model, world set and cache with
-its ID, parent IDs and storage location.
+"""The artifact registry (CLAUDE.md §18): every detector, library, sensor model, world set and
+cache with its ID, parent IDs and storage location.
 
 The manifest is a committed JSON file. Artifacts themselves never enter git; ``location`` says
 where the bytes live, e.g. ``kaggle:<user>/<kernel>@<version>:<path in its output>``. Registering
@@ -12,7 +12,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-KINDS = ("detector", "sensor_model", "world_set", "cache")
+KINDS = ("detector", "library", "sensor_model", "world_set", "cache")
 
 
 @dataclass(frozen=True)

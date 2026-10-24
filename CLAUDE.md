@@ -18,7 +18,7 @@ Update as milestones complete (§21).
 | M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
 | M2 Detector | done (2026-10-25): detectors `700e0ff3455259e8` (GSD-stratified views, D23) and `78aba879cc50e025` evaluated on B and T over 2–30 cm/px, every bin populated, and registered (`docs/results.md`). Which goes forward is open (§25) |
 | M3 Level design | done (2026-10-25): five levels at 30–89 m over 2.5 m cells, battery 500 s, coarsest rule loosened to ≤ 0.65 (D7, `configs/levels/default.yaml`); re-check at M6 |
-| M4 Worlds & renderer | not started |
+| M4 Worlds & renderer | in progress: θ_lib = 45° and g₀ = 5 cm/px (D26); libraries, sampler, renderer and fidelity check under way |
 | M5 Detection cache | not started |
 | M6 Sensor models | not started |
 | M7 Environment & baselines | not started |
@@ -902,12 +902,12 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D23 | Detector views, second version (replaces D21's view sampling and evaluation frame choice). **Coverage:** `min_coverage` 0.25 for training and evaluation views; the rest of a view is grey fill. **Training views** are stratified by GSD: 12 bins of equal log-width over 2–30 cm/px, each with 600 train and 100 internal-validation views, dealt over the frames that can serve the bin's centre GSD, at most 3 per frame. **Evaluation** picks each bin's ≤ 120 frames among the frames that can serve it; false positives are counted per full view of valid pixels, and per-view counts are saved. `78aba879cc50e025` is re-evaluated with the same code | D21's rejection sampling left 0.5% of training views above 16 cm/px and no B evaluation view above 13 cm/px. At 50% coverage no A-train frame has a tile at 16 cm/px; at 25%, 856 do (495 at 20 cm/px). Padded views hold only real pixels; the cost is less context per coarse view | Default; evaluation coverage revised by D25 |
 | D24 | Level design (§8 step 1) reads **centre recall** on split B: a swimmer counts as found when a detection's centre lies within 1 m of its centre. Detector **`700e0ff3455259e8`** goes forward to M4–M6. Owner's choice, 2026-10-25 | IoU is unstable for swimmers 2–3 px wide, and offset annotations lower IoU recall in every video (`docs/data_notes.md`). Centre matching is the closest to the cell-level r_ℓ of §10. `700e0ff3455259e8` was trained across the full GSD range (§9) and is better at coarse GSDs; `78aba879cc50e025` is better at fine GSDs on B and T | Default |
 | D25 | Evaluation tiles need only **5%** valid pixels (`eval_views.min_coverage`); training views keep 25% (D23). Owner's choice, 2026-10-25 | At 25%, only frames flown high can fill a coarse tile: one video supplied 98–100% of B's swimmers at 25–30 cm/px, so each split's coarse recall measured a single scene. At 5%, all four B videos can serve 30 cm/px (838 frames, against 80 from one video). A mostly-fill tile gives the detector less context, so recall on ≥ 25% tiles is checked against the rest wherever both exist | Default |
+| D26 | World libraries (M4): source pixels within **θ_lib = 45°** of nadir; canonical world GSD **g₀ = 5 cm/px**. Owner's choice, 2026-10-25 | g₀ must be ≤ 0.65 × g(L1) = 5.1 cm/px (§8). At θ_lib = 30°, every usable T swimmer came from one video (317) and T's only distractors were 10 boats. At 45°, T's swimmers come from 3 videos (402) and B's from 4 (3,930). The cost is a little more sky reflection and lean in the source pixels, which the fidelity check measures. Within 45°, T has 33 boats and no jetskis, buoys or life-saving appliances; split purity rules out borrowing B crops | Default |
 
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- θ_lib (M4) off-nadir limit for libraries.
 - Boundary rule for swimmers straddling cells.
 - Known vs unknown K as the default.
 - MaskablePPO vs a custom PPO.
