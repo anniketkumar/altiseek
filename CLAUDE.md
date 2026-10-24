@@ -16,8 +16,8 @@ Update as milestones complete (§21).
 |---|---|
 | M0 Repo & tooling | done (2026-10-24) |
 | M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
-| M2 Detector | in progress: detector `78aba879cc50e025` trained, evaluated on B and T, and registered (`docs/results.md`), but its coarse GSDs are undersampled. Kaggle run `altiseek-detector-v3` retrains with GSD-stratified views and re-evaluates `78aba879cc50e025` under the same evaluation (D23) |
-| M3 Level design | tooling built (`design-levels`, energy model, level tables); the first run, on detector `78aba879cc50e025`, finds no feasible design (`docs/results.md`); D7 pending |
+| M2 Detector | done (2026-10-25): detectors `700e0ff3455259e8` (GSD-stratified views, D23) and `78aba879cc50e025` evaluated on B and T over 2–30 cm/px, every bin populated, and registered (`docs/results.md`). Which goes forward is open (§25) |
+| M3 Level design | in progress: no feasible design on B under IoU or centre recall (`docs/results.md`); D7 waits on the decisions in §25 |
 | M4 Worlds & renderer | not started |
 | M5 Detection cache | not started |
 | M6 Sensor models | not started |
@@ -905,10 +905,12 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- **Level-design curve (blocks M3 and D7).** The first `design-levels` run finds no feasible design (`docs/results.md`).
-  - Coarse GSDs: the training views and B's evaluation have almost nothing above 13–16 cm/px. D23 addresses this (Kaggle run `altiseek-detector-v3`).
-  - Which recall to design on: IoU recall, or centre recall, which is closer to the cell-level r_ℓ of §10. Offset annotations in B (§22) lower IoU recall but not centre recall.
-  - Whether finest-level recall ≥ 0.8 is reachable on B at all: its best bin has 0.62 (IoU) or 0.80 (centre).
+- **Level-design rules (blocks M3 and D7).** No design is feasible on B under either recall measure, and the two fail opposite rules (`docs/results.md`).
+  - Which recall to design on: IoU recall, or centre recall, which is closer to the cell-level r_ℓ of §10. IoU is unstable for 2–3 px swimmers, and offset annotations (§22) lower it in every video.
+  - With IoU recall the finest rule fails: B's best bin is 0.65 (`700e0ff3455259e8`) or 0.71 (`78aba879cc50e025`).
+  - With centre recall the coarsest rule fails: B stays at 0.64 or higher up to 30 cm/px. A tradeoff then needs a looser coarsest rule, or GSDs beyond 30 cm/px, which few frames can serve.
+  - Whether B's frames are representative: B has dense groups, which may hold up its coarse recall; val and T fall much faster. Options: recall on isolated swimmers only, or wait for the M4 fidelity check on rendered worlds.
+  - Which detector goes forward: `700e0ff3455259e8` is better at coarse GSDs, `78aba879cc50e025` at fine GSDs on B and T.
 - θ_lib (M4) off-nadir limit for libraries.
 - Boundary rule for swimmers straddling cells.
 - Known vs unknown K as the default.

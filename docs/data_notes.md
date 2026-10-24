@@ -352,5 +352,24 @@ yet none overlap their box by IoU 0.5.
 - IoU metrics count each such swimmer as a miss plus a false positive; centre matching does not.
 - Crops cut from offset boxes would miss part of the object, and an object can sit outside its own
   box's safety margin. Library building (M4) must allow for this.
-- The prevalence per video is not yet measured. eval-detector's per-view counts (`views.csv`: true
-  positives by IoU and by centre) will show where IoU and centre matching disagree.
+
+**Prevalence.** Swimmer recall by IoU and by centre (within 1 m) per video, from eval-detector's
+per-view counts (`views.csv`, D23 evaluation). Only views at 2–6.5 cm/px are counted, where
+swimmers are about 8 px or larger and IoU is meaningful:
+
+| Split | Video | Swimmers | `78aba879cc50e025`: IoU / centre | `700e0ff3455259e8`: IoU / centre |
+|---|---|---|---|---|
+| B | `NorthSea_Sat_DJI_0122` | 563 | 0.83 / 0.94 | 0.75 / 0.89 |
+| B | `NorthSea_Sat_DJI_0126` | 784 | 0.57 / 0.83 | 0.53 / 0.74 |
+| B | `NorthSea_Sat_DJI_0129` | 434 | 0.71 / 0.95 | 0.62 / 0.89 |
+| B | `NorthSea_Sat_DJI_0131` | 437 | 0.65 / 0.83 | 0.64 / 0.77 |
+| T | `NorthSea_Thu_DJI_0107` | 276 | 0.92 / 0.99 | 0.89 / 0.98 |
+| T | `NorthSea_Thu_DJI_0108` | 161 | 0.81 / 0.93 | 0.63 / 0.76 |
+| T | `NorthSea_Thu_DJI_0109` | 204 | 0.76 / 0.95 | 0.79 / 0.98 |
+
+- Every video has the gap, for both detectors. It is largest in `NorthSea_Sat_DJI_0126` and
+  `_0129` (B), at 0.21–0.27.
+- Two independently trained detectors show it, which points at the annotations. Part of it may
+  still be the detectors' own loose boxes.
+- `views.csv` holds counts, not box positions. Telling a frame-wide offset apart from loose boxes
+  needs the detections, for example the median offset between matched centres per frame.
