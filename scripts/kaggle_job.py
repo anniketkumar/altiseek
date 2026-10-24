@@ -6,16 +6,18 @@ and make-splits, all deterministic. It checks that the split ID matches this che
 runs each ``--run`` command in order. Bulky intermediates live under ``/tmp``. ``/kaggle/working``
 (checkpoints, metrics, metadata) is kept by Kaggle and downloaded to ``data/kaggle/<slug>/``.
 
-    uv run python scripts/kaggle_job.py --slug altiseek-detector --gpu \
+    MSYS_NO_PATHCONV=1 uv run python scripts/kaggle_job.py --slug altiseek-detector --gpu \
         --run "scripts/make_views.py views_dir=/tmp/views" \
         --run "scripts/train_detector.py views_dir=/tmp/views out_dir=/kaggle/working/detector"
 
-``--source <slug>`` attaches a previous kernel's output under ``/kaggle/input/<slug>/`` (e.g. to
-resume training from its last checkpoint).
+From Git Bash, ``MSYS_NO_PATHCONV=1`` stops ``/tmp/...`` arguments being rewritten into Windows
+paths. ``--source <slug>`` attaches a previous kernel's output under ``/kaggle/input/<slug>/``
+(e.g. to resume training from its last checkpoint).
 """
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 import tempfile
