@@ -45,10 +45,15 @@ splits:
   # Constance adds variety to detector training (A) only.
   eval_campaigns: [north_sea_2021]
 leakage:
-  calibration_quantile: 0.95
+  # Highest recall on consecutive frames with no false alarm across campaigns (D17).
+  max_hamming_limit: 32
+  correlation_min: 0.80
+  correlation_step: 0.01
   positive_max_gap_s: 1.0
   negative_campaigns: [lake_constance_2020, north_sea_2021]
   negative_samples: 20000
+  geometric_samples: 100
+  negative_min_gap_s: 600.0
   seed: 20261024
 scan:
   workers: 24  # the share answers each request after ~3 s; throughput scales with workers

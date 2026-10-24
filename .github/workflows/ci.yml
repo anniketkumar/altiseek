@@ -10,8 +10,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Linux matches WSL2 and the cloud notebooks; Windows is the development machine.
-        os: [ubuntu-24.04, windows-latest]
+        # Linux matches WSL2 (3.12) and Kaggle (3.13); Windows is the development machine.
+        include:
+          - { os: ubuntu-24.04, python: "3.12" }
+          - { os: ubuntu-24.04, python: "3.13" }
+          - { os: windows-latest, python: "3.12" }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -19,5 +22,6 @@ jobs:
       - uses: astral-sh/setup-uv@v10.3.2
         with:
           version: "0.13.5"
+          python-version: ${{ matrix.python }}
       - run: uv sync --locked
       - run: uv run pytest

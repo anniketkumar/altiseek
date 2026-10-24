@@ -15,8 +15,8 @@ Update as milestones complete (§21).
 | Milestone | Status |
 |---|---|
 | M0 Repo & tooling | done (2026-10-24) |
-| M1 Data | in progress: frame table, camera groups and the `mavic_4k` GSD model done; sessions, splits and leakage check wait on §25 decisions |
-| M2 Detector | not started |
+| M1 Data | done (2026-10-24): split `783b4403804291a2`, leakage check passed |
+| M2 Detector | in progress: shared resampling, rectification, view generation, Kaggle runner, training wrapper and inference API built; first training run next |
 | M3 Level design | not started |
 | M4 Worlds & renderer | not started |
 | M5 Detection cache | not started |
@@ -155,7 +155,7 @@ Every policy is run with four ways of turning detections into belief updates (V0
 
 **Code style**
 - Type hints throughout; a formatter and linter enforced in tests or pre-commit.
-- One Python version across WSL2, cloud notebooks and local runs, recorded in `docs/env.md`.
+- Exactly two Python versions: 3.12 (local runs, WSL2/ROS 2 Jazzy) and 3.13 (Kaggle). CI tests both; recorded in `docs/env.md` (D9).
 
 ---
 
@@ -255,7 +255,7 @@ Record verified values, exact metadata field names and counts in `docs/data_note
    - **B** — sensor-model fitting, plus imagery for RL training and validation worlds.
    - **T** — test only: test worlds, final calibration evaluation, fidelity check.
    Stratify by altitude band and swimmer presence, using an exhaustive search over session assignments. B and T come only from the open-sea campaign. Report counts per split × altitude band × class.
-7. **Leakage check** (D17). A perceptual-hash near-duplicate search across splits, confirmed by thumbnail correlation. Thresholds come from known duplicates (consecutive video frames). It must pass before any training.
+7. **Leakage check** (D17). Three tests decide whether a cross-split pair is a near-duplicate: perceptual-hash distance, thumbnail correlation and geometric verification (ORB + RANSAC inliers). Every threshold comes from pairs of known status, never from the result. It must pass before any training.
 
 **Done when:** `docs/data_notes.md` holds the verified field names, camera groups, GSD model, split statistics and the leakage-check result.
 
@@ -882,22 +882,23 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D6 | Re-look rule: first observation per (cell, level) | Deterministic detector; revisit once conditional recall is measured | Provisional |
 | D7 | Camera resolution and level table | Decided at M3 from the measured recall-vs-GSD curve | Pending |
 | D8 | Project name: AltiSeek (working title was SeaSearch) | Names the new idea (the drone chooses its own altitude); "Seasearch" is already a UK marine-survey programme | Fixed |
-| D9 | Python 3.12 everywhere (`requires-python = ">=3.12,<3.13"`) | PX4 recommends ROS 2 Jazzy on Ubuntu 24.04, whose system Python (hence rclpy) is 3.12; Colab runtime 2026.07 is 3.12.13 and Kaggle builds on the Colab image; local dev has 3.12.10. Evidence in `docs/env.md` | Fixed |
+| D9 | Python 3.12 and 3.13 (`requires-python = ">=3.12,<3.14"`); CI tests both. Revised 2026-10-24 from "3.12 everywhere" | ROS 2 Jazzy on Ubuntu 24.04 (PX4's recommendation) fixes 3.12 for the ROS nodes (rclpy is system Python); local dev has 3.12.10. A Kaggle probe kernel found **3.13.15**: the image builds on a Colab runtime newer than the 3.12-based 2026.07. Evidence in `docs/env.md` | Revised |
 | D10 | Tooling: uv ≥ 0.13.4 with a committed `uv.lock`; hatchling; ruff for lint and format, run inside pytest; GitHub Actions CI on Ubuntu and Windows | `pytest` alone enforces style; pyproject stays the single place dependencies are declared, the lockfile pins transitive ones; uv < 0.13.4 trusts a compromised CA (GHSA-hq85-5cpj-mr62) | Fixed |
 | D11 | Config system: PyYAML + pydantic v2 in `altiseek.config`. A `_base_` key gives inheritance and cross-group composition; dotted CLI overrides; schemas forbid unknown keys and are frozen | Lighter and more explicit than Hydra/OmegaConf; misspelt keys fail loudly; the resolved config serialises for run metadata (§18) | Default |
 | D12 | `mavic_4k` camera model: f = 3029 px (95% CI 2932–3225), i.e. HFOV 64.7° and nadir GSD = 3.30 × 10⁻⁴ m/px per metre of altitude; gimbal pitch bias −0.38°. Fitted from the open-sea horizon (`fit-camera`), not from box sizes | §7 step 4's box-size fit cannot separate object size from focal length; the horizon gives f directly. The fit confirms the Mavic 2 Pro's full-width 4K mode. Details in `docs/data_notes.md` | Fixed until re-measured |
-| D13 | Runtime deps numpy 2.0.2 (Colab's version), Pillow 12.3.0, matplotlib 3.11.2 | Needed for M1 imaging and figures; matching Colab avoids reinstalls in cloud sessions | Fixed |
+| D13 | Pins follow Kaggle's preinstalled versions: numpy 2.1.3, Pillow 13.0.0, matplotlib 3.10.0, pydantic 2.13.5, PyYAML 6.0.3, torch 2.11.0, torchvision 0.26.0, opencv-python 4.14.0.94, polars 1.35.2. Locally and in CI, torch comes from the PyTorch CPU index. The lock covers Windows and Linux only. Revised 2026-10-24 from Colab's numpy 2.0.2 | Installing the package in a kernel then changes nothing preinstalled, and local runs use the same image libraries as the cloud. numpy 2.0.2 has no Python 3.13 wheels | Revised |
 | D14 | Oblique source frames are used through a tilted pinhole model over a flat sea and ground-plane rectification into nadir-equivalent views. Off-nadir limits are θ_train (detector views, set in M2) and a stricter θ_lib (libraries, set in M4). This replaces the ±10° nadir filter of §7 step 3 | Nadir-only keeps 296 `mavic_4k` frames from 3 videos, too few for session-disjoint splits; the median 4K pitch is about 31°. Rectification is exact for a flat sea with a known camera model (D12). The cost is an appearance gap (lean of 3D objects, sky reflection), which the fidelity check measures | Fixed |
 | D15 | Session = capture day across all camera groups. Frames without a trusted day get `undated:<group>` sessions: `trinity_rgb` (no timestamps) and MicaSense frames without GPS (their clock dates them to 2021-08-27, when nothing else flew). Both are assigned to campaign `lake_constance_2020` | The Mavic and M210 filmed the same exercises in the same hours, so a finer unit would leak swimmers, boats and sea state across splits. The paper flew the Trinity only at Lake Constance in 2020 | Fixed |
 | D16 | Split by exhaustive search over session blocks: target shares A/B/T = 0.6/0.25/0.15 of usable (`mavic_4k`) frames, stratified by altitude band (0/20/40/60/200 m) × swimmer presence. Undated sessions are tied to their campaign. B and T only from `north_sea_2021`. B and T need ≥ 100 near-nadir (≤ 30°) swimmer boxes. Result: A = Lake Constance 2020 + 2021-08-20, B = 2021-08-21, T = 2021-08-19 (`split_id` 783b4403804291a2) | Sensor models are fitted on B worlds and judged on T worlds, so both must come from the target domain (open sea); the lake adds variety to detector training only. B feeds more stages than T, and unequal targets also break the tie between swapping two days | Fixed |
-| D17 | Leakage check: 64-bit DCT perceptual hash of a 32×32 masked-luma thumbnail; candidate if the hash distance ≤ H, near-duplicate if the thumbnail correlation is also ≥ R. H and R are the 95th/5th percentiles over consecutive video frames (known duplicates). False alarms are measured on the full lake × sea search | Open-water scenes look alike, so a hash alone over-reports. Deriving thresholds from known duplicates keeps them independent of the cross-split result | Fixed |
+| D17 | Leakage check: a cross-split pair is a near-duplicate if (1) its 64-bit DCT perceptual hashes (32×32 masked luma) differ by ≤ H bits, (2) its thumbnails correlate at ≥ R, and (3) its ORB matches give ≥ G RANSAC homography inliers. H, R: the highest recall on consecutive video frames with no false alarm among all 24.9M cross-campaign pairs (H = 10, R = 0.93). G: one more than the most among same-session look-alikes ≥ 10 min apart (G = 12). The check covers the same-campaign cross-split pairs. Revised 2026-10-24 | The first rule (95th/5th percentiles of consecutive frames) flagged 3.7% of known non-duplicates: open water is too self-similar for a recall-side calibration. Every threshold is set on pairs of known status, never on the result | Fixed |
+| D19 | Detector: Ultralytics YOLO (`ultralytics==8.4.184`, AGPL-3.0). The repository is licensed **AGPL-3.0-only** (`LICENSE`) | Owner's choice, 2026-10-24. Fastest path: strong small-object models, an optional P2 (higher-resolution) head, and resumable training built in. AGPL obliges the repo to share the licence | Fixed |
+| D20 | Cloud GPU is Kaggle (account `aniketkumarpradhan`, 2× T4). Kernels are pushed, monitored and collected with the Kaggle CLI. They fetch images from the dataset share directly instead of uploading them | The share serves about 10 images/s to Kaggle versus about 2.5/s to the laptop. The CLI lets jobs run without manual notebook use. Tokens stay in `~/.kaggle/`, never in the repo | Fixed |
 | D18 | Images: the compressed JPEG version (full resolution), streamed. `scan-images` reads each image once and keeps only near-nadir (≤ 30°) `mavic_4k` frames on disk | 7.4 GB vs 92.5 GB as PNG; the laptop has about 23 GB free and no Kaggle account is set up yet. Later stages re-fetch what they need; cloud notebooks fetch from the share directly | Fixed |
 
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- Detector framework and its licence (decide together with the repository licence).
 - θ_train (M2) and θ_lib (M4) off-nadir limits.
 - Swimmer class definition: merge any subclasses? Treat life-saving appliances as distractors?
 - Boundary rule for swimmers straddling cells.

@@ -8,7 +8,8 @@ check passes when no cross-split pair is a near-duplicate.
 
 Both thresholds are calibrated on pairs whose status is known: consecutive frames of one video
 (about 0.5 s apart, near-duplicates by construction) and frames from different campaigns (a lake
-in 2020 and the North Sea in 2021, never duplicates).
+in 2020 and the North Sea in 2021, never duplicates). Pairs are held as arrays throughout:
+the searches cover tens of millions of pairs.
 """
 
 from collections import defaultdict
@@ -23,13 +24,49 @@ from altiseek.data.image_stats import hamming, hamming_aligned
 
 
 @dataclass(frozen=True)
-class Pair:
-    """Two compared images: hash distance in bits, thumbnail correlation in [-1, 1]."""
+class Pairs:
+    """Compared image pairs as parallel arrays: ids, hash distance (bits), correlation."""
 
-    image_a: int
-    image_b: int
-    hamming: int
-    correlation: float
+    a: NDArray[np.int64]
+    b: NDArray[np.int64]
+    hamming: NDArray[np.int64]
+    correlation: NDArray[np.float32]
+
+    def __len__(self) -> int:
+        return len(self.a)
+
+    def where(self, mask: NDArray[np.bool_]) -> "Pairs":
+        return Pairs(self.a[mask], self.b[mask], self.hamming[mask], self.correlation[mask])
+
+
+class Thumbnails:
+    """Thumbnails as zero-mean, unit-norm rows, so that a correlation is one dot product."""
+
+    def __init__(self, thumb_of: Mapping[int, NDArray[np.floating]]) -> None:
+        self.ids = np.array(sorted(thumb_of), dtype=np.int64)
+        rows = np.stack([np.asarray(thumb_of[int(i)], np.float32).ravel() for i in self.ids])
+        rows -= rows.mean(axis=1, keepdims=True)
+        norm = np.linalg.norm(rows, axis=1, keepdims=True)
+        self.rows = np.divide(rows, norm, out=np.zeros_like(rows), where=norm > 0)
+
+    def correlation(
+        self, a: NDArray[np.int64], b: NDArray[np.int64], chunk: int = 1 << 16
+    ) -> NDArray[np.float32]:
+        """Pearson correlation of the thumbnails of each pair ``(a[i], b[i])`` (0 if constant)."""
+        ia, ib = np.searchsorted(self.ids, a), np.searchsorted(self.ids, b)
+        out = np.empty(len(a), dtype=np.float32)
+        for s in range(0, len(a), chunk):
+            out[s : s + chunk] = np.einsum(
+                "ij,ij->i", self.rows[ia[s : s + chunk]], self.rows[ib[s : s + chunk]]
+            )
+        return out
+
+
+def hash_array(
+    ids: Sequence[int] | NDArray[np.int64], hash_of: Mapping[int, int]
+) -> NDArray[np.uint64]:
+    """The hashes of ``ids`` as a uint64 array, in order."""
+    return np.array([hash_of[int(i)] for i in ids], dtype=np.uint64)
 
 
 def close_pairs(
@@ -39,62 +76,60 @@ def close_pairs(
     hashes_b: NDArray[np.uint64],
     max_hamming: int,
     block: int = 512,
-) -> list[tuple[int, int, int]]:
-    """``(id_a, id_b, distance)`` for every pair across the two sets within ``max_hamming``.
+) -> tuple[NDArray[np.int64], NDArray[np.int64], NDArray[np.int64]]:
+    """Ids and distances of every pair across the two sets within ``max_hamming`` bits.
 
     The distance matrix is computed ``block`` rows at a time to bound memory.
     """
-    out = []
+    a, b, d = [], [], []
     for start in range(0, len(ids_a), block):
         dist = hamming(hashes_a[start : start + block], hashes_b)
         rows, cols = np.nonzero(dist <= max_hamming)
-        out.extend(
-            (int(ids_a[start + r]), int(ids_b[c]), int(dist[r, c]))
-            for r, c in zip(rows, cols, strict=True)
-        )
-    return out
-
-
-def correlation(a: NDArray[np.floating], b: NDArray[np.floating]) -> float:
-    """Pearson correlation of two thumbnails (0 if either is constant)."""
-    x = a.astype(np.float64).ravel()
-    y = b.astype(np.float64).ravel()
-    x, y = x - x.mean(), y - y.mean()
-    norm = float(np.sqrt((x @ x) * (y @ y)))
-    return float(x @ y) / norm if norm > 0 else 0.0
+        a.append(ids_a[start + rows])
+        b.append(ids_b[cols])
+        d.append(dist[rows, cols])
+    if not a:
+        empty = np.zeros(0, dtype=np.int64)
+        return empty, empty, empty
+    return np.concatenate(a), np.concatenate(b), np.concatenate(d).astype(np.int64)
 
 
 def cross_split_pairs(
     split_of: Mapping[int, str],
     hash_of: Mapping[int, int],
-    thumb_of: Mapping[int, NDArray[np.floating]],
+    thumbs: Thumbnails,
     max_hamming: int,
-) -> list[Pair]:
+) -> Pairs:
     """Every candidate pair between images of different splits, with its thumbnail correlation."""
     names = sorted(set(split_of.values()))
     members = {
         k: np.array(sorted(i for i, s in split_of.items() if s == k), dtype=np.int64) for k in names
     }
-    hashes = {k: hash_array(ids, hash_of) for k, ids in members.items()}
-    pairs = []
+    parts = []
     for x, first in enumerate(names):
         for second in names[x + 1 :]:
-            close = close_pairs(
-                members[first], hashes[first], members[second], hashes[second], max_hamming
+            parts.append(
+                close_pairs(
+                    members[first],
+                    hash_array(members[first], hash_of),
+                    members[second],
+                    hash_array(members[second], hash_of),
+                    max_hamming,
+                )
             )
-            pairs.extend(Pair(a, b, d, correlation(thumb_of[a], thumb_of[b])) for a, b, d in close)
-    return pairs
+    a = np.concatenate([p[0] for p in parts]) if parts else np.zeros(0, np.int64)
+    b = np.concatenate([p[1] for p in parts]) if parts else np.zeros(0, np.int64)
+    d = np.concatenate([p[2] for p in parts]) if parts else np.zeros(0, np.int64)
+    return Pairs(a, b, d, thumbs.correlation(a, b))
 
 
 def consecutive_pairs(
-    videos: Mapping[str, Sequence[int]],
-    hash_of: Mapping[int, int],
-    thumb_of: Mapping[int, NDArray[np.floating]],
-) -> list[Pair]:
+    videos: Mapping[str, Sequence[int]], hash_of: Mapping[int, int], thumbs: Thumbnails
+) -> Pairs:
     """Each frame paired with the next one of its video (ids in time order): known duplicates."""
-    a = [x for ids in videos.values() for x in ids[:-1]]
-    b = [y for ids in videos.values() for y in ids[1:]]
-    return _pairs(a, b, hash_of, thumb_of)
+    a = np.array([x for ids in videos.values() for x in ids[:-1]], dtype=np.int64)
+    b = np.array([y for ids in videos.values() for y in ids[1:]], dtype=np.int64)
+    return _pairs(a, b, hash_of, thumbs)
 
 
 def random_pairs(
@@ -103,21 +138,14 @@ def random_pairs(
     n: int,
     seed: int,
     hash_of: Mapping[int, int],
-    thumb_of: Mapping[int, NDArray[np.floating]],
-) -> list[Pair]:
+    thumbs: Thumbnails,
+) -> Pairs:
     """``n`` random pairs drawn across two sets; known non-duplicates if the sets cannot share
     content (e.g. different campaigns)."""
     rng = np.random.default_rng(seed)
-    a = rng.choice(np.asarray(ids_a, dtype=np.int64), size=n).tolist()
-    b = rng.choice(np.asarray(ids_b, dtype=np.int64), size=n).tolist()
-    return _pairs(a, b, hash_of, thumb_of)
-
-
-def hash_array(
-    ids: Sequence[int] | NDArray[np.int64], hash_of: Mapping[int, int]
-) -> NDArray[np.uint64]:
-    """The hashes of ``ids`` as a uint64 array, in order."""
-    return np.array([hash_of[int(i)] for i in ids], dtype=np.uint64)
+    a = rng.choice(np.asarray(ids_a, dtype=np.int64), size=n)
+    b = rng.choice(np.asarray(ids_b, dtype=np.int64), size=n)
+    return _pairs(a, b, hash_of, thumbs)
 
 
 def video_runs(frames: Sequence[Frame], max_gap_s: float) -> dict[str, list[int]]:
@@ -146,15 +174,81 @@ def video_runs(frames: Sequence[Frame], max_gap_s: float) -> dict[str, list[int]
 
 
 def _pairs(
-    a: Sequence[int],
-    b: Sequence[int],
-    hash_of: Mapping[int, int],
-    thumb_of: Mapping[int, NDArray[np.floating]],
-) -> list[Pair]:
-    if not a:
-        return []
-    dist = hamming_aligned(hash_array(a, hash_of), hash_array(b, hash_of))
-    return [
-        Pair(i, j, int(d), correlation(thumb_of[i], thumb_of[j]))
-        for i, j, d in zip(a, b, dist, strict=True)
-    ]
+    a: NDArray[np.int64], b: NDArray[np.int64], hash_of: Mapping[int, int], thumbs: Thumbnails
+) -> Pairs:
+    if len(a) == 0:
+        empty = np.zeros(0, dtype=np.int64)
+        return Pairs(empty, empty, empty, np.zeros(0, dtype=np.float32))
+    d = hamming_aligned(hash_array(a, hash_of), hash_array(b, hash_of))
+    return Pairs(a, b, d, thumbs.correlation(a, b))
+
+
+@dataclass(frozen=True)
+class Thresholds:
+    """A near-duplicate rule and how it scored on the calibration pairs."""
+
+    max_hamming: int
+    min_correlation: float
+    #: Share of known duplicates the rule flags.
+    recall: float
+    #: Known non-duplicates the rule flags (zero by construction).
+    false_alarms: int
+
+
+def choose_thresholds(
+    positives: Pairs, negatives: Pairs, max_hamming_limit: int, correlations: Sequence[float]
+) -> Thresholds:
+    """The grid point with the highest recall on ``positives`` and no false alarm on
+    ``negatives``. Ties go to the stricter rule (smaller distance, then higher correlation).
+
+    The grid is whole bits up to ``max_hamming_limit`` by the given correlation levels; its
+    coarseness keeps a margin from the negatives instead of fitting their boundary exactly.
+    """
+    best: Thresholds | None = None
+    for h in range(max_hamming_limit + 1):
+        for r in sorted(correlations, reverse=True):
+            if ((negatives.hamming <= h) & (negatives.correlation >= r)).any():
+                break  # lower correlations at this distance only flag more negatives
+            recall = float(((positives.hamming <= h) & (positives.correlation >= r)).mean())
+            if best is None or recall > best.recall + 1e-12:
+                best = Thresholds(h, float(r), recall, 0)
+    if best is None:
+        raise ValueError("no grid point avoids every false alarm")
+    return best
+
+
+def geometric_inliers(
+    rgb_a: NDArray[np.uint8], rgb_b: NDArray[np.uint8], width_px: int = 1280
+) -> int:
+    """RANSAC homography inliers among ORB matches between two images: near-duplicates (same
+    scene, about the same viewpoint) share many; look-alike water shares few.
+
+    Both images are area-resized to ``width_px`` wide and blackened regions are masked out.
+    Matches pass Lowe's ratio test (0.75); the homography tolerates 5 px reprojection error.
+    OpenCV's random generator is reseeded, so the count is deterministic.
+    """
+    import cv2
+
+    def prepare(rgb: NDArray[np.uint8]) -> tuple[NDArray[np.uint8], NDArray[np.uint8]]:
+        scale = width_px / rgb.shape[1]
+        small = cv2.resize(
+            rgb, (width_px, round(rgb.shape[0] * scale)), interpolation=cv2.INTER_AREA
+        )
+        gray = cv2.cvtColor(small, cv2.COLOR_RGB2GRAY)
+        return gray, np.where(gray >= 8, 255, 0).astype(np.uint8)
+
+    (ga, ma), (gb, mb) = prepare(rgb_a), prepare(rgb_b)
+    orb = cv2.ORB_create(nfeatures=3000)
+    ka, da = orb.detectAndCompute(ga, ma)
+    kb, db = orb.detectAndCompute(gb, mb)
+    if da is None or db is None or len(ka) < 8 or len(kb) < 8:
+        return 0
+    pairs = cv2.BFMatcher(cv2.NORM_HAMMING).knnMatch(da, db, k=2)
+    good = [p[0] for p in pairs if len(p) == 2 and p[0].distance < 0.75 * p[1].distance]
+    if len(good) < 8:
+        return 0
+    src = np.float32([ka[m.queryIdx].pt for m in good])
+    dst = np.float32([kb[m.trainIdx].pt for m in good])
+    cv2.setRNGSeed(0)
+    _, inliers = cv2.findHomography(src, dst, cv2.RANSAC, 5.0)
+    return 0 if inliers is None else int(inliers.sum())

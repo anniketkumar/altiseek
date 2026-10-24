@@ -95,15 +95,22 @@ class SplitConfig(Config):
 
 
 class LeakageConfig(Config):
-    """check-leakage: thresholds come from known duplicates, never from the cross-split result."""
+    """check-leakage: the rule comes from pairs of known status, never from the result."""
 
-    #: Thresholds flag this share of known duplicates (consecutive frames of one video).
-    calibration_quantile: float
+    #: The rule is searched over whole-bit distances up to this limit ...
+    max_hamming_limit: int
+    #: ... and correlation levels from ``correlation_min`` below 1 in ``correlation_step`` steps.
+    correlation_min: float
+    correlation_step: float
     #: Consecutive frames at most this far apart count as known duplicates.
     positive_max_gap_s: float
     #: Known non-duplicates: pairs across these two campaigns.
     negative_campaigns: tuple[str, str]
     negative_samples: int
+    #: Pairs of each known status used to set the geometric-verification threshold.
+    geometric_samples: int
+    #: Look-alikes of one session at least this far apart are known non-duplicates.
+    negative_min_gap_s: float
     seed: int
 
 

@@ -49,3 +49,17 @@ The data are [SeaDronesSee](https://seadronessee.cs.uni-tuebingen.de/) Object De
 (Varga et al., WACV 2022), released under CC0 1.0. Images are fetched on demand from the dataset's
 public share, and only near-nadir frames are kept on disk. Verified dataset facts, the camera model,
 the splits and the leakage-check result are in [docs/data_notes.md](docs/data_notes.md).
+
+## Licence
+
+AltiSeek is licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-only).
+The detector is built on [Ultralytics YOLO](https://github.com/ultralytics/ultralytics)
+(`ultralytics==8.4.184`), which is itself AGPL-3.0. The SeaDronesSee dataset is CC0 1.0; its code is
+MIT.
+
+## Citation
+
+If you use the data, cite the dataset paper:
+
+> Leon Amadeus Varga, Benjamin Kiefer, Martin Messmer, Andreas Zell. *SeaDronesSee: A Maritime
+> Benchmark for Detecting Humans in Open Water.* WACV 2022. [arXiv:2105.01922](https://arxiv.org/abs/2105.01922)

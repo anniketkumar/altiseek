@@ -286,3 +286,57 @@ The `split_id` is **783b4403804291a2**.
     several days of a campaign; day-level splitting removes shared scenes, not shared people.
   - T is dominated by low altitudes (72% of its frames are below 20 m) and has almost no
     distractors. Distractor-heavy test scenarios will reuse a small set of T distractor crops.
+
+## Ignore regions (scan-images)
+
+`scripts/scan_images.py` read each of the 10,477 labelled images once. None were missing, and every
+decoded size matched the annotations. It kept the 802 near-nadir (≤ 30°) `mavic_4k` frames on disk,
+about 0.6 GB; the rest were streamed and discarded (D18).
+
+`has_ignore_regions` means the image contains at least one fully black 32 × 32 px square
+(`image_scan/stats.csv`, column `black_blocks`). Spot checks by eye: image 2922 (4 blocks) contains a
+real blackened square, and the dark water of multispectral image 344 has none.
+
+| Group | Frames with ignore regions |
+|---|---|
+| `mavic_4k` | 2,343 of 6,059 (39%) |
+| `m210_1080p` | 642 of 1,834 (35%) |
+| `m210_4k` | 76 of 771 (10%) |
+| `trinity_rgb` | 23 of 1,338 (2%) |
+| `trinity_multispectral` | 0 of 475 |
+
+The hashes were computed with Pillow 12.3.0 and numpy 2.0.2, the environment before D13 was revised.
+The pass resumed once, after the share cut a transfer short (`IncompleteRead`, now retried).
+
+## Leakage check (check-leakage, D17)
+
+**Passed:** no near-duplicate pair exists across splits.
+
+Three tests decide whether a pair is a near-duplicate. Each threshold was set on pairs whose status
+is known, never on the result:
+
+1. **Hash distance ≤ 10 bits and** 2. **thumbnail correlation ≥ 0.93.** This is the most sensitive
+   grid point that flags none of the 24,873,876 cross-campaign pairs (lake 2020 vs North Sea 2021,
+   which cannot share content). It catches 61% of 8,593 consecutive video-frame pairs, which are
+   about 0.5 s apart.
+3. **At least 12 RANSAC homography inliers among ORB matches.** That is one more than the most found
+   among 75 look-alike pairs from one session at least 10 min apart: known non-duplicates that share
+   the site's look. Known duplicates have a median of 53 inliers, and 73% of a 100-pair sample reach
+   12.
+
+The check covers the 14,241,684 cross-split pairs within a campaign, which is where leakage could
+hide:
+
+| Stage | Pairs |
+|---|---|
+| Hash candidates (test 1) | 243 |
+| Look-alikes (tests 1–2) | 104, at most 7 inliers |
+| Near-duplicates (all three tests) | **0** |
+
+- Cross-campaign pairs set the thresholds of tests 1–2, so none of them can be flagged.
+- By eye, the closest look-alikes are different scenes that happen to share glint, horizon height or
+  mask position.
+- The figure is [docs/figures/leakage_calibration.png](figures/leakage_calibration.png).
+
+A first version set thresholds at the 95th/5th percentile of consecutive frames. It flagged 3.7% of
+known non-duplicates, so it could not tell leakage from look-alike water, and was replaced (D17).

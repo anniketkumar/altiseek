@@ -6,10 +6,12 @@ fetch never leaves a truncated image behind and simply resumes on the next call.
 """
 
 import base64
+import http.client
 import time
 import urllib.error
 import urllib.request
 from collections.abc import Iterable
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import quote
 
@@ -65,7 +67,8 @@ def _get(source: ImageSource, url: str, timeout_s: float, attempts: int) -> byte
         try:
             with urllib.request.urlopen(request, timeout=timeout_s) as response:
                 return response.read()
-        except (urllib.error.URLError, TimeoutError, ConnectionError):
+        # IncompleteRead (an HTTPException) is raised when the share cuts a transfer short.
+        except (urllib.error.URLError, http.client.HTTPException, TimeoutError, ConnectionError):
             time.sleep(2.0**attempt)
     with urllib.request.urlopen(request, timeout=timeout_s) as response:
         return response.read()
@@ -79,15 +82,20 @@ def save_atomic(path: Path, data: bytes) -> None:
     partial.replace(path)
 
 
-def fetch_images(source: ImageSource, frames: Iterable[Frame], timeout_s: float = 120.0) -> int:
-    """Download the images of ``frames`` that are missing locally; return how many were fetched."""
-    fetched = 0
-    for frame in frames:
-        path = image_path(source, frame)
-        if not path.exists():
-            save_atomic(path, download(source, frame, timeout_s))
-            fetched += 1
-    return fetched
+def fetch_images(
+    source: ImageSource, frames: Iterable[Frame], timeout_s: float = 120.0, workers: int = 1
+) -> int:
+    """Download the images of ``frames`` that are missing locally, ``workers`` at a time (the
+    share answers each request after about 3 s, so parallel requests are much faster). Returns
+    how many were fetched."""
+    missing = [f for f in frames if not image_path(source, f).exists()]
+
+    def fetch(frame: Frame) -> None:
+        save_atomic(image_path(source, frame), download(source, frame, timeout_s))
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        list(pool.map(fetch, missing))
+    return len(missing)
 
 
 def load_rgb(path: str | Path) -> NDArray[np.uint8]:

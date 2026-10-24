@@ -1,0 +1,38 @@
+# Detector (CLAUDE.md §9). Composes the data and camera configs.
+data:
+  _base_: ../data/default.yaml
+camera:
+  _base_: ../camera/default.yaml
+views:
+  camera_groups: [mavic_4k]
+  max_off_nadir_deg: 60.0  # theta_train (D14); most footage is 45-75 deg off nadir
+  min_coverage: 0.5
+  supersample: 4
+train_views:
+  gsd_range_mpp: [0.02, 0.30]  # the level-design sweep range (CLAUDE.md §8)
+  gsds_per_frame: 3
+  views_per_gsd: 2
+  object_share: 0.6
+  blur_sigma_px: [0.0, 0.8]
+  jpeg_quality: [70, 95]
+  seed: 20261024
+eval_views:
+  gsd_bins_mpp: [0.02, 0.03, 0.04, 0.05, 0.065, 0.08, 0.10, 0.13, 0.16, 0.20, 0.25, 0.30]
+# 2020-08-28 (Lake Constance, 290 frames, 1,595 swimmer boxes): session-disjoint from the rest of A.
+internal_val_sessions: ["2020-08-28"]
+model:
+  weights: yolo11s.pt
+  epochs: 100
+  batch: 32
+  patience: 20
+  workers: 4
+  mosaic: 0.0  # mosaic changes scale and context; views already control GSD (logged, §9)
+  fliplr: 0.5
+  flipud: 0.5  # nadir views have no "up"
+  degrees: 0.0  # 90-degree rotations are applied when views are written
+  hsv_h: 0.015
+  hsv_s: 0.5
+  hsv_v: 0.3
+  seed: 20261024
+views_dir: data/detector/views
+out_dir: data/detector

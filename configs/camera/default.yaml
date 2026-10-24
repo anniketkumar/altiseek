@@ -1,0 +1,6 @@
+# Simulated camera (CLAUDE.md §8). Starting point R = 640, HFOV 80 deg; fixed at M3 (D7).
+resolution_px: 640
+hfov_deg: 80.0
+pipeline:  # applied after area-averaging, in output pixels
+  blur_sigma_px: 0.3
+  jpeg_quality: 90

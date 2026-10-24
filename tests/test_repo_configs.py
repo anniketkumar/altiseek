@@ -6,9 +6,15 @@ import pytest
 
 from altiseek.config import Config, load_config
 from altiseek.data.config import DataConfig
+from altiseek.detector.config import DetectorConfig
+from altiseek.imaging.config import CameraSpec
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "configs"
-SCHEMAS: dict[str, type[Config]] = {"data": DataConfig}
+SCHEMAS: dict[str, type[Config]] = {
+    "camera": CameraSpec,
+    "data": DataConfig,
+    "detector": DetectorConfig,
+}
 CONFIGS = sorted(CONFIG_DIR.rglob("*.yaml"))
 
 
