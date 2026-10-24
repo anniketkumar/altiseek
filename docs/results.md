@@ -119,7 +119,9 @@ Size is √(width × height) of the box in view pixels; swimmer counts in bracke
 - **B is much harder than T or internal validation.**
   - At the same τ, recall is 0.56 on B, against 0.84 on T and 0.86 on val.
   - Centre matching closes part of the gap (B: recall 0.73, precision 0.93). Many B detections lie
-    within 1 m of a swimmer, but their boxes miss IoU 0.5 against the annotation.
+    within 1 m of a swimmer, but their boxes miss IoU 0.5 against the annotation. In image 10465
+    the annotation is at fault: every box in the frame is offset from its swimmer by about half a
+    box ([data notes](data_notes.md#annotation-offsets)).
   - B, the single day 2021-08-21, has 6.0 swimmer boxes per `mavic_4k` frame, against 1.6 in T
     and 4.2 in A. It also has 995 of the 1,068 `mavic_4k` `life_saving_appliances` boxes.
   - The deficit holds at every object size: for 32+ px swimmers, recall is 0.71 on B against 0.84

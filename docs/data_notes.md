@@ -340,3 +340,17 @@ hide:
 
 A first version set thresholds at the 95th/5th percentile of consecutive frames. It flagged 3.7% of
 known non-duplicates, so it could not tell leakage from look-alike water, and was replaced (D17).
+
+## Annotation offsets
+
+Some ODv2 boxes are offset from their objects in the image itself. In image 10465
+(`NorthSea_Sat_DJI_0126`, frame 6750, split B), every swimmer box lies about half a box down and to
+the right of its swimmer, as if all the frame's boxes had been drawn on a neighbouring video frame.
+The detector finds those swimmers: at 3 cm/px, all five in one view are within 1 m of a box centre,
+yet none overlap their box by IoU 0.5.
+
+- IoU metrics count each such swimmer as a miss plus a false positive; centre matching does not.
+- Crops cut from offset boxes would miss part of the object, and an object can sit outside its own
+  box's safety margin. Library building (M4) must allow for this.
+- The prevalence per video is not yet measured. eval-detector's per-view counts (`views.csv`: true
+  positives by IoU and by centre) will show where IoU and centre matching disagree.
