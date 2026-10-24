@@ -38,6 +38,11 @@ class EvalViews(Config):
     """Tiled evaluation views (splits B and T), one set per GSD bin."""
 
     gsd_bins_mpp: tuple[float, ...]
+    #: Per split and bin: at most this many frames, spread evenly over the split's frames ...
+    frames_per_bin: int
+    #: ... and at most this many tiles per frame (a seeded random subset).
+    views_per_frame: int
+    seed: int
 
 
 class ModelSettings(Config):

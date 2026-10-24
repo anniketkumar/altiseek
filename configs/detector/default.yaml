@@ -18,6 +18,9 @@ train_views:
   seed: 20261024
 eval_views:
   gsd_bins_mpp: [0.02, 0.03, 0.04, 0.05, 0.065, 0.08, 0.10, 0.13, 0.16, 0.20, 0.25, 0.30]
+  frames_per_bin: 120
+  views_per_frame: 4
+  seed: 20261024
 # 2020-08-28 (Lake Constance, 290 frames, 1,595 swimmer boxes): session-disjoint from the rest of A.
 internal_val_sessions: ["2020-08-28"]
 model:
