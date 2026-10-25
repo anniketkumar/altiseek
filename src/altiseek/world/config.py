@@ -119,7 +119,10 @@ class WorldConfig(Config):
     #: Share of worlds whose distractors follow a lane (a random line), and the lane's half-width.
     lane_share: float
     lane_half_width_m: float
-    #: Appearance conditions with fewer patches than this are not used for worlds.
+    #: Appearance conditions worlds may use. Each world draws one of them in proportion to its
+    #: patch count, so worlds mirror the split's own mix; conditions with fewer patches than
+    #: ``min_condition_patches`` are not used.
+    conditions: tuple[int, ...]
     min_condition_patches: int
     #: Background patch centres lie on a grid of this step; neighbours overlap by the patch side
     #: minus the step, metres.

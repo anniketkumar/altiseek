@@ -11,7 +11,8 @@ world, drawn from one split's library with an explicit seed.
 - **Spacing:** every object's whole crop lies inside the area, and opaque regions keep
   ``clearance_m`` apart; rotation is uniform, so radii are those of the crops' bounding circles.
 - **Background:** patches of one appearance condition on a grid, each with a random quarter turn
-  and mirror.
+  and mirror. The condition is drawn from ``conditions`` in proportion to the library's patch
+  counts.
 """
 
 import math
@@ -255,9 +256,12 @@ def sample_world(
     area = cfg.levels.area_m
     prior_name, target_name, distractor_name = family
     usable = [
-        c for c, s in enumerate(library.conditions) if s["count"] >= cfg.min_condition_patches
+        c for c in cfg.conditions if library.conditions[c]["count"] >= cfg.min_condition_patches
     ]
-    condition = usable[int(rng.integers(len(usable)))]
+    if not usable:
+        raise ValueError(f"library {library.library_id} has no usable appearance condition")
+    counts = np.array([library.conditions[c]["count"] for c in usable], dtype=np.float64)
+    condition = usable[int(rng.choice(len(usable), p=counts / counts.sum()))]
     pool = [p.patch_id for p in library.backgrounds if p.condition == condition]
     background = background_layout(
         rng, pool, area, cfg.patch_step_m, library.patch_px * library.gsd_mpp

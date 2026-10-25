@@ -1,5 +1,6 @@
 """World specs and the scenario sampler on a small in-memory library."""
 
+import dataclasses
 import itertools
 import math
 from pathlib import Path
@@ -53,6 +54,7 @@ CFG = WorldConfig(
     group_radius_m=6.0,
     lane_share=0.5,
     lane_half_width_m=15.0,
+    conditions=(0, 1),
     min_condition_patches=20,
     patch_step_m=10.0,
     clearance_m=0.3,
@@ -128,6 +130,21 @@ def test_worlds_respect_the_family_and_the_layout_rules(family):
         patches = {p.patch_id: p for p in LIBRARY.backgrounds}
         assert all(patches[p.patch_id].condition == w.condition for p in w.background)
         assert len(w.background) == 30 * 30
+
+
+def test_conditions_follow_patch_counts_and_the_allowed_list():
+    library = dataclasses.replace(
+        LIBRARY,
+        backgrounds=tuple(patch(i, int(i >= 10)) for i in range(60)),
+        conditions=({"count": 20}, {"count": 100}),
+    )
+    family = ("sharp", "single", "low")
+    drawn = [sample_world(s, family, SET, CFG, library).condition for s in range(300)]
+    assert 0.75 < np.mean(drawn) < 0.92  # 100 of 120 patches
+    only = CFG.model_copy(update={"conditions": (0,)})
+    assert {sample_world(s, family, SET, only, library).condition for s in range(20)} == {0}
+    rare = CFG.model_copy(update={"min_condition_patches": 21})
+    assert {sample_world(s, family, SET, rare, library).condition for s in range(20)} == {1}
 
 
 def test_split_purity_is_enforced():

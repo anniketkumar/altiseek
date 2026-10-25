@@ -25,7 +25,6 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 from numpy.typing import NDArray
-from PIL import Image
 
 from altiseek.data.horizon import LUMA
 from altiseek.geometry.levels import Level, LevelTable
@@ -36,11 +35,6 @@ from altiseek.world.appearance import Stats, stats, transfer
 from altiseek.world.config import VariantSettings
 from altiseek.world.library import BackgroundRow, Library, ObjectRow
 from altiseek.world.spec import WorldSpec
-
-
-def _png(path: object) -> NDArray[np.uint8]:
-    with Image.open(path) as image:
-        return np.asarray(image)
 
 
 def feather(size_px: int, overlap_px: int) -> NDArray[np.float32]:
@@ -129,7 +123,7 @@ def compose_world(spec: WorldSpec, library: Library, band_px: int = 1024) -> NDA
                 continue
             if pl.patch_id not in harmonised:
                 harmonised[pl.patch_id] = transfer(
-                    _png(library.patch_path(pl.patch_id)), _row_stats(rows[pl.patch_id]), target
+                    library.patch_image(pl.patch_id), _row_stats(rows[pl.patch_id]), target
                 )
             image = np.rot90(harmonised[pl.patch_id], k=pl.turns)
             if pl.flip:
@@ -142,31 +136,47 @@ def compose_world(spec: WorldSpec, library: Library, band_px: int = 1024) -> NDA
 
     crops = {c.crop_id: c for c in library.objects}
     for obj in spec.objects:
-        row_info = crops[obj.crop_id]
-        rgba, (cx, cy) = transformed(
-            _png(library.crop_path(obj.crop_id)),
-            (row_info.centre_col, row_info.centre_row),
+        col, row = raster.to_pixel(obj.x_m, obj.y_m)
+        paste(
+            composed,
+            library.crop_image(obj.crop_id),
+            crops[obj.crop_id],
+            (float(col), float(row)),
             obj.rotation_deg,
             obj.scale,
         )
-        col, row = raster.to_pixel(obj.x_m, obj.y_m)
-        c0, r0 = round(float(col) - cx), round(float(row) - cy)
-        h, w = rgba.shape[:2]
-        rr0, rr1, cc0, cc1 = max(r0, 0), min(r0 + h, height), max(c0, 0), min(c0 + w, width)
-        if rr0 >= rr1 or cc0 >= cc1:
-            continue
-        piece = rgba[rr0 - r0 : rr1 - r0, cc0 - c0 : cc1 - c0]
-        under = composed[rr0:rr1, cc0:cc1]
-        alpha = piece[..., 3:].astype(np.float32) / 255.0
-        ring = (piece[..., 3] > 0) & (piece[..., 3] < 255)
-        if ring.any():
-            local = stats(under, ring)
-            colour = transfer(piece[..., :3], _water_stats(row_info), local, scale=False)
-        else:
-            colour = piece[..., :3]
-        blended = colour.astype(np.float32) * alpha + under.astype(np.float32) * (1.0 - alpha)
-        composed[rr0:rr1, cc0:cc1] = np.clip(np.rint(blended), 0, 255).astype(np.uint8)
     return composed
+
+
+def paste(
+    canvas: NDArray[np.uint8],
+    rgba: NDArray[np.uint8],
+    crop: ObjectRow,
+    at_px: tuple[float, float],
+    rotation_deg: float,
+    scale: float,
+) -> None:
+    """Paste ``rgba``, the image of ``crop``, into ``canvas`` in place with its object at
+    ``at_px`` (column, row): rotated and scaled about the object, shifted in Lab so its water
+    ring matches the canvas beneath, and alpha-composited. Parts outside the canvas are
+    dropped."""
+    turned, (cx, cy) = transformed(rgba, (crop.centre_col, crop.centre_row), rotation_deg, scale)
+    c0, r0 = round(at_px[0] - cx), round(at_px[1] - cy)
+    h, w = turned.shape[:2]
+    rr0, rr1 = max(r0, 0), min(r0 + h, canvas.shape[0])
+    cc0, cc1 = max(c0, 0), min(c0 + w, canvas.shape[1])
+    if rr0 >= rr1 or cc0 >= cc1:
+        return
+    piece = turned[rr0 - r0 : rr1 - r0, cc0 - c0 : cc1 - c0]
+    under = canvas[rr0:rr1, cc0:cc1]
+    alpha = piece[..., 3:].astype(np.float32) / 255.0
+    ring = (piece[..., 3] > 0) & (piece[..., 3] < 255)
+    if ring.any():
+        colour = transfer(piece[..., :3], _water_stats(crop), stats(under, ring), scale=False)
+    else:
+        colour = piece[..., :3]
+    blended = colour.astype(np.float32) * alpha + under.astype(np.float32) * (1.0 - alpha)
+    canvas[rr0:rr1, cc0:cc1] = np.clip(np.rint(blended), 0, 255).astype(np.uint8)
 
 
 @dataclass(frozen=True)

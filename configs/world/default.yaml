@@ -21,6 +21,7 @@ grid:  # the main grid of §16
 group_radius_m: 6.0
 lane_share: 0.5
 lane_half_width_m: 15.0
+conditions: [0, 1]  # glint (2) is left out (D30)
 min_condition_patches: 20
 patch_step_m: 10.0  # 12.8 m patches overlap their neighbours by 2.8 m
 clearance_m: 0.3

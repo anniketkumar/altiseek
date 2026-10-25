@@ -26,6 +26,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 from numpy.typing import NDArray
+from PIL import Image
 
 from altiseek.data.frames import Box, Frame
 from altiseek.data.horizon import BLACK_LUMA, LUMA
@@ -326,5 +327,15 @@ class Library:
     def patch_path(self, patch_id: str) -> Path:
         return self.path / "backgrounds" / f"{patch_id}.png"
 
+    def patch_image(self, patch_id: str) -> NDArray[np.uint8]:
+        """The patch's RGB image."""
+        with Image.open(self.patch_path(patch_id)) as image:
+            return np.asarray(image)
+
     def crop_path(self, crop_id: str) -> Path:
         return self.path / "objects" / f"{crop_id}.png"
+
+    def crop_image(self, crop_id: str) -> NDArray[np.uint8]:
+        """The crop's RGBA image."""
+        with Image.open(self.crop_path(crop_id)) as image:
+            return np.asarray(image)
