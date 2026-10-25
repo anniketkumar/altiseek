@@ -9,6 +9,7 @@ stage named with it, and each figure is that stage's own plot.
 |---|---|---|
 | [horizon_fit_mavic_4k.png](figures/horizon_fit_mavic_4k.png) | fit-camera | `mavic_4k` focal length fitted from the sea horizon (D12) |
 | [leakage_calibration.png](figures/leakage_calibration.png) | check-leakage | Near-duplicate thresholds and their calibration (D17) |
+| [fidelity_700e0ff3_d30.png](figures/fidelity_700e0ff3_d30.png) | check-fidelity | Rendered worlds vs real frames per level (recall, false detections), and the paste test (D30) |
 | [eval_vs_gsd_700e0ff3_d25.png](figures/eval_vs_gsd_700e0ff3_d25.png) | eval-detector | Swimmer recall, precision and false positives per valid view vs GSD, detector `700e0ff3455259e8`, 5% tiles (D25) |
 | [level_design_700e0ff3_d25.png](figures/level_design_700e0ff3_d25.png) | design-levels | B centre recall (D25) against the §8 limits: no feasible design |
 | [level_design_700e0ff3_d25_c065.png](figures/level_design_700e0ff3_d25_c065.png) | design-levels | The same curve with coarsest ≤ 0.65: best-ranked design |
@@ -317,6 +318,170 @@ GSD → centre recall:
   6.4 at 16), so coarse levels give weaker evidence than recall alone shows.
 - **A level table chosen now should be re-checked at M6,** when r_ℓ and f_ℓ are measured on rendered
   sensor-fit worlds.
+
+## Fidelity (M4, D30)
+
+All numbers are swimmer centre recall (within 1 m, D24) of detector `700e0ff3455259e8` at
+τ = 0.3765 (D25). Real frames are eval-detector's views at exactly the level GSDs (Kaggle run
+`altiseek-eval-levels`, 5% tiles).
+
+### First run: worlds as built under D28 and D29
+
+Worlds then drew their appearance condition uniformly from all three, so a third of them were
+glint worlds. Rendered views are every target-bearing lattice view of 40 sensor-fit (B) and
+40 test (T) worlds:
+
+| Level | GSD | B rendered | B real | Gap | T rendered | T real | Gap |
+|---|---|---|---|---|---|---|---|
+| L1 | 7.8 cm/px | 0.74 | 0.86 | −0.11 | 0.96 | 0.96 | 0.00 |
+| L2 | 11.7 cm/px | 0.66 | 0.83 | −0.17 | 0.88 | 0.86 | +0.02 |
+| L3 | 15.6 cm/px | 0.57 | 0.76 | −0.19 | 0.78 | 0.65 | +0.13 |
+| L4 | 18.8 cm/px | 0.48 | 0.73 | −0.24 | 0.67 | 0.85 | −0.17 |
+| L5 | 23.4 cm/px | 0.25 | 0.67 | −0.42 | 0.30 | 0.66 | −0.36 |
+
+This failed the proposed bar of a gap ≤ 0.10 at every level. Rendered false positives were 0.3–0.8
+of the real rate.
+
+### Diagnosis
+
+Each check below holds everything else fixed. Unless stated, it is at L5 on split B.
+
+- **Glint worlds were wrong.**
+  - **Rendered:** recall on glint (condition 2) worlds fell from 0.49 at L1 to 0.04 at L5 on B,
+    and from 0.83 to 0.00 on T.
+  - **Real:** swimmers in glint frames were found at 0.85 (L1) and 0.62 (L5). Each real frame
+    took the condition of the library patches from the nearest library frame of its video.
+  - **Cause:** every pasted swimmer carries its own calm water into the sparkle, as a smooth
+    square. Only 32 B and no T swimmer crops come from glint frames, so matching crops to the
+    condition is not possible.
+- **Calm worlds lost recall only at L5.**
+  - **L1–L4:** rendered recall on conditions 0 and 1 matched or exceeded real.
+  - **L5:**
+
+    | Split | Condition | Rendered | Real |
+    |---|---|---|---|
+    | B | 0 (dark, calm) | 0.37 | 0.68 |
+    | B | 1 (lighter, hazy) | 0.52 | 0.73 |
+    | T | 0 | 0.59 | 0.62 |
+    | T | 1 | 0.30 | no real frames |
+
+- **Not oblique pixels.** Real L5 recall by the swimmer's off-nadir angle: 0.66 at 0–30° (240
+  swimmers), 0.81 at 30–45° (70), 0.71 at 45–52° (21) and 0.65 at 52–61° (31). On T it is 0.64
+  at 0–30° (96).
+- **Not tile coverage.** Real L5 tiles with at least 40% valid pixels score higher, not lower
+  (B 0.80), so full-sea rendered views are not at a disadvantage.
+- **Not the resampling path.** Real swimmers in 40 library frames (89 swimmers) were found at:
+  - 0.70 when rectified to g0 and then area-resampled, the world path;
+  - 0.71 when rectified straight to the level GSD, the evaluation path, at either 45° or 60°.
+- **Not the paste.** Within 80 real library frames, 170 swimmers were found at 0.77 in place,
+  and their own crops at 0.79 when pasted 12–20 m away in the same view.
+- **Scene context matters.** Random library crops were pasted into the same 80 frames, whose
+  real swimmers scored 0.73 (206). Each row is 148 pasted swimmers:
+
+  | Placement | Paste | Recall |
+  |---|---|---|
+  | 3–8 m from a real swimmer | rotated, colour-shifted (as in worlds) | 0.68 |
+  | At least 10 m from every object | rotated, colour-shifted (as in worlds) | 0.57 |
+  | At least 10 m from every object | not rotated | 0.61 |
+  | At least 10 m from every object | no colour shift | 0.54 |
+  | At least 10 m from every object | opaque, no fade | 0.50 |
+  | At least 10 m from every object | 0.75 m or 1.05 m fade | 0.54–0.55 |
+
+  The detector finds a swimmer more readily among other swimmers and boats. ODv2 frames are
+  rescue exercises, where swimmers rarely float alone, while world targets are alone or in a
+  small group.
+- **The background barely matters.** 16 calm sensor-fit worlds (90 L5 targets) were
+  re-composed with the same targets:
+
+  | Background | L5 recall |
+  |---|---|
+  | As built | 0.47 |
+  | No patch turns | 0.43 |
+  | No colour harmonisation | 0.39 |
+  | Patches from one video, in frame order, unturned | 0.44 |
+
+  L4 stayed at 0.78–0.82 throughout.
+
+### Second run: D30 worlds and the paste test
+
+D30 changed two things:
+- worlds leave glint out and draw condition 0 or 1 in proportion to the library's patch counts
+  (B 34/66, T 87/13);
+- check-fidelity adds the paste test.
+
+The world sets were regenerated as:
+
+| Set | ID |
+|---|---|
+| sensor-fit | `5dc45d0e1ea5afbd` |
+| rl-train | `512eab088f9403f3` |
+| rl-val | `40f07c646a97efba` |
+| test | `22750c80717314c3` |
+
+The run writes `data/fidelity/fidelity.json`, with its plot at
+[fidelity_700e0ff3_d30.png](figures/fidelity_700e0ff3_d30.png).
+
+**Paste test**, the acceptance measure. Library swimmers are pasted with `render.paste` into
+real library frames of the same split, either 3–8 m from a real swimmer (near) or at least 10 m
+from every object (isolated). "Real" is the real swimmers on the isolated copy; "real among
+pasted" is the same swimmers on the near copy. The gap is near minus real among pasted, with a
+95% bootstrap interval over frames:
+
+| Split | Level | Frames | Real | Real among pasted | Near | Isolated | Gap (95% CI) |
+|---|---|---|---|---|---|---|---|
+| B | L1 | 34 | 0.90 (137) | 0.93 | 0.89 (187) | 0.83 (173) | −0.03 (−0.10, +0.02) |
+| B | L2 | 32 | 0.85 (135) | 0.90 | 0.88 (144) | 0.72 (149) | −0.01 (−0.08, +0.04) |
+| B | L3 | 27 | 0.80 (136) | 0.82 | 0.87 (112) | 0.68 (118) | +0.04 (−0.07, +0.17) |
+| B | L4 | 23 | 0.75 (134) | 0.78 | 0.88 (96) | 0.68 (97) | +0.10 (−0.00, +0.21) |
+| B | L5 | 21 | 0.77 (118) | 0.81 | 0.79 (84) | 0.63 (82) | −0.02 (−0.10, +0.07) |
+| T | L1 | 14 | 1.00 (20) | 1.00 | 1.00 (48) | 1.00 (52) | 0.00 |
+| T | L2 | 13 | 1.00 (23) | 1.00 | 1.00 (52) | 0.86 (50) | 0.00 |
+| T | L3 | 13 | 0.92 (25) | 1.00 | 0.90 (52) | 0.80 (50) | −0.10 (−0.17, −0.02) |
+| T | L4 | 12 | 0.87 (23) | 0.91 | 0.90 (48) | 0.75 (48) | −0.02 (−0.15, +0.14) |
+| T | L5 | 11 | 0.52 (21) | 0.67 | 0.68 (44) | 0.61 (44) | +0.02 (−0.25, +0.25) |
+
+**Worlds against real frames.** Rendered views come from 40 sensor-fit and 40 test worlds; real
+views from the eval-levels run. False detections are per view. Rendered false detections include
+hits on distractors; test worlds have none:
+
+| Set | Level | Rendered recall (95% CI) | Real recall | Gap | Rendered false / view | Real false / valid view | Distractors hit |
+|---|---|---|---|---|---|---|---|
+| sensor-fit | L1 | 0.87 (0.81, 0.93) | 0.86 | +0.02 | 0.13 | 0.30 | 0.31 |
+| sensor-fit | L2 | 0.90 (0.86, 0.95) | 0.83 | +0.07 | 0.30 | 0.80 | 0.59 |
+| sensor-fit | L3 | 0.88 (0.82, 0.94) | 0.76 | +0.13 | 0.63 | 0.86 | 0.70 |
+| sensor-fit | L4 | 0.77 (0.68, 0.86) | 0.73 | +0.04 | 0.79 | 1.26 | 0.71 |
+| sensor-fit | L5 | 0.49 (0.39, 0.59) | 0.67 | −0.18 | 1.33 | 1.77 | 0.73 |
+| test | L1 | 1.00 (0.99, 1.00) | 0.96 | +0.04 | 0.01 | 0.16 | none |
+| test | L2 | 0.98 (0.96, 1.00) | 0.86 | +0.13 | 0.00 | 0.18 | none |
+| test | L3 | 0.98 (0.96, 1.00) | 0.65 | +0.33 | 0.01 | 0.04 | none |
+| test | L4 | 0.90 (0.83, 0.95) | 0.85 | +0.05 | 0.00 | 0.00 | none |
+| test | L5 | 0.52 (0.41, 0.62) | 0.66 | −0.13 | 0.00 | 0.05 | none |
+
+**False detections on empty sea:**
+- Real false detections sit in views that hold swimmers: exercise scenes with boats, unlabelled
+  people and offset boxes.
+- On real views without a swimmer, B L1 has 0.05 per valid view (101 views), and T has 0.07 at
+  L1 and 0.00 at L2–L5 (13–102 views).
+- Rendered views without targets or distractors have 0.00–0.03 per view.
+- B's swimmer-free views at L2–L4 (0.36, 1.02 and 0.55, from 37, 17 and 10 views) can still
+  hold boats, so they do not isolate empty sea.
+
+**Reading:**
+- **Renderer accepted (D30).** The paste-test gap is within 0.10 at every level on both splits.
+  The margins are thin at B L4 (+0.099) and T L3 (−0.096), and T rests on 11–14 frames.
+- **Context, not rendering, drives the coarse levels.** Isolated pastes score 0.06–0.20 below
+  near pastes. That is why worlds, whose targets are alone or in a small group, fall below
+  real frames at L5.
+- **Rendered L5 recall is about 0.1 below isolated pastes on real water** (B 0.49 against 0.63,
+  T 0.52 against 0.61). The composed background or the condition mix costs that much at L5, so
+  sensor models fitted on these worlds will be slightly pessimistic about L5.
+- **Mid levels run above real frames** (B L3 +0.13, T L2 +0.13 and L3 +0.33). A real bin's
+  recall depends on which frames can serve it: T's 15.6 cm/px views from frames covering less
+  than 15% of a tile score 0.41 (92 swimmers), while the paste test finds 0.92 on T's library
+  frames at L3.
+- **Distractors are where rendered false detections come from.** A third to three quarters of
+  distractors draw a swimmer detection, while empty rendered sea is as clean as empty real sea.
+  Open-sea clutter other than ODv2 classes (debris, foam) is not modelled.
 
 ## Superseded: `78aba879cc50e025` under D21
 

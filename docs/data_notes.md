@@ -428,3 +428,9 @@ against 2021-08-21).
   pastes would also carry an unlabelled swimmer and are rejected.
 - **T has no usable distractor:** its 22 boats and jetskis in the chosen frames all lie beyond
   45°, so test worlds have no distractors.
+- Every T frame, not only every 4th, gives the same answer (a geometry-only check, 2026-10-25):
+  all 42 boat and 45 jetski boxes in frames with pixels within 45° fall outside the usable
+  pixels. At 60°, 4 crops of one boat (`NorthSea_Thu_DJI_0106`) would pass; jetskis, buoys and
+  life-saving appliances stay outside even there. The limit is the off-nadir angle and the image
+  border, not the native GSD: allowing 7.8 cm/px instead of 5 keeps exactly the same crops. T's
+  distractors were filmed obliquely, far from the camera.

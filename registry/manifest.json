@@ -201,85 +201,85 @@
   },
   {
     "kind": "world_set",
-    "artifact_id": "b294a2e2121c0546",
-    "sha256": "b294a2e2121c054610b1140d8c0d2027128a3ff1bcbb2be5c89fd929cc84f4bb",
+    "artifact_id": "5dc45d0e1ea5afbd",
+    "sha256": "5dc45d0e1ea5afbd431ac43a2e0a4c2775f53ce1c48e8ffbe6862c44495e2977",
     "location": "local:data/worlds/sensor-fit",
     "parents": {
       "library_id": "6b541bb0ff9d062a",
-      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+      "code_commit": "f5052e439e89dbe34509381783e6ebb9ec43bc5b"
     },
-    "created_utc": "2026-10-24T20:03:46+00:00",
+    "created_utc": "2026-10-25T08:31:46+00:00",
     "notes": {
       "world_set": "sensor-fit",
-      "world_set_id": "b294a2e2121c0546",
+      "world_set_id": "5dc45d0e1ea5afbd",
       "split": "B",
       "library_id": "6b541bb0ff9d062a",
       "worlds": 40,
       "families": 8,
-      "targets": 76,
-      "distractors": 338
+      "targets": 80,
+      "distractors": 325
     }
   },
   {
     "kind": "world_set",
-    "artifact_id": "68bb835a22d7ee13",
-    "sha256": "68bb835a22d7ee13e0089c823da4e043f80750053ffcb67dd580ae35f7303959",
+    "artifact_id": "512eab088f9403f3",
+    "sha256": "512eab088f9403f397670472fe5cf098cf73983041cb878fb6e381b533e4c144",
     "location": "local:data/worlds/rl-train",
     "parents": {
       "library_id": "6b541bb0ff9d062a",
-      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+      "code_commit": "f5052e439e89dbe34509381783e6ebb9ec43bc5b"
     },
-    "created_utc": "2026-10-24T20:03:57+00:00",
+    "created_utc": "2026-10-25T08:31:56+00:00",
     "notes": {
       "world_set": "rl-train",
-      "world_set_id": "68bb835a22d7ee13",
+      "world_set_id": "512eab088f9403f3",
       "split": "B",
       "library_id": "6b541bb0ff9d062a",
       "worlds": 160,
       "families": 8,
-      "targets": 314,
-      "distractors": 1314
+      "targets": 323,
+      "distractors": 1348
     }
   },
   {
     "kind": "world_set",
-    "artifact_id": "1265961a26d03ba7",
-    "sha256": "1265961a26d03ba708902a0b7db6539708f497e9b02401d688038cec7845e1b3",
+    "artifact_id": "40f07c646a97efba",
+    "sha256": "40f07c646a97efba15c2c57cf84f33df6fff68cfc5315bdbc4a83828ce7b5272",
     "location": "local:data/worlds/rl-val",
     "parents": {
       "library_id": "6b541bb0ff9d062a",
-      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+      "code_commit": "f5052e439e89dbe34509381783e6ebb9ec43bc5b"
     },
-    "created_utc": "2026-10-24T20:04:00+00:00",
+    "created_utc": "2026-10-25T08:31:59+00:00",
     "notes": {
       "world_set": "rl-val",
-      "world_set_id": "1265961a26d03ba7",
+      "world_set_id": "40f07c646a97efba",
       "split": "B",
       "library_id": "6b541bb0ff9d062a",
       "worlds": 40,
       "families": 8,
-      "targets": 79,
-      "distractors": 327
+      "targets": 78,
+      "distractors": 332
     }
   },
   {
     "kind": "world_set",
-    "artifact_id": "b0b51543d08d1d9e",
-    "sha256": "b0b51543d08d1d9e64ae6b6ed637376cc2bb30274417af92d7f90c16fda83285",
+    "artifact_id": "22750c80717314c3",
+    "sha256": "22750c80717314c36114b74584bb1de5f62fb3589c89b888e44877ca1346da68",
     "location": "local:data/worlds/test",
     "parents": {
       "library_id": "181004cb84b676f1",
-      "code_commit": "58052bae2295b9d34c0d533877e9af744771cd2a"
+      "code_commit": "f5052e439e89dbe34509381783e6ebb9ec43bc5b"
     },
-    "created_utc": "2026-10-24T20:04:05+00:00",
+    "created_utc": "2026-10-25T08:32:04+00:00",
     "notes": {
       "world_set": "test",
-      "world_set_id": "b0b51543d08d1d9e",
+      "world_set_id": "22750c80717314c3",
       "split": "T",
       "library_id": "181004cb84b676f1",
       "worlds": 80,
       "families": 8,
-      "targets": 163,
+      "targets": 158,
       "distractors": 0
     }
   }
