@@ -1,0 +1,17 @@
+render:
+  _base_: ../world/render.yaml
+detector_id: 700e0ff3455259e8
+checkpoint: data/kaggle/altiseek-detector-v3/detector/train/weights/best.pt
+tau_min: 0.05
+inference: {iou: 0.7, max_det: 300}
+batch_size: 16
+render_workers: 2
+worlds_dir: data/worlds
+libraries: {B: data/libraries/B, T: data/libraries/T}
+library_ids: {B: 6b541bb0ff9d062a, T: 181004cb84b676f1}
+world_set_ids:
+  sensor-fit: 5dc45d0e1ea5afbd
+  rl-train: 512eab088f9403f3
+  rl-val: 40f07c646a97efba
+  test: 22750c80717314c3
+out_dir: data/caches

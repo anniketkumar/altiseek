@@ -207,6 +207,32 @@ def jittered(
     return np.clip(np.rint(out), 0, 255).astype(np.uint8)
 
 
+def view_window(
+    spec: WorldSpec,
+    table: LevelTable,
+    level: Level,
+    cell: tuple[int, int],
+    variant: int,
+    settings: VariantSettings,
+    resolution_px: int,
+) -> tuple[int, int, int, np.random.Generator]:
+    """Shifted ``(row0, col0, side_px)`` at g0 and the RNG after the shift draw.
+
+    Shared by rendering and cache projection so pixel-corner detections map to the
+    actual shifted footprint. Recreating this window never advances another view's RNG.
+    """
+    raster = Raster.covering(spec.area_m, spec.area_m, spec.gsd_mpp)
+    row0, col0, n = raster.window(
+        cell[0] * table.cell_m, cell[1] * table.cell_m, table.footprint_m(level)
+    )
+    rng = np.random.default_rng([spec.seed, table.levels.index(level), cell[0], cell[1], variant])
+    reach = math.floor(n / resolution_px * settings.shift_view_px)
+    dc, dr = (int(v) for v in rng.integers(-reach, reach + 1, 2)) if reach else (0, 0)
+    col0 = min(max(col0 + dc, 0), raster.width_px - n)
+    row0 = min(max(row0 + dr, 0), raster.height_px - n)
+    return row0, col0, n, rng
+
+
 def render_view(
     spec: WorldSpec,
     composed: NDArray[np.uint8],
@@ -221,15 +247,8 @@ def render_view(
     """The camera's view of the footprint of ``level`` whose south-west cell is ``cell``
     (``(ix, iy)``), and the objects in it."""
     raster = Raster(spec.gsd_mpp, composed.shape[1], composed.shape[0])
-    row0, col0, n = raster.window(
-        cell[0] * table.cell_m, cell[1] * table.cell_m, table.footprint_m(level)
-    )
     size = camera.resolution_px
-    rng = np.random.default_rng([spec.seed, table.levels.index(level), cell[0], cell[1], variant])
-    reach = math.floor(n / size * settings.shift_view_px)
-    dc, dr = (int(v) for v in rng.integers(-reach, reach + 1, 2)) if reach else (0, 0)
-    col0 = min(max(col0 + dc, 0), raster.width_px - n)
-    row0 = min(max(row0 + dr, 0), raster.height_px - n)
+    row0, col0, n, rng = view_window(spec, table, level, cell, variant, settings, size)
     region = jittered(composed[row0 : row0 + n, col0 : col0 + n], rng, settings)
     image = pipeline.render_view(region, size, size, camera.pipeline)
     truth = []

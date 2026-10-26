@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from altiseek.cache.config import CacheConfig
 from altiseek.config import Config, load_config
 from altiseek.data.config import DataConfig
 from altiseek.detector.config import DetectorConfig
@@ -16,6 +17,7 @@ from altiseek.world.config import LibraryConfig, RenderConfig, WorldConfig
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "configs"
 SCHEMAS: dict[str, type[Config]] = {
+    "cache": CacheConfig,
     "camera": CameraSpec,
     "data": DataConfig,
     "detector": DetectorConfig,

@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D31**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D32**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 202
   pass at `7138ab7`.
@@ -76,6 +76,21 @@ comes next.
 - `scripts/build_libraries.py`, `generate_worlds.py`, `render_preview.py`, `check_fidelity.py`.
 - `LevelTable.lattice(level)` (in `altiseek.geometry.levels`) gives a level's view cells: 121, 49,
   25, 16 and 9 for L1–L5, so 220 views per world.
+
+## M5 implementation update (2026-10-26)
+
+Cache code and tests are present in `src/altiseek/cache/`, `scripts/build_cache.py` and
+`scripts/validate_cache.py` (D31). All 219 tests pass, including lint and format. Local library
+index/image hashes and all four world-set IDs were verified. Cloud inference has not run:
+Windows code-integrity policy
+blocked the installed Kaggle CLI; Smart App Control is off. Browser automation could not
+reliably determine the browser URL. Do not weaken Windows security to proceed.
+
+Use the manual pilot workflow in `docs/cache.md`: `scripts/prepare_cache_notebook.py` makes a
+credential-free notebook pinned to a pushed commit. `scripts/cache_pilot.py` rebuilds M1,
+libraries and world sets, refusing mismatched IDs, then times two sensor-fit worlds and
+validates fresh GPU inference. Full cache sets, final counts, validation and registry collection
+remain pending. Do not mark M5 done or start M6 yet.
 
 ## Next: M5, the detection cache (CLAUDE.md §12)
 
