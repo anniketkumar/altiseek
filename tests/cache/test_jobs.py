@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import runpy
 from pathlib import Path
 
 import pytest
@@ -71,3 +72,48 @@ def test_resumed_stage_keeps_completed_worlds_outside_limit(tmp_path, cfg, libra
         fh.write(b"changed bytes")
     with pytest.raises(ValueError, match="checksum mismatch"):
         resume_metadata(path, specs[0], cfg)
+
+
+def test_attached_input_identity_and_split_checks(tmp_path, cfg):
+    read = runpy.run_path(str(Path(__file__).resolve().parents[2] / "scripts/cache_pilot.py"))[
+        "attached_config"
+    ]
+    cfg = cfg.model_copy(
+        update={
+            "libraries": {"B": tmp_path / "unused"},
+            "library_ids": {"B": "lib"},
+            "world_set_ids": {"sensor-fit": "set"},
+        }
+    )
+    assert read(cfg, tmp_path) is None
+    root = tmp_path / "input"
+    (root / "libraries/B").mkdir(parents=True)
+    marker = root / "m5-inputs.json"
+    manifest = {
+        "split_id": "783b4403804291a2",
+        "library_ids": cfg.library_ids,
+        "world_set_ids": cfg.world_set_ids,
+    }
+    marker.write_text(json.dumps(manifest))
+    meta = root / "libraries/B/library.meta.json"
+    meta.write_text(json.dumps({"split_id": manifest["split_id"], "split": "B"}))
+    attached = read(cfg, tmp_path)
+    assert attached.libraries["B"] == root / "libraries/B"
+    assert attached.worlds_dir == root / "worlds"
+    meta.write_text(json.dumps({"split_id": "wrong", "split": "B"}))
+    with pytest.raises(ValueError, match="split mismatch"):
+        read(cfg, tmp_path)
+    marker.write_text(json.dumps(manifest | {"library_ids": {"B": "changed"}}))
+    with pytest.raises(ValueError, match="frozen IDs"):
+        read(cfg, tmp_path)
+
+
+def test_manual_notebook_requires_preserved_inputs():
+    make = runpy.run_path(
+        str(Path(__file__).resolve().parents[2] / "scripts/prepare_cache_notebook.py")
+    )["notebook"]
+    notebook = make("a" * 40)
+    code = "".join(notebook["cells"][1]["source"])
+    compile(code, "pilot.ipynb", "exec")
+    assert "--require-input-bundle" in code
+    assert "KGAT_" not in code

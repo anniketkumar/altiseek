@@ -24,7 +24,8 @@ subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", "--no-input",
                cwd=repo, check=True)
 log_path = Path("/kaggle/working/cache-pilot.log")
 with log_path.open("w") as log:
-    process = subprocess.Popen([sys.executable, "-u", "scripts/cache_pilot.py"], cwd=repo,
+    process = subprocess.Popen([sys.executable, "-u", "scripts/cache_pilot.py",
+                                "--require-input-bundle"], cwd=repo,
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     for line in process.stdout:
         print(line, end="", flush=True)
@@ -39,10 +40,12 @@ if status:
 
 Keep this notebook **private**. Enable **Internet** and **GPU T4 x2**.
 Use **Add Input** to attach the saved output of your `altiseek-detector-v3` notebook.
+Also attach the **private** dataset created from `altiseek-m5-inputs.zip`.
+Its input tree must contain `m5-inputs.json`, `libraries/`, and `worlds/`.
 Then use **Save Version → Save & Run All** for a background run that saves outputs.
 
-This runs a two-world sensor-fit pilot, not the full cache build. It first rebuilds
-the libraries/worlds and stops on any identity mismatch. No API token is needed.
+This runs a two-world sensor-fit pilot, not the full cache build. It verifies the original
+library/world bytes and IDs, and skips rebuilding them. No API token is needed.
 Download `pilot-summary.json` and `cache-pilot.log` from the saved output afterward.
 """
     return {

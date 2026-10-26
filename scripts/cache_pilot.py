@@ -4,10 +4,12 @@ Attach the saved output of aniketkumarpradhan/altiseek-detector-v3 as notebook i
 No API credential is needed. This script does not launch the full 320-world build.
 """
 
+import argparse
 import json
 import subprocess
 import sys
 import time
+from collections.abc import Sequence
 from pathlib import Path
 
 from altiseek.cache.config import CacheConfig
@@ -22,13 +24,51 @@ def stage(script: str, *args: str) -> None:
     subprocess.run(command, check=True)
 
 
-def main() -> None:
+def attached_config(cfg: CacheConfig, input_root: Path) -> CacheConfig | None:
+    """Use byte-preserved inputs only when their manifest matches the frozen IDs."""
+    markers = sorted(input_root.rglob("m5-inputs.json"))
+    if not markers:
+        return None
+    if len(markers) != 1:
+        raise ValueError("Attach exactly one M5 input bundle")
+    marker = markers[0]
+    manifest = json.loads(marker.read_text(encoding="utf-8"))
+    expected = {
+        "split_id": "783b4403804291a2",
+        "library_ids": cfg.library_ids,
+        "world_set_ids": cfg.world_set_ids,
+    }
+    if manifest != expected:
+        raise ValueError("M5 input manifest does not match the frozen IDs")
+    root = marker.parent
+    candidate = cfg.model_copy(
+        update={
+            "libraries": {s: root / "libraries" / s for s in cfg.libraries},
+            "worlds_dir": root / "worlds",
+        }
+    )
+    for split, path in candidate.libraries.items():
+        meta = json.loads((path / "library.meta.json").read_text(encoding="utf-8"))
+        if meta["split_id"] != expected["split_id"] or meta["split"] != split:
+            raise ValueError("attached library split mismatch")
+    return candidate
+
+
+def main(argv: Sequence[str] | None = None) -> None:
+    import numpy as np
     import torch
 
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--require-input-bundle", action="store_true")
+    args = parser.parse_args(argv)
     out = Path("/kaggle/working")
     if not out.is_dir() or not torch.cuda.is_available():
         raise SystemExit("Run in Kaggle with Internet on and a GPU accelerator enabled.")
     start = time.perf_counter()
+    runtime = {"numpy": np.__version__, "numpy_file": np.__file__, "torch": torch.__version__}
+    write_json(out / "runtime.json", runtime)
+    if np.__version__ != "2.1.3":
+        raise ValueError(f"Imported NumPy {np.__version__} != pinned 2.1.3; inspect runtime.json")
     cfg = load_config("configs/cache/default.yaml", CacheConfig)
     checkpoints = [
         p for p in Path("/kaggle/input").rglob("best.pt") if detector_id_of(p) == cfg.detector_id
@@ -46,13 +86,26 @@ def main() -> None:
             "out_dir": out / "caches",
         }
     )
+    attached = attached_config(cfg, Path("/kaggle/input"))
+    if args.require_input_bundle and attached is None:
+        raise SystemExit("Add the private M5 input dataset containing m5-inputs.json first.")
+    if attached is not None:
+        cfg = attached
     # The bootstrap notebook clones a pinned commit. Rebuild the M1 tables there.
-    for name in ("prepare_data", "fit_camera", "make_splits"):
-        stage(name)
-    split = json.loads(Path("data/processed/make_splits.meta.json").read_text())["split_id"]
+    split = "783b4403804291a2"
+    if attached is None:
+        for name in ("prepare_data", "fit_camera", "make_splits"):
+            stage(name)
+        split = json.loads(Path("data/processed/make_splits.meta.json").read_text())["split_id"]
     if split != "783b4403804291a2":
         raise ValueError(f"split_id mismatch: {split}")
-    report = {"split_id": split, "detector_id": cfg.detector_id, "status": "preparing"}
+    report = {
+        "split_id": split,
+        "detector_id": cfg.detector_id,
+        "status": "preparing",
+        "runtime": runtime,
+        "input_mode": "attached" if attached else "rebuilt",
+    }
     write_json(out / "pilot-summary.json", report)
     prep_manifest = str(out / "preparation-artifacts.json")
     if not all((p / "library.meta.json").exists() for p in cfg.libraries.values()):
