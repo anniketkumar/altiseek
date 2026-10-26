@@ -26,7 +26,7 @@ min_condition_patches: 20
 patch_step_m: 10.0  # 12.8 m patches overlap their neighbours by 2.8 m
 clearance_m: 0.3
 scale_jitter: 0.05
-world_sets:  # small sets for M4; M5 fixes the counts against the cache's cost
+world_sets:  # M5 counts retained after the GPU cost pilot (D33)
   - {name: sensor-fit, split: B, per_family: 5, seed_base: 1000000}
   - {name: rl-train, split: B, per_family: 20, seed_base: 2000000}
   - {name: rl-val, split: B, per_family: 5, seed_base: 3000000}

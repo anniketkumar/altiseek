@@ -20,6 +20,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument("--config", type=Path, default=Path("configs/cache/default.yaml"))
     parser.add_argument("--sets", nargs="+", default=["sensor-fit", "rl-train", "rl-val", "test"])
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument(
+        "--existing-only",
+        action="store_true",
+        help="validate completed files after a time-limited partial build",
+    )
     parser.add_argument("--samples", type=int, default=20, help="random views per world")
     parser.add_argument("--seed", type=int, default=20261026)
     parser.add_argument("--score-atol", type=float, default=1e-4)
@@ -38,6 +43,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     for name in args.sets:
         for spec in load_worlds(cfg, name)[: args.limit]:
             path = cfg.out_dir / name / f"{spec.world_id}.npz"
+            if args.existing_only and not path.exists():
+                continue
             if resume_metadata(path, spec, cfg) is None:
                 raise ValueError(f"cache or metadata is missing: {path}")
             cache = WorldCache.load(path, expected=header_for(spec, cfg))

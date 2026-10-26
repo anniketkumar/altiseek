@@ -117,3 +117,56 @@ def test_manual_notebook_requires_preserved_inputs():
     compile(code, "pilot.ipynb", "exec")
     assert "--require-input-bundle" in code
     assert "KGAT_" not in code
+    production = make("a" * 40, production=True)
+    code = "".join(production["cells"][1]["source"])
+    compile(code, "production.ipynb", "exec")
+    assert "scripts/cache_production.py" in code
+    assert "cache-production.log" in code
+
+
+def test_production_resume_preserves_verified_bytes_and_reports_partial(tmp_path, cfg, built):
+    module = runpy.run_path(
+        str(Path(__file__).resolve().parents[2] / "scripts/cache_production.py")
+    )
+    spec, cache = built
+    cfg = cfg.model_copy(
+        update={"out_dir": tmp_path / "working/caches", "world_set_ids": {"sensor-fit": "set"}}
+    )
+    source = tmp_path / "input/pilot/caches/sensor-fit" / f"{spec.world_id}.npz"
+    cache.save(source)
+    meta = {
+        "created_utc": "2026-10-26T00:00:00+00:00",
+        "cache_id": cache.header.cache_id,
+        "world_id": spec.world_id,
+        "world_set_id": "set",
+        "detector_id": "fake",
+        "views": len(cache.views),
+        "outputs": {"cache": {"sha256": sha256_file(source)}},
+    }
+    source.with_suffix(".meta.json").write_text(json.dumps(meta))
+    worlds = {"sensor-fit": [spec]}
+    assert module["resume_inputs"](cfg, tmp_path / "input", worlds) == 1
+    assert module["resume_inputs"](cfg, tmp_path / "input", worlds) == 0
+    target = cfg.out_dir / "sensor-fit" / source.name
+    assert target.read_bytes() == source.read_bytes()
+    assert module["completion"](cfg, worlds) == {
+        "sensor-fit": {"expected": 1, "built": 1, "validated": 0}
+    }
+    target.with_suffix(".validation.json").write_text(
+        json.dumps(
+            {
+                "passed": True,
+                "cache_id": "wrong",
+                "inputs": {"cache": {"sha256": sha256_file(target)}},
+                "score_atol": 1e-4,
+                "box_atol_px": 0.05,
+                "view_indices": list(range(20)),
+            }
+        )
+    )
+    with pytest.raises(ValueError, match="validation"):
+        module["completion"](cfg, worlds)
+    with source.open("ab") as fh:
+        fh.write(b"corrupt")
+    with pytest.raises(ValueError, match="checksum"):
+        module["resume_inputs"](cfg, tmp_path / "input", worlds)

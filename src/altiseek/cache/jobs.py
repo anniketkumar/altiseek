@@ -102,3 +102,33 @@ def write_json(path: Path, value: object) -> None:
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
     temp.replace(path)
+
+
+def attached_config(cfg: CacheConfig, input_root: Path) -> CacheConfig | None:
+    """Use byte-preserved inputs only when their manifest matches the frozen IDs."""
+    markers = sorted(input_root.rglob("m5-inputs.json"))
+    if not markers:
+        return None
+    if len(markers) != 1:
+        raise ValueError("Attach exactly one M5 input bundle")
+    marker = markers[0]
+    manifest = json.loads(marker.read_text(encoding="utf-8"))
+    expected = {
+        "split_id": "783b4403804291a2",
+        "library_ids": cfg.library_ids,
+        "world_set_ids": cfg.world_set_ids,
+    }
+    if manifest != expected:
+        raise ValueError("M5 input manifest does not match the frozen IDs")
+    root = marker.parent
+    candidate = cfg.model_copy(
+        update={
+            "libraries": {s: root / "libraries" / s for s in cfg.libraries},
+            "worlds_dir": root / "worlds",
+        }
+    )
+    for split, path in candidate.libraries.items():
+        meta = json.loads((path / "library.meta.json").read_text(encoding="utf-8"))
+        if meta["split_id"] != expected["split_id"] or meta["split"] != split:
+            raise ValueError("attached library split mismatch")
+    return candidate

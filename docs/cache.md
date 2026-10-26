@@ -1,7 +1,31 @@
 # Detection cache (M5)
 
-The code is implemented; the cloud pilot, cost decision and production cache build are pending.
-No GPU inference has run for M5 yet. D31 records storage and inference choices.
+The two-world cloud pilot passed; the production cache build is pending. D31 records storage
+and inference choices, D32 fixes the cloud input transfer, and D33 fixes the world-set counts.
+
+## Production run after the successful pilot
+
+```powershell
+uv run python scripts/prepare_cache_notebook.py --production
+```
+
+Import `data/kaggle/altiseek-cache-production.ipynb` into Kaggle. Keep it private, select GPU
+T4 x2 and enable Internet. Attach the existing `altiseek-m5-inputs` dataset and
+`altiseek-detector-v3` notebook output. Optionally attach the successful pilot notebook's
+saved output to reuse its two caches. No new dataset upload is needed.
+
+Use Save Version → Save & Run All. Generation stops between worlds after eight hours; validation
+then checks 20 seeded random views per completed world with the unchanged pilot tolerances.
+Expected total runtime is roughly 7–8 hours, extrapolated from two sensor-fit worlds, not a
+guarantee. The reported remaining quota before preparation was 22 h 36 min.
+
+Download all outputs, including `production-summary.json`, `cache-production.log` and `caches/`.
+Status `complete` requires all 320 worlds to have matching metadata, registry entries and live
+validation records. Status `partial` saves the completed subset: attach that saved notebook output
+to a subsequent production run. The runner checks restored headers and checksums before copying,
+refuses conflicting versions, and registers restored caches. It revalidates all completed caches.
+Collect and verify the actual output files locally before marking M5 done and updating the
+committed artifact registry; a summary alone is insufficient.
 
 ## Manual Kaggle pilot
 
@@ -45,8 +69,8 @@ attached. Mismatched IDs are always refused.
 On matching inputs it caches two sensor-fit worlds (1,760 views), validates 20 seeded views per
 world against fresh GPU inference, and reports composition/render/inference time, output bytes,
 and estimated cache hours for each set. These two worlds are a preliminary cost estimate, not
-performance evaluation. D29 counts remain provisional until the measured cost is reviewed and
-the count decision is logged. The full build is not launched automatically.
+performance evaluation. D33 retains D29's counts based on the measured cost. The pilot does not
+launch the full build automatically.
 
 ## Generation and resume
 
@@ -101,3 +125,28 @@ The accepted originals remain authoritative. Transfer their exact bytes privatel
 renaming rebuilt artifacts or changing their IDs. The dataset's [official repository](https://github.com/Ben93kie/SeaDronesSee/blob/main/README.md)
 states that the data are CC0 1.0; terms were checked before preparing this private transfer.
 No imagery or transfer bundle is committed to git.
+
+## Successful pilot with original inputs (D33)
+
+The second pilot passed with all frozen library/world-set IDs and imported NumPy 2.1.3,
+PyTorch 2.11.0+cu128. Both worlds have 880 views; all 40 randomly sampled live checks passed
+at the fixed tolerances. Downloaded cache files were checked locally against their expected
+headers and metadata SHA-256. They are retained under
+`data/kaggle/altiseek-cache-pilot-passed/`.
+
+Per-world totals were 74.89 and 65.30 seconds (mean 70.10). Composition averaged 6.56 seconds,
+rendering 48.32 seconds, and detection 15.12 seconds; the first world includes detector warm-up.
+Cache sizes were 23,213 and 17,382 bytes. These sizes are for two low-distractor pilot worlds
+and should not be extrapolated as an upper bound. End-to-end pilot time was 416.39 seconds,
+including 239.87 seconds of preparation/input checking.
+
+| Set | Worlds | Projected generation hours |
+|---|---:|---:|
+| sensor-fit | 40 | 0.78 |
+| rl-train | 160 | 3.12 |
+| rl-val | 40 | 0.78 |
+| test | 80 | 1.56 |
+| Total | 320 | 6.23 |
+
+Counts and seeds stay unchanged. Generation estimates exclude full validation and startup.
+The final build will provide measured production timings and sizes.

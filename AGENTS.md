@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D33**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D34**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 202
   pass at `7138ab7`.
@@ -93,8 +93,14 @@ credential-free notebook pinned to a pushed commit. `scripts/prepare_cache_input
 the original libraries and world specs as `data/kaggle/altiseek-m5-inputs.zip` for a private
 Kaggle dataset (terms checked, D32). The updated notebook requires this input, verifies its
 IDs and file hashes, skips rebuilding and checks imported NumPy before timing two sensor-fit
-worlds and validating fresh GPU inference. Full cache sets, final counts, validation and registry collection
-remain pending. Do not mark M5 done or start M6 yet.
+worlds and validating fresh GPU inference. The second pilot passed: both 880-view worlds were
+verified locally and all 40 live view checks passed. Mean generation time was 70.10 s/world;
+D33 retains the 40/160/40/80 counts (about 6.23 h generation, roughly 7–8 h with validation).
+The owner reported 22 h 36 min GPU quota remaining. `prepare_cache_notebook.py --production`
+creates the full-run notebook; attach the same two inputs and optionally the successful pilot's
+saved output to resume those caches. Production generation stops between worlds after 8 h,
+then validates completed files and reports complete/partial. Full cache sets, production
+validation and committed registry collection remain pending. Do not mark M5 done or start M6 yet.
 
 ## Next: M5, the detection cache (CLAUDE.md §12)
 
