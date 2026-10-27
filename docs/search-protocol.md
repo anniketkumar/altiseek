@@ -17,6 +17,9 @@ and excludes actual K from observations; main runs use known K.
 - Start at L5, at a seeded random edge launch location snapped to its lattice.
   The initial observation costs 2 s and can make declarations. Initial finds,
   false declarations and energy enter episode metrics/reward accounting.
+  If everyone is found at reset, a Gymnasium caller's first step returns terminal
+  without another move, observation or reward. Episode logging already includes
+  the initial event and need not take this extra API transition.
 - Auto-declare at posterior > 0.5, one fixed rule across V0–V3 and normal policies.
   This is a decision threshold for the ablation, not a claim of reliable calibration.
   Resolve the centre cell once, finding every remaining target in it or recording
@@ -69,7 +72,11 @@ claimed tuned. Choose each baseline's settings per family and sensor variant by
 mean validation AUC; ties prefer fewer false declarations, then canonical config
 order. These selected validation scores are optimistically biased, not test scores.
 
-B1 chooses the nearer end of its boustrophedon route. B3 interrupts the coarse
+B1 chooses the nearer end of its boustrophedon route. Travel between goals at the
+same level stays at that level, even if an altitude shortcut would cost less.
+The initial validation run `2b3af75b6628cf6d` was stopped during review and is
+superseded by implementation `m7-v2-fixed-level-routing`; do not combine them.
+B3 interrupts the coarse
 sweep on a candidate, finishes its confirmation, then resumes the unvisited
 coarse views. A completed fixed-level sweep stays at that level. B4 considers
 one-step actions; B5 considers up to two moves with no free travel, correcting

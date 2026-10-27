@@ -74,7 +74,7 @@ def main() -> None:
         inputs[f"cache_{world.world_id}"] = path
     identity = {
         "schema": 1,
-        "implementation": "m7-v1",
+        "implementation": "m7-v2-fixed-level-routing",
         "config": run.model_dump(mode="json"),
         "search": search.model_dump(mode="json"),
         "model_sha256": sha256_file(args.model),

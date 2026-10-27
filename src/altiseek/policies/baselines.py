@@ -72,7 +72,7 @@ class Baseline:
             if candidates:
                 goal = min(candidates, key=lambda i: self.nav.distances[node, i])
                 if goal != node:
-                    return int(self.nav.first_actions[node, goal])
+                    return self._toward(node, goal)
             return int(valid[0])
         level = int(
             self.parameters.get("coarse", 4)
@@ -97,7 +97,7 @@ class Baseline:
                 self.goal = self.nav.nearest(confirm, (cell + 0.5) * self.nav.table.cell_m)
         # Persist an in-flight goal so changing apparent distances cannot cause oscillation.
         if self.goal is not None and self.goal != node:
-            return int(self.nav.first_actions[node, self.goal])
+            return self._toward(node, self.goal)
         if self.goal is None:
             remaining = [
                 i
@@ -125,10 +125,10 @@ class Baseline:
                     )
                     self.goal = min(ranked[:width], key=lambda i: self.nav.distances[node, i])
         if self.goal is not None and self.goal != node:
-            return int(self.nav.first_actions[node, self.goal])
+            return self._toward(node, self.goal)
         if self.nav.nodes[node].level != level:
             nearest = self.nav.nearest(level, self.nav.positions[node])
-            return int(self.nav.first_actions[node, nearest])
+            return self._toward(node, nearest)
         # A completed fixed-level sweep stays at that level; no hidden extra policy.
         horizontal = valid[valid < 4]
         return int(horizontal[0] if len(horizontal) else valid[0])
@@ -136,6 +136,17 @@ class Baseline:
     def _contains(self, node: int, cell: np.ndarray) -> bool:
         x0, y0, x1, y1 = self.nav.bounds(node)
         return bool(x0 <= cell[0] < x1 and y0 <= cell[1] < y1)
+
+    def _toward(self, node: int, goal: int) -> int:
+        current, target = self.nav.nodes[node], self.nav.nodes[goal]
+        if current.level != target.level:
+            return int(self.nav.first_actions[node, goal])
+        # Fixed-level travel must not exploit a cheap climb-and-snap shortcut.
+        if current.ix != target.ix:
+            return 1 if target.ix > current.ix else 3
+        if current.iy != target.iy:
+            return 0 if target.iy > current.iy else 2
+        raise ValueError("already at goal")
 
     def _sum(self, values: np.ndarray, node: int) -> float:
         x0, y0, x1, y1 = self.nav.bounds(node)

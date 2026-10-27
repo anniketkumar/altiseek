@@ -124,7 +124,8 @@ class SearchEnv(gym.Env):
         self._ended = False
         self.last_events = self._observe()
         self.initial_reward = self._reward(self.last_events, self.elapsed_s)
-        self._ended = bool(self.found.all())
+        self._pending_termination = bool(self.found.all())
+        self._ended = False
         return self._observation(), self._info()
 
     def action_masks(self) -> np.ndarray:
@@ -142,6 +143,12 @@ class SearchEnv(gym.Env):
             raise RuntimeError("reset required after episode end")
         if not self.action_space.contains(action):
             raise ValueError("action outside action space")
+        if self._pending_termination:
+            # reset() has no terminal flag. Expose initial completion without a free view.
+            self._pending_termination = False
+            self._ended = True
+            self.last_events = {"found": 0, "false": 0, "informative_cells": 0}
+            return self._observation(), 0.0, True, False, self._info()
         self.steps += 1
         self.last_events = {"found": 0, "false": 0, "informative_cells": 0}
         if not self.action_masks()[action]:
@@ -287,6 +294,6 @@ class SearchEnv(gym.Env):
             "path_m": self.path_m,
             "steps": self.steps,
             "terminated": bool(self.found.all()),
-            "ended": self._ended,
+            "ended": self._ended or self._pending_termination,
             "events": self.last_events.copy(),
         }

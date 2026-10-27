@@ -170,6 +170,21 @@ def test_multilevel_snap_charges_horizontal_and_climb():
     assert np.isfinite(nav.distances).all()
 
 
+def test_initial_completion_has_a_terminal_transition(env):
+    env.config = env.config.model_copy(update={"declare_threshold": 1e-10})
+    _, info = env.reset(seed=2)
+    assert info["ended"]
+    observations, energy = env.observations, env.energy_used_s
+    _, reward, terminated, truncated, _ = env.step(int(np.flatnonzero(env.action_masks())[0]))
+    assert terminated
+    assert not truncated
+    assert reward == 0
+    assert env.energy_used_s == energy
+    assert env.observations == observations
+    with pytest.raises(RuntimeError, match="reset"):
+        env.step(0)
+
+
 @pytest.mark.parametrize("variant", ["V0", "V1", "V2", "V3"])
 def test_information_is_nonnegative_and_zero_at_certainty(sensor, variant):
     p = np.array([0.0, 0.1, 0.5, 1.0])
