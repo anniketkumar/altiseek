@@ -1,0 +1,8 @@
+# Frozen candidate grid before rl-val selection; no test worlds are read.
+seed: 20261027
+variants: [V0, V1, V2, V3]
+levels: [0, 1, 2, 3, 4]
+coarse_levels: [3, 4]
+confirm_levels: [0, 1]
+candidate_thresholds: [0.01, 0.05]
+top_share: 0.25

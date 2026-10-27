@@ -156,7 +156,9 @@ class SearchEnv(gym.Env):
             return self._observation(), reward, False, truncated, self._info()
         remaining = self.config.energy.battery_s - self.energy_used_s
         cost = float(self.nav.cost[self.node, action])
-        previous_potential = -float(entropy(self.belief.probabilities).sum())
+        previous_potential = (
+            -float(entropy(self.belief.probabilities).sum()) if self.config.shaping_weight else 0.0
+        )
         if cost > remaining + 1e-9:
             # Insufficient energy for the complete move + dwell: end without observing.
             self.energy_used_s += remaining

@@ -58,6 +58,31 @@ Episode logs and hidden-truth diagnostics belong to a logging wrapper, not polic
 observations. Record world/cache/model/config IDs, seed, actions, event times,
 energy, found/false counts and altitude usage. Resume only matching run identities.
 
+## Baseline selection grid (D37)
+
+Run all 40 rl-val worlds with paired launch/variant seeds `20261027 + world.seed`
+under every V0–V3 model. The grid in `configs/policy/baselines.yaml` was chosen
+before full rl-val outcomes: B1/B2 fixed level L1–L5; B3 coarse L4/L5, confirm
+L1/L2, candidate threshold 0.01/0.05. B2/B3 choose the nearest view among the
+top quarter of remaining views ranked by prior mass. That quarter is fixed, not
+claimed tuned. Choose each baseline's settings per family and sensor variant by
+mean validation AUC; ties prefer fewer false declarations, then canonical config
+order. These selected validation scores are optimistically biased, not test scores.
+
+B1 chooses the nearer end of its boustrophedon route. B3 interrupts the coarse
+sweep on a candidate, finishes its confirmation, then resumes the unvisited
+coarse views. A completed fixed-level sweep stays at that level. B4 considers
+one-step actions; B5 considers up to two moves with no free travel, correcting
+overlapping footprints for first-look gating. Across different levels it sums
+the expected second information over the first outcome, assuming conditional
+independence across levels. A 2,049-point log-odds table interpolates that sum.
+This is open-loop depth-two planning, not an adaptive branch-contingent policy.
+
+The finest-level oracle is a reference, not a per-episode mathematical upper
+bound: a lucky coarse observation can find a person sooner. Do not clamp negative
+normalisation denominators or scores. Report undefined ratios and use paired
+family-mean oracle/random AUCs when displaying family normalised scores.
+
 ## Dependency
 
 Gymnasium is pinned to 1.4.0. Its installed checker validates reset/step seeding,

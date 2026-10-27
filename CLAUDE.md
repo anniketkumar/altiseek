@@ -926,6 +926,8 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D36 | M7 main setting: known K, allocentric north-up map with x/y channels (owner confirmed after discussing alternatives, 2026-10-27). Six moves, L5 edge launch, tau_declare 0.5, suppression radius 1 m, cap 300; operational contracts in `docs/search-protocol.md`. Gymnasium 1.4.0 is pinned. | Makes the main comparison focus on sensing. Unknown K and egocentric maps remain ablations. Snap travel and initial dwell are charged; no unaffordable final view. Oracle is a privileged L1 perfect-verification bound with identical movement costs, explicitly separated from detector-limited policies. | Implemented; baseline validation pending |
 
+| D37 | M7 baseline selection uses the predeclared grid in `configs/policy/baselines.yaml`, paired seeds on all 40 rl-val worlds, all V0-V3 variants, per-family/per-variant mean-AUC selection; fixed top-share 0.25. B5 is open-loop depth-two conditional-information planning with first-look overlap correction. | Baselines must be selected on B validation only. Scores used for selection are not held-out performance. The finest-level oracle can lose to a lucky coarse find in individual episodes, so family normalisation reports nonpositive denominators as undefined rather than forcing a bound. Details in `docs/search-protocol.md`. | Implemented; selection and sanity checks pending |
+
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
