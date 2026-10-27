@@ -17,7 +17,7 @@ comes next.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
   add a Decision Log entry (§24) in the same commit. The next free ID is **D40**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
-- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 273
+- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 274
   pass with the M8 training pipeline (M7 completion had 268).
 
 ## Environment
@@ -180,6 +180,21 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   `runs/ppo/m8-initial/`: `status.json`, one log per variant/seed, and content-addressed
   run directories beneath each variant/seed. Relaunching the same command resumes from
   the last complete checkpoint; do not restart or combine different run identities.
+- Initial suite launched detached from `321a1c9`, launcher PID saved in
+  `runs/ppo/m8-initial/launcher.pid`. V3 seed 17 run ID: `c4bcf40c608ec14a`.
+  Training is active; inspect status/logs before launching anything. At 32,768 steps,
+  validation AUC was 0.376 versus 0.244 initially; about 101 production steps/s.
+  This is early progress, not M8 completion. All six curves/diagnostics remain to review.
+- `scripts/report_ppo.py --partial` reads current output without changing training.
+  Full `scripts/report_ppo.py` checks all six completed runs, hashes and paired worlds;
+  writes all-seed numeric results and learning curves. `docs/ppo.md` documents operation.
+  Recovery now also passes with two subprocess workers and two torch threads; training
+  and validation helpers reject wrong world sets. All 274 tests pass, including lint
+  and format. Reporting-only additions do not change training run identities.
+- `scripts/watch_ppo_report.py` waits for this existing suite and generates the final
+  report automatically; it never starts or restarts training. Check `report-status.json`,
+  `report.log` and `report.err` under the suite directory. A generated report still needs
+  scientific review of learning stability and the zero-belief gate before M8 is complete.
 - Train on rl-train only; select checkpoints on rl-val with frozen baseline settings.
   At least three seeds per configuration; report every seed. No test-world tuning.
 - Check zeroed belief channels against the prior-only heuristic once PPO exists. This

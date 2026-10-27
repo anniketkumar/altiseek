@@ -4,7 +4,13 @@ import torch
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 
 from altiseek.policies.ppo import FiniteSearch, PPOConfig, SearchFeatures
-from altiseek.policies.training import load_checkpoint, make_model, save_checkpoint
+from altiseek.policies.training import (
+    evaluate,
+    load_checkpoint,
+    make_model,
+    save_checkpoint,
+    vector_env,
+)
 from tests.env.test_search import built, cfg, env, library, sensor
 
 __all__ = ["built", "cfg", "env", "library", "sensor"]
@@ -39,20 +45,30 @@ def test_finite_battery_has_no_timeout_bootstrap(env):
 
 @pytest.mark.parametrize("vector_class", [DummyVecEnv, SubprocVecEnv])
 def test_checkpoint_resume_matches_uninterrupted_optimizer_and_rollout(env, tmp_path, vector_class):
-    config = PPOConfig(n_envs=1, n_steps=8, batch_size=4, epochs=1, total_steps=16, eval_every=8)
-    vector = vector_class([lambda: FiniteSearch(env)])
+    workers = 2 if vector_class is SubprocVecEnv else 1
+    rollout = 8 * workers
+    config = PPOConfig(
+        n_envs=workers,
+        n_steps=8,
+        batch_size=4,
+        epochs=1,
+        threads=workers,
+        total_steps=2 * rollout,
+        eval_every=rollout,
+    )
+    vector = vector_class([lambda: FiniteSearch(env) for _ in range(workers)])
     model = make_model(vector, config, 17)
-    model.learn(8)
+    model.learn(rollout)
     saved_obs = {k: v.copy() for k, v in model._last_obs.items()}
     save_checkpoint(model, tmp_path / "checkpoint")
-    model.learn(8, reset_num_timesteps=False)
+    model.learn(rollout, reset_num_timesteps=False)
     expected = {k: v.clone() for k, v in model.policy.state_dict().items()}
     expected_obs = {k: v.copy() for k, v in model._last_obs.items()}
     resumed = load_checkpoint(tmp_path / "checkpoint", vector)
     for key in saved_obs:
         np.testing.assert_array_equal(resumed._last_obs[key], saved_obs[key])
-    resumed.learn(8, reset_num_timesteps=False)
-    assert resumed.num_timesteps == 16
+    resumed.learn(rollout, reset_num_timesteps=False)
+    assert resumed.num_timesteps == 2 * rollout
     for key, value in resumed.policy.state_dict().items():
         torch.testing.assert_close(value, expected[key], rtol=0, atol=0)
     for key in expected_obs:
@@ -61,3 +77,11 @@ def test_checkpoint_resume_matches_uninterrupted_optimizer_and_rollout(env, tmp_
     with pytest.raises(ValueError, match="checksum"):
         load_checkpoint(tmp_path / "checkpoint", vector)
     vector.close()
+
+
+def test_training_and_validation_reject_wrong_world_sets(env):
+    wrong = env._worlds[0].model_copy(update={"world_set": "test"})
+    with pytest.raises(ValueError, match="rl-train only"):
+        vector_env([wrong], env.cache_config, env.sensor, env.config, PPOConfig(), 17)
+    with pytest.raises(ValueError, match="rl-val only"):
+        evaluate(None, [wrong], env.cache_config, env.sensor, env.config)
