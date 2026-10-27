@@ -1,6 +1,6 @@
 # AGENTS.md: hand-off for coding agents
 
-This file hands AltiSeek over to a new coding agent (2026-10-26). **CLAUDE.md is the source of
+This file hands AltiSeek over to a new coding agent (2026-10-27). **CLAUDE.md is the source of
 truth** for goals, design, data contracts and working rules. Read it in full before changing
 anything. This file only adds where the work stands, how the owner wants you to work, and what
 comes next.
@@ -17,8 +17,8 @@ comes next.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
   add a Decision Log entry (§24) in the same commit. The next free ID is **D34**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
-- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 202
-  pass at `7138ab7`.
+- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 226
+  pass at M5 completion.
 
 ## Environment
 
@@ -77,79 +77,38 @@ comes next.
 - `LevelTable.lattice(level)` (in `altiseek.geometry.levels`) gives a level's view cells: 121, 49,
   25, 16 and 9 for L1–L5, so 220 views per world.
 
-## M5 implementation update (2026-10-26)
+## M5 complete (2026-10-27)
 
-Cache code and tests are present in `src/altiseek/cache/`, `scripts/build_cache.py` and
-`scripts/validate_cache.py` (D31). Local library index/image hashes and all four world-set IDs
-were verified. The first cloud pilot stopped before inference because rebuilt library IDs
-differed. Full archive comparison found all 2,807 decoded images identical but every PNG's bytes
-different; indexes otherwise match (D32, `docs/cache.md`). Cloud inference has not run:
-Windows code-integrity policy
-blocked the installed Kaggle CLI; Smart App Control is off. Browser automation could not
-reliably determine the browser URL. Do not weaken Windows security to proceed.
+All four sets are cached, verified locally and registered in `registry/manifest.json`:
 
-Use the manual pilot workflow in `docs/cache.md`: `scripts/prepare_cache_notebook.py` makes a
-credential-free notebook pinned to a pushed commit. `scripts/prepare_cache_inputs.py` packages
-the original libraries and world specs as `data/kaggle/altiseek-m5-inputs.zip` for a private
-Kaggle dataset (terms checked, D32). The updated notebook requires this input, verifies its
-IDs and file hashes, skips rebuilding and checks imported NumPy before timing two sensor-fit
-worlds and validating fresh GPU inference. The second pilot passed: both 880-view worlds were
-verified locally and all 40 live view checks passed. Mean generation time was 70.10 s/world;
-D33 retains the 40/160/40/80 counts (about 6.23 h generation, roughly 7–8 h with validation).
-The owner reported 22 h 36 min GPU quota remaining. `prepare_cache_notebook.py --production`
-creates the full-run notebook; attach the same two inputs and optionally the successful pilot's
-saved output to resume those caches. Production generation stops between worlds after 8 h,
-then validates completed files and reports complete/partial. Full cache sets, production
-validation and committed registry collection remain pending. Do not mark M5 done or start M6 yet.
+| Set | Worlds | Cached views | Live GPU checks |
+|---|---:|---:|---:|
+| sensor-fit | 40 | 35,200 | 800 |
+| rl-train | 160 | 140,800 | 3,200 |
+| rl-val | 40 | 35,200 | 800 |
+| test | 80 | 70,400 | 1,600 |
 
-## Next: M5, the detection cache (CLAUDE.md §12)
+- Production code: `c6c1e43`; total cloud time 6 h 43 min, generation 5.72 h.
+- Caches: `data/caches/<set>/<world_id>.npz`, with `.meta.json` and `.validation.json`.
+  Total compressed cache bytes: 9,804,608. Each world has all 880 views/variants.
+- All 6,400 live checks passed at score tolerance 0.0001 and box tolerance 0.05 px (D31).
+  Collection additionally verifies headers, SHA-256, input/checkpoint/config provenance,
+  deterministic validation sample indices, counts and registry parents before importing.
+- Saved source: `data/kaggle/altiseek-cache-production/results.zip`.
+  Collection summary: `data/caches/collection-summary.json`; metadata: `collect.meta.json`.
+- Cache modules: `src/altiseek/cache/{config,storage,build,jobs,validate,collect}.py`.
+  Use `WorldCache.load(..., expected=header_for(spec, cfg))` or `CachePool` for M6/M7.
+- Stage CLIs: `build_cache.py`, `validate_cache.py`, `collect_cache.py` in `scripts/`.
+- Cloud input fix (D32): rebuilt libraries had identical decoded pixels for all 2,807 images,
+  but different PNG file bytes/IDs. The accepted originals and world specs were uploaded as
+  the private `altiseek-m5-inputs` dataset; never relabel rebuilt artifacts.
+- CLI remains blocked by Windows code-integrity policy; Smart App Control is off. Browser
+  automation could not verify the URL. Use the documented manual Kaggle notebooks if needed;
+  do not weaken Windows security. `docs/cache.md` contains the full workflow and results.
+- D33 fixes counts at 40/160/40/80. Test has 10 worlds per family: report limited statistical
+  power and uncertainty. Test worlds still have no distractors (D30).
 
-Done when: caches exist for the sensor-fit, rl-train, rl-val and test sets, validation passes,
-and the manifest is complete.
-
-**Scale:** 220 views × 4 variants (D28) = 880 renders per world. Over the 320 worlds that is
-about 282k views.
-- Detection must run on a Kaggle GPU (§2). Rendering is CPU work; Kaggle has 4 cores.
-- Estimate the cost per world first, then set the world-set counts against the GPU quota
-  (about 30 h per week, at most 12 h per session). Log the counts as a Decision Log entry; D29
-  says M5 fixes them.
-
-**Get the libraries onto Kaggle.**
-- Preferred: rebuild them in the kernel with `scripts/build_libraries.py`, which fetches the B
-  and T frames from the share, and check that the library IDs match. Then regenerate the worlds
-  with `scripts/generate_worlds.py` and check that the world-set IDs match.
-- If the IDs differ (for example from platform differences in OpenCV remap), stop. Either upload
-  `data/libraries` as a **private** Kaggle dataset, after checking the SeaDronesSee terms (§2),
-  or ask the owner.
-- Never mix artifacts with mismatched IDs (§5).
-
-**Build the cache.**
-- **Lattice:** every lattice view per level.
-- **Generation:** for each (world, level, view, variant): `render_view`, then detect in GPU
-  batches, then store every detection with score ≥ τ_min.
-- **Records:** each holds class, raw score, box in view pixels, centre in world metres and cell
-  index.
-- **τ_min:** choose it low enough for V3's score histograms (§10), e.g. 0.05, and log it.
-- **Storage:** one compressed file per world, whose header holds world_id, detector_id, camera
-  spec, level spec, variant spec, τ_min and `cache_id`. `cache_id` is the hash of all of those
-  (§5).
-- **Resumable:** work in per-world chunks, with a manifest of completed worlds in
-  `/kaggle/working`, so a dropped session resumes.
-- **Ground truth:** store the targets' world positions and cells alongside the cache (from
-  `render_view`'s truth), for M6's cell-level matching (§10).
-- **Loader:** checks the header IDs and refuses a mismatch. Keep an LRU pool for the
-  environment (M7).
-
-**Validate the cache** (`validate-cache`): re-run live inference on random cached views. Outputs
-must match within a small tolerance (GPU nondeterminism).
-
-**Write tests** for header and ID validation, refusal of a mismatched detector or world, lattice
-completeness, and deterministic variant draws.
-
-Each stage writes metadata (`altiseek.registry.run.write_metadata`) and registers artifacts
-(`altiseek.registry.manifest.register`; the kind `"cache"` already exists).
-
-## After M5
+## Next: M6 sensor models
 
 - **M6 sensor models:** fit them on the sensor-fit caches. Re-check D7 with the measured r_ℓ and
   f_ℓ, then settle the re-look rule (D6).

@@ -507,3 +507,28 @@ It did not cover the coarse GSDs, which is why D23 replaced it:
   coarse draws.
 - **Evaluation views:** eval-detector spread each bin's 120 frames over the whole split, whether or
   not a frame could serve that bin. B had no view coarser than 13 cm/px.
+
+
+## M5 detection cache (completed 2026-10-27)
+
+Production commit `c6c1e43`, detector `700e0ff3455259e8`, four variants and tau_min 0.05 (D31).
+All artifact IDs match the frozen library/world inputs (D32, D33). Complete output was downloaded,
+verified and registered; caches are local under `data/caches/` and excluded from git.
+
+| Set | Worlds | Cached views | Passed live checks | Generation seconds | Compressed cache bytes |
+|---|---:|---:|---:|---:|---:|
+| sensor-fit | 40 | 35,200 | 800 | 2,592.68 | 1,415,223 |
+| rl-train | 160 | 140,800 | 3,200 | 10,360.05 | 5,980,618 |
+| rl-val | 40 | 35,200 | 800 | 2,553.75 | 1,492,895 |
+| test | 80 | 70,400 | 1,600 | 5,084.60 | 915,872 |
+| Total | 320 | 281,600 | 6,400 | 20,591.08 | 9,804,608 |
+
+End-to-end cloud runtime: **6 h 43 min 14 s**, including setup and live validation. Every world
+has the full 880 view/variant entries. Twenty seeded views per world were checked with fresh
+GPU inference: exact counts/classes and one-to-one matching, score tolerance 0.0001 and box
+coordinate tolerance 0.05 px. Local collection verified all file checksums, header identities,
+input provenance and validation records. No full live re-inference was run locally.
+
+Source: `data/caches/collection-summary.json` and the archived production ZIP; reproduction and
+archive SHA-256 are documented in `docs/cache.md`. These are cache integrity/cost results, not
+sensor-model performance or final search results. M6 fitting is next.

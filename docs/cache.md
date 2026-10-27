@@ -1,7 +1,7 @@
 # Detection cache (M5)
 
-The two-world cloud pilot passed; the production cache build is pending. D31 records storage
-and inference choices, D32 fixes the cloud input transfer, and D33 fixes the world-set counts.
+M5 is complete (2026-10-27): all 320 worlds are cached, live-validated, imported and registered.
+D31 records storage and inference choices, D32 fixes cloud input transfer, and D33 fixes counts.
 
 ## Production run after the successful pilot
 
@@ -150,3 +150,30 @@ including 239.87 seconds of preparation/input checking.
 
 Counts and seeds stay unchanged. Generation estimates exclude full validation and startup.
 The final build will provide measured production timings and sizes.
+
+## Completed production and collection (2026-10-27)
+
+Production at commit `c6c1e43` completed all 320 worlds in 24,194.46 seconds (6 h 43 min 14 s).
+Summed per-world generation time was 20,591.08 seconds (5.72 h, 64.35 s/world). All 6,400 seeded
+live comparisons passed the fixed tolerances. The imported NumPy was 2.1.3 and torch 2.11.0+cu128.
+The output contains 281,600 cached views and 9,804,608 compressed cache bytes (9.35 MiB).
+
+The archive is retained at `data/kaggle/altiseek-cache-production/results.zip`; its SHA-256 is
+`f7aa9d9802498f7bf1cfe6e5d99724dcc01970b865c52d5c87c9b38e714870a5`.
+To reproduce collection:
+
+```powershell
+uv run python scripts/collect_cache.py data/kaggle/altiseek-cache-production/results.zip
+```
+
+Collection verifies every expected world, complete lattice/variant keys, cache file checksum,
+header IDs/settings, local world/checkpoint input hashes, metadata configs and counts, exact
+seeded validation sample indices, unchanged tolerances, and the cloud artifact registry.
+Only after all checks pass does it copy the exact cache/metadata bytes into `data/caches/` and
+register the 320 cache artifacts with local locations in `registry/manifest.json`. Existing
+different files or registry entries are refused. Collection does not rerun inference locally.
+The report and collection provenance are `data/caches/collection-summary.json` and
+`data/caches/collect.meta.json`.
+
+M6 may now use the sensor-fit caches. No test detection-performance statistics were used to
+choose counts, thresholds, tolerances or any sensor-model rule during M5.
