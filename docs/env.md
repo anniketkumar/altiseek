@@ -50,6 +50,8 @@ Direct dependencies are pinned exactly in `pyproject.toml`, the single place the
   PyTorch CPU index (`2.11.0+cpu`). On Kaggle, the preinstalled `2.11.0+cu128` satisfies the same
   `==2.11.0` pin.
 - **Detector:** Ultralytics 8.4.184 (AGPL-3.0, D19).
+- **Search environment:** Gymnasium 1.4.0 (D36); installed checker and seeded replay
+  tested on local Python 3.12. All M7 search runs are CPU-only and read cached detections.
 
 ## Tooling
 

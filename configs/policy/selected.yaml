@@ -1,0 +1,526 @@
+implementation: m7-v2-fixed-level-routing
+schema_version: 1
+sensor_model_id: fcf8cdae58ca3947
+settings:
+  diffuse-group-high:
+    V0:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 3
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 3
+        top_share: 0.25
+      B3:
+        candidate: 0.05
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 3
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+  diffuse-group-low:
+    V0:
+      B1:
+        level: 0
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.05
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.05
+        coarse: 4
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 3
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+  diffuse-single-high:
+    V0:
+      B1:
+        level: 1
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 3
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+  diffuse-single-low:
+    V0:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 2
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 0
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 0
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 1
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+  sharp-group-high:
+    V0:
+      B1:
+        level: 1
+        top_share: 0.25
+      B2:
+        level: 2
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 2
+        top_share: 0.25
+      B3:
+        candidate: 0.05
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+  sharp-group-low:
+    V0:
+      B1:
+        level: 1
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 4
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+  sharp-single-high:
+    V0:
+      B1:
+        level: 1
+        top_share: 0.25
+      B2:
+        level: 1
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 3
+        top_share: 0.25
+      B2:
+        level: 3
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+  sharp-single-low:
+    V0:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V1:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 2
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V2:
+      B1:
+        level: 2
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 3
+        confirm: 1
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+    V3:
+      B1:
+        level: 4
+        top_share: 0.25
+      B2:
+        level: 0
+        top_share: 0.25
+      B3:
+        candidate: 0.01
+        coarse: 4
+        confirm: 0
+        top_share: 0.25
+      B4: {}
+      B5: {}
+      oracle: {}
+      random: {}
+source_run_id: 8cd76bdb72f965a1
+world_set_id: 40f07c646a97efba

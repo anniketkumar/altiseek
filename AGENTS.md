@@ -1,6 +1,6 @@
 # AGENTS.md: hand-off for coding agents
 
-This file hands AltiSeek over to a new coding agent (2026-10-27). **CLAUDE.md is the source of
+This file hands AltiSeek over to a new coding agent (2026-10-28). **CLAUDE.md is the source of
 truth** for goals, design, data contracts and working rules. Read it in full before changing
 anything. This file only adds where the work stands, how the owner wants you to work, and what
 comes next.
@@ -15,10 +15,10 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D38**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D39**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
-- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 241
-  pass at M6 completion.
+- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 268
+  pass at M7 completion.
 
 ## Environment
 
@@ -38,7 +38,7 @@ comes next.
   - The token lives in `~/.kaggle/access_token`. Never print or commit it. The owner was asked to
     regenerate it.
 
-## Status: M0–M6 done, M7 next
+## Status: M0–M7 done, M8 next
 
 | Item | Value |
 |---|---|
@@ -139,14 +139,39 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   directly with `box_centres_m`, avoiding view-clipping shifts. The initial v1 directory is
   superseded; use only `cb1a5bb437b21ea3`.
 
-## Next: M7 environment and baselines
+## M7 complete (2026-10-28)
 
-- Implement stateful belief updates, resolved cells, found-target suppression and the D35
-  re-look gate; `SensorModel.posterior` itself is stateless. Keep the sensor model frozen.
-- Build the Gymnasium environment and random/oracle/B1–B5 baselines; run sanity checks on
-  rl-val and freeze baseline hyperparameters before M8. Do not use test outcomes for tuning.
-- **Open decisions (§25):** known vs unknown K, MaskablePPO vs a custom PPO,
-  observation frame, tracker, and test-world distractors.
+- Owner chose **known K** (unknown K as an ablation) and **north-up maps with x/y channels**
+  after discussing alternatives (D36). Do not ask again. Five levels, 500 s battery and
+  first observation per (cell, level) remain fixed (D35).
+- `src/altiseek/belief/`, `env/search.py`, `env/navigation.py`, `env/logging.py` and
+  `policies/baselines.py` implement the environment and random/oracle/B1–B5. The Gymnasium
+  checker, masks, movement/energy, suppression, re-look and determinism tests pass.
+- Completed corrected validation run **`8cd76bdb72f965a1`** in `data/baselines/`: 3,520
+  episodes on all 40 rl-val worlds, V0–V3. It used code loaded at `07d0c81`. The older
+  `2b3af75b6628cf6d` run is superseded; never combine it with the corrected run or rerun it.
+- Frozen settings: `configs/policy/selected.yaml`, per family and variant (D37/D38).
+  Results: `docs/baseline-results.md` and `.json`; reproduction/integration: `docs/search.md`.
+  V3 B5 has validation AUC 0.888 and found fraction 0.981. These are selection-set scores,
+  not held-out performance. Oracle is an L1 perfect-verification reference, not an upper bound.
+- Coverage sanity: 320 completed episodes in `data/baselines/sanity/e8fe99ea7d56cb12`.
+  Fine exceeds coarse for all variants. Original step-only diagnostic missed reset and
+  reported no false-clear crossing. Keep its failed summary intact: supplemental
+  `initial-822759b7fb88637d.json` verifies one initial crossing at the unchanged 0.01 threshold.
+  Evidence is weak: 75/78 target priors already lie below 0.01. D38 records the correction.
+- Optimized environment exactly replayed all 320 random/oracle episodes, 7,606 steps;
+  `replay.json` records mean core step 1.590 ms, median 1.403 ms, p95 2.956 ms. The
+  sub-millisecond aim is not met; measure full training throughput in M8. No GPU needed.
+
+## Next: M8 PPO
+
+- Resolve MaskablePPO vs custom PPO and TensorBoard vs W&B with the owner before adding
+  heavy dependencies. Use a CNN for float32 maps, explicit action masks and CPU training.
+- Train on rl-train only; select checkpoints on rl-val with frozen baseline settings.
+  At least three seeds per configuration; report every seed. No test-world tuning.
+- Check zeroed belief channels against the prior-only heuristic once PPO exists. This
+  M8 check has not yet run. Preserve the M6 sensor model and M7 observation contract.
+- Test-world distractors remain an open decision before M9 (§25).
 
 ## Caveats
 

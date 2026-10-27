@@ -26,11 +26,11 @@ class EpisodeLog(gym.Wrapper):
     def step(self, action: int) -> tuple[dict[str, np.ndarray], float, bool, bool, dict[str, Any]]:
         env = self.search
         cells = env._target_cells
-        before = env.belief.probabilities[cells[:, 0], cells[:, 1]].copy()
+        before = np.exp(-np.logaddexp(0, -env.belief.log_odds[cells[:, 0], cells[:, 1]]))
         was_found = env.found.copy()
         old_observations = env.observations
         obs, reward, terminated, truncated, info = self.env.step(action)
-        after = env.belief.probabilities[cells[:, 0], cells[:, 1]]
+        after = np.exp(-np.logaddexp(0, -env.belief.log_odds[cells[:, 0], cells[:, 1]]))
         li = env.nav.nodes[env.node].level
         if env.observations > old_observations and li == len(env.table.levels) - 1:
             negative = (after < before - 1e-12) & ~was_found & ~env.found

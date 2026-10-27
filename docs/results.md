@@ -549,3 +549,35 @@ Temperature scaling leaves substantial error: calibrated ECE is 0.366–0.461 on
 and 0.290–0.414 on real T. These measurements complete M6's evaluation requirement; they do
 not establish reliable score calibration or improved search performance. Test worlds have no
 distractors, unlike B, and real exercise scenes differ again. No settings were changed using T.
+
+## M7 environment and baselines (completed 2026-10-28)
+
+Run `8cd76bdb72f965a1` completed 3,520 validation episodes on 40 B worlds, covering
+random, oracle and B1–B5 under V0–V3. Baseline settings are frozen per family and
+variant in `configs/policy/selected.yaml`. Full tables, bootstrap intervals and the
+numeric figure are in [baseline-results.md](baseline-results.md); commands and
+artifact provenance are in [search.md](search.md).
+
+| V3 method | Validation AUC | Mean found fraction | All-found rate |
+|---|---:|---:|---:|
+| Random | 0.659 | 0.825 | 0.725 |
+| Oracle reference | 0.884 | 1.000 | 1.000 |
+| B3 scan/confirm | 0.868 | 0.967 | 0.900 |
+| B4 greedy information | 0.870 | 0.965 | 0.900 |
+| B5 depth-two information | 0.888 | 0.981 | 0.950 |
+
+These are selection-set scores, with only five worlds per family; they are not
+held-out performance or proof of H1/H2. The L1 perfect-verification oracle is a
+reference, not an upper bound on how early coarse observations can find targets.
+
+Oracle exceeds random on mean AUC in every family/variant. In 320 coverage
+diagnostic episodes, fine sweeps find more than coarse sweeps for every variant.
+The original false-clear diagnostic omitted reset; a separate check verifies one
+initial V0 crossing from 0.01166 to 0.00118 at the unchanged 0.01 threshold (D38).
+Its evidence is weak: 75/78 target priors already start below that threshold. The
+original failed summary is retained alongside the supplementary measurement.
+
+The optimized environment replayed 320 saved random/oracle episodes and 7,606
+steps without changing outcomes. Mean core step time is 1.590 ms, above the
+sub-ms aim; M8 must benchmark full CPU training throughput. The PPO-specific
+zero-belief check remains for M8. No test worlds or detector inference were used.

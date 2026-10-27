@@ -21,7 +21,7 @@ Update as milestones complete (§21).
 | M4 Worlds & renderer | done (2026-10-26): libraries B `6b541bb0ff9d062a` and T `181004cb84b676f1` (D26, D27); world sets regenerated without glint (D30); fidelity accepted on the paste test, within 0.10 at every level on B and T (D30, `docs/results.md`) |
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
-| M7 Environment & baselines | in progress: cache-backed Gymnasium environment, stateful belief and movement graph implemented (D36) |
+| M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
 | M8 PPO | not started |
 | M9 Main experiments | not started |
 | M10 PX4 / Gazebo / ROS 2 | not started |
@@ -565,6 +565,10 @@ A world is a lightweight **spec**, not a giant image. The renderer composes what
 - Vectorised NumPy belief updates. Profile so the environment is never the training bottleneck; aim for sub-millisecond steps.
 - Episode logging lives in a wrapper (§18), not in core environment logic.
 
+M7's optimized core replay measured 1.590 ms mean per step (7,606 steps), above the
+sub-millisecond aim. All 320 replayed random/oracle episodes retained their outcomes.
+Measure full CPU training throughput before choosing M8 worker counts (D38).
+
 ---
 
 ## 15. Policies
@@ -575,7 +579,7 @@ Every policy implements the same interface: observation + action mask → action
 
 **Bounds**
 - **Random:** uniformly random valid action.
-- **Oracle:** knows the target cells and flies a short tour (nearest-neighbour or a TSP solver) visiting each one at the finest level. Used to normalise scores. D36 makes this a privileged perfect-verification bound once a target cell is covered at L1; normal policies remain detector-limited.
+- **Oracle:** knows the target cells and flies a short tour (nearest-neighbour or a TSP solver) visiting each one at the finest level. Used to normalise scores. D36 makes this a privileged perfect-verification reference once a target cell is covered at L1; normal policies remain detector-limited. It is not a mathematical upper bound: coarse finds can be earlier, and normalised scores can exceed one (D37).
 
 **Classical baselines** (tune every hyperparameter on rl-val worlds only)
 - **B1 Lawnmower:** a boustrophedon sweep at one fixed level, chosen per family on rl-val.
@@ -765,6 +769,13 @@ This avoids motion blur and synchronisation problems.
 - With V0, a coarse-level-only lawnmower produces measurable false clears.
 - A PPO agent whose belief channels are zeroed does no better than a prior-only heuristic. If it does better, it is exploiting something it shouldn't see.
 
+M7 completion (D38): all 40 rl-val worlds pass the family/variant oracle-versus-random
+comparison; 320 full-coverage diagnostic episodes find more at L1 than L5 for every
+variant. The original false-clear check omitted reset. A separate, provenance-linked
+initial-observation check completes it at the unchanged p = 0.01 threshold: one crossing
+from 0.01166 to 0.00118. The original failed summary remains intact. This is weak evidence,
+since 75/78 target priors already start below 0.01. The PPO check remains for M8.
+
 ---
 
 ## 20. Visualisation and deliverables
@@ -924,9 +935,11 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D35 | M6 confirms the first observation per (cell, level) as informative; keep all five D7 levels and the 500 s battery. Owner confirmed on 2026-10-27, using B only. | Sensor-fit cell recall at tau is 0.794/0.797/0.780/0.664/0.446; second-look recall after a miss is 0.172/0.186/0.152/0.157/0.095. Correlated variants do not justify repeated independent updates. L1 falls just below the original 0.80 goal (95% CI 0.718-0.868); explicitly accept this measured shortfall. L5 meets the revised <=0.65 rule; existing fine/coarse coverage costs still satisfy the battery constraint. No T result informed this choice. | Confirmed |
 
-| D36 | M7 main setting: known K, allocentric north-up map with x/y channels (owner confirmed after discussing alternatives, 2026-10-27). Six moves, L5 edge launch, tau_declare 0.5, suppression radius 1 m, cap 300; operational contracts in `docs/search-protocol.md`. Gymnasium 1.4.0 is pinned. | Makes the main comparison focus on sensing. Unknown K and egocentric maps remain ablations. Snap travel and initial dwell are charged; no unaffordable final view. Oracle is a privileged L1 perfect-verification bound with identical movement costs, explicitly separated from detector-limited policies. | Implemented; baseline validation pending |
+| D36 | M7 main setting: known K, allocentric north-up map with x/y channels (owner confirmed after discussing alternatives, 2026-10-27). Six moves, L5 edge launch, tau_declare 0.5, suppression radius 1 m, cap 300; operational contracts in `docs/search-protocol.md`. Gymnasium 1.4.0 is pinned. | Makes the main comparison focus on sensing. Unknown K and egocentric maps remain ablations. Snap travel and initial dwell are charged; no unaffordable final view. Oracle is a privileged L1 perfect-verification reference with identical movement costs, explicitly separated from detector-limited policies. | Implemented and validated |
 
-| D37 | M7 baseline selection uses the predeclared grid in `configs/policy/baselines.yaml`, paired seeds on all 40 rl-val worlds, all V0-V3 variants, per-family/per-variant mean-AUC selection; fixed top-share 0.25. B5 is open-loop depth-two conditional-information planning with first-look overlap correction. | Baselines must be selected on B validation only. Scores used for selection are not held-out performance. The finest-level oracle can lose to a lucky coarse find in individual episodes, so family normalisation reports nonpositive denominators as undefined rather than forcing a bound. Details in `docs/search-protocol.md`. | Implemented; selection and sanity checks pending |
+| D37 | M7 baseline selection uses the predeclared grid in `configs/policy/baselines.yaml`, paired seeds on all 40 rl-val worlds, all V0-V3 variants, per-family/per-variant mean-AUC selection; fixed top-share 0.25. B5 is open-loop depth-two conditional-information planning with first-look overlap correction. | Baselines must be selected on B validation only. Scores used for selection are not held-out performance. The finest-level oracle can lose to a lucky coarse find in individual episodes, so family normalisation reports nonpositive denominators as undefined rather than forcing a bound. Details in `docs/search-protocol.md`. | Complete; settings frozen 2026-10-28 |
+
+| D38 | M7 completion uses corrected fixed-level-routing run `8cd76bdb72f965a1` (3,520 episodes); freeze `configs/policy/selected.yaml`. Complete the step-only false-clear measurement with the separately recorded initial-observation check, keeping its original failed summary and the 0.01 threshold. | One initial V0 coarse crossing verifies the mechanism; 75/78 priors already lie below the threshold, so this is weak diagnostic evidence, not a strong H1 result. Fine/coarse coverage and oracle/random family checks pass. Numeric reports expose selection bias and the oracle's non-bound status. Optimized core replay preserves 320 episodes/7,606 steps; mean 1.590 ms misses the sub-ms aim, so M8 must measure full training throughput. No T tuning or sensor refitting. | M7 complete; PPO-specific checks deferred to M8 |
 
 ---
 

@@ -103,6 +103,10 @@ class SearchEnv(gym.Env):
         q = prior_grid(self.world.prior_given, self.world.area_m, self.world.cell_m)
         count = len(self._targets) if self.config.known_count else self.config.assumed_count
         self.belief = Belief(q, count, self.level_count, self.sensor)
+        self._static_map = np.zeros(self.observation_space["map"].shape, dtype=np.float32)
+        self._static_map[1] = q.T[::-1]
+        if self.config.coordinate_channels:
+            self._static_map[-2:] = self._coordinates.transpose(0, 2, 1)[:, ::-1, :]
         self.episode_seed = int(self.np_random.integers(2**31))
         # Random edge launch point, snapped to an admissible footprint centre.
         edge, along = (
@@ -230,9 +234,10 @@ class SearchEnv(gym.Env):
                     axis=0,
                 )
         else:
-            candidates = np.argwhere(
-                (self.belief.probabilities > self.config.declare_threshold) & ~self.belief.resolved
+            threshold = np.log(self.config.declare_threshold) - np.log1p(
+                -self.config.declare_threshold
             )
+            candidates = np.argwhere((self.belief.log_odds > threshold) & ~self.belief.resolved)
         new_found, false = 0, 0
         for cell in candidates:
             matches = (self._target_cells == cell).all(axis=1) & ~self.found
@@ -250,25 +255,16 @@ class SearchEnv(gym.Env):
         }
 
     def _observation(self) -> dict[str, np.ndarray]:
-        footprint, drone = np.zeros((2, self.grid, self.grid), dtype=np.float32)
+        tensor = self._static_map.copy()
+        tensor[0] = self.belief.probabilities.T[::-1]
+        tensor[2 : self.level_count + 2] = self.belief.observed.transpose(0, 2, 1)[:, ::-1, :]
+        tensor[self.level_count + 2] = self.belief.resolved.T[::-1]
         x0, y0, x1, y1 = self.footprint
-        footprint[x0:x1, y0:y1] = 1
+        tensor[self.level_count + 3, self.grid - y1 : self.grid - y0, x0:x1] = 1
         ix, iy = np.minimum(
             (self.nav.positions[self.node] / self.table.cell_m).astype(int), self.grid - 1
         )
-        drone[ix, iy] = 1
-        maps = [
-            self.belief.probabilities,
-            self.belief.prior,
-            *self.belief.observed,
-            self.belief.resolved,
-            footprint,
-            drone,
-        ]
-        if self.config.coordinate_channels:
-            maps.extend(self._coordinates)
-        # World arrays use [ix,iy]; image-style tensors have north at row zero.
-        tensor = np.stack(maps).astype(np.float32).transpose(0, 2, 1)[:, ::-1, :].copy()
+        tensor[self.level_count + 4, self.grid - iy - 1, ix] = 1
         one_hot = np.eye(self.level_count, dtype=np.float32)[self.nav.nodes[self.node].level]
         found_fraction = (
             self.found.sum() / len(self.found)

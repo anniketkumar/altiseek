@@ -38,10 +38,10 @@ and excludes actual K from observations; main runs use known K.
 - Reward: found count − 0.5 × false declarations − energy / initial budget.
   Optional shaping uses gamma * next potential − previous potential, with
   potential = −belief entropy and terminal potential zero. Main runs disable it.
-- The oracle is an explicit privileged bound: it knows target cells, follows
+- The oracle is an explicit privileged reference: it knows target cells, follows
   shortest energy paths to L1 views covering them, and verifies them without
   detector misses once covered at L1. It pays the same move and dwell costs.
-  Its perfect verification distinguishes this bound from detector-limited policies.
+  Its perfect verification distinguishes this reference from detector-limited policies.
 
 ## Policy and metric contracts
 
@@ -89,6 +89,20 @@ The finest-level oracle is a reference, not a per-episode mathematical upper
 bound: a lucky coarse observation can find a person sooner. Do not clamp negative
 normalisation denominators or scores. Report undefined ratios and use paired
 family-mean oracle/random AUCs when displaying family normalised scores.
+
+## Completed validation and measurement correction (D38)
+
+The corrected run `8cd76bdb72f965a1` completed 3,520 episodes. Its selected settings
+are frozen in `configs/policy/selected.yaml`; reports and provenance are linked
+from [search.md](search.md). Selection did not change the sensor model or thresholds.
+
+The original coverage diagnostic counted false-clear crossings only after actions,
+omitting the initial observation. Preserve that failed summary. The separate
+`initial-observation-v1` diagnostic repeats the same initial seeds/config and links
+its output to the original summary by SHA-256. Combining the two records gives
+one crossing at the unchanged p = 0.01 threshold. This is weak evidence because
+75/78 target priors already lie below 0.01. The PPO-specific sanity check remains
+pending until M8; no M7 test-world evaluation was performed.
 
 ## Dependency
 
