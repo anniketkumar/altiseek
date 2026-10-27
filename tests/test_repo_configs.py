@@ -16,6 +16,7 @@ from altiseek.geometry.level_design import coverage_energy_s
 from altiseek.geometry.levels import LevelTable
 from altiseek.imaging.config import CameraSpec
 from altiseek.policies.config import BaselineRun, SelectedBaselines
+from altiseek.policies.ppo import PPOConfig
 from altiseek.world.config import LibraryConfig, RenderConfig, WorldConfig
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "configs"
@@ -31,6 +32,7 @@ SCHEMAS: dict[str, type[Config]] = {
     "sensor": SensorConfig,
     "policy/baselines": BaselineRun,
     "policy/selected": SelectedBaselines,
+    "policy/ppo": PPOConfig,
     "world": WorldConfig,
     "world/library": LibraryConfig,
     "world/render": RenderConfig,

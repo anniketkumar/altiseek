@@ -52,6 +52,8 @@ Direct dependencies are pinned exactly in `pyproject.toml`, the single place the
 - **Detector:** Ultralytics 8.4.184 (AGPL-3.0, D19).
 - **Search environment:** Gymnasium 1.4.0 (D36); installed checker and seeded replay
   tested on local Python 3.12. All M7 search runs are CPU-only and read cached detections.
+- **PPO:** sb3-contrib and stable-baselines3 2.9.2, TensorBoard 2.21.0 (D39).
+  Training is CPU-only, with a custom float32-map CNN and environment action masks.
 
 ## Tooling
 

@@ -22,7 +22,7 @@ Update as milestones complete (§21).
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
-| M8 PPO | not started |
+| M8 PPO | in progress: MaskablePPO/custom CNN and local TensorBoard selected; CPU training, exact checkpoint recovery and validation pipeline implemented (D39) |
 | M9 Main experiments | not started |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
@@ -596,6 +596,8 @@ Every policy implements the same interface: observation + action mask → action
 
 **PPO**
 - **Algorithm:** masked PPO — either sb3-contrib's MaskablePPO with a multi-input policy, or a single-file PPO if you want full control. Record which.
+  D39 selects MaskablePPO 2.9.2 with a custom float32 CNN extractor and local
+  TensorBoard 2.21.0. `docs/ppo-protocol.md` freezes the initial CPU training protocol.
 - **Network:**
   - A CNN over the map tensor (a few strided convolutions or small residual blocks).
   - Its output is concatenated with the vector features → MLP → policy and value heads.
@@ -726,7 +728,7 @@ This avoids motion blur and synchronisation problems.
 
 - **Configs:** hierarchical YAML with schema validation. Every run saves the resolved config, git commit, seeds, package versions and artifact IDs.
 - **Runs:** `runs/<stage>/<timestamp>_<name>/` containing config, logs, metrics and checkpoints.
-- **Tracking:** pick one of TensorBoard or W&B. Also write results to CSV/Parquet, so figures can be regenerated without the tracker.
+- **Tracking:** local TensorBoard (owner selected, D39), with CSV optimizer logs and JSON episode results so figures regenerate independently of the tracker.
 - **Artifact registry:** a manifest listing every detector, sensor model, world set and cache, with its ID, parent IDs and storage location (local or cloud).
 - **Episode logs:**
   - per step: time, battery, position, level, action, mask, detection summary, declarations, found events;
@@ -941,13 +943,13 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D38 | M7 completion uses corrected fixed-level-routing run `8cd76bdb72f965a1` (3,520 episodes); freeze `configs/policy/selected.yaml`. Complete the step-only false-clear measurement with the separately recorded initial-observation check, keeping its original failed summary and the 0.01 threshold. | One initial V0 coarse crossing verifies the mechanism; 75/78 priors already lie below the threshold, so this is weak diagnostic evidence, not a strong H1 result. Fine/coarse coverage and oracle/random family checks pass. Numeric reports expose selection bias and the oracle's non-bound status. Optimized core replay preserves 320 episodes/7,606 steps; mean 1.590 ms misses the sub-ms aim, so M8 must measure full training throughput. No T tuning or sensor refitting. | M7 complete; PPO-specific checks deferred to M8 |
 
+| D39 | M8 uses MaskablePPO 2.9.2, a custom spatial CNN and local TensorBoard 2.21.0, owner selected 2026-10-28. Initial CPU runs: V0/V3, seeds 17/29/43, 131,072 steps each, validation every 16,384; four subprocess environments and two torch threads. Full protocol: `docs/ppo-protocol.md`. | Fits existing Gymnasium/CPU torch pins; avoids default flattening of float maps. Fixed log scaling exposes sparse p/q without fitted statistics. Battery/cap endings are terminal to the learner, preventing timeout bootstrap beyond the finite task. Checkpoints preserve optimizer, worker state and all RNGs; exact continuation is tested. CPU pilots favored subprocess workers (148–185 steps/s at two epochs), so budget is provisional pending full learning curves. No shaping or T tuning; baseline settings remain frozen. | Implemented; multi-seed training and diagnostics pending |
+
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
 - Test-world distractors: T has none within θ_lib, so test worlds have none (D29, D30), and RQ2(c) and E3's distractor test cannot run on them as they stand. The alternative is to reserve one B video's distractor crops for test worlds only, which bends split purity. Decide before M9.
-- MaskablePPO vs a custom PPO.
-- TensorBoard vs W&B.
 
 ---
 

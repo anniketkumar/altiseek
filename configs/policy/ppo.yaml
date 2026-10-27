@@ -1,0 +1,17 @@
+seeds: [17, 29, 43]
+variants: [V0, V3]
+total_steps: 131072
+eval_every: 16384
+n_envs: 4
+n_steps: 128
+batch_size: 64
+epochs: 4
+threads: 2
+learning_rate: 0.0003
+gamma: 0.99
+gae_lambda: 0.95
+clip_range: 0.2
+entropy_coef: 0.01
+target_kl: 0.03
+vectorization: subproc
+zero_belief: false

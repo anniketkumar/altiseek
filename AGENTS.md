@@ -15,10 +15,10 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D39**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D40**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
-- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 268
-  pass at M7 completion.
+- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 273
+  pass with the M8 training pipeline (M7 completion had 268).
 
 ## Environment
 
@@ -38,7 +38,7 @@ comes next.
   - The token lives in `~/.kaggle/access_token`. Never print or commit it. The owner was asked to
     regenerate it.
 
-## Status: M0–M7 done, M8 next
+## Status: M0–M7 done, M8 in progress
 
 | Item | Value |
 |---|---|
@@ -163,10 +163,23 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   `replay.json` records mean core step 1.590 ms, median 1.403 ms, p95 2.956 ms. The
   sub-millisecond aim is not met; measure full training throughput in M8. No GPU needed.
 
-## Next: M8 PPO
+## M8 PPO in progress
 
-- Resolve MaskablePPO vs custom PPO and TensorBoard vs W&B with the owner before adding
-  heavy dependencies. Use a CNN for float32 maps, explicit action masks and CPU training.
+- Owner selected **MaskablePPO with a custom CNN and local TensorBoard** on 2026-10-28.
+  Dependencies pinned: sb3-contrib/stable-baselines3 2.9.2, TensorBoard 2.21.0 (D39).
+  Do not ask again. `docs/ppo-protocol.md` defines the initial settings and diagnostics.
+- `policies/ppo.py` contains the CNN, settings and finite-task adapter; `training.py`
+  verifies caches, evaluates and saves/loads full rollout-boundary checkpoints. Tests
+  compare resumed and uninterrupted weights and observations. No timeout bootstrap
+  after battery/cap exhaustion. Core M7 evaluation behavior remains unchanged.
+- `scripts/train_ppo.py` runs one seed; `scripts/run_ppo_suite.py` runs all six serially.
+  CPU pilots: dummy 1 thread 86–91 steps/s, dummy 2 threads 112–125, subprocess 2 threads
+  148–185 (two-epoch pilots). Production uses four subprocess workers/two torch threads,
+  four optimizer epochs; its actual throughput and learning stability still need checking.
+- Full suite command: `uv run python -u scripts/run_ppo_suite.py`. It writes to
+  `runs/ppo/m8-initial/`: `status.json`, one log per variant/seed, and content-addressed
+  run directories beneath each variant/seed. Relaunching the same command resumes from
+  the last complete checkpoint; do not restart or combine different run identities.
 - Train on rl-train only; select checkpoints on rl-val with frozen baseline settings.
   At least three seeds per configuration; report every seed. No test-world tuning.
 - Check zeroed belief channels against the prior-only heuristic once PPO exists. This
