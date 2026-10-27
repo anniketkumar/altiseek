@@ -47,3 +47,16 @@ def test_grid_origin_is_not_view_corner():
         SensorConfig(),
     )
     assert first["labels"] == second["labels"] == [False]
+
+
+def test_target_outside_view_still_occupies_observed_boundary_cell():
+    # Cell (0,0)'s centre is inside the view; its target is just outside it.
+    result = real_outcomes(
+        ViewWindow(1, 0, 1, 10),
+        np.ones((10, 10), dtype=bool),
+        np.array([[0.9, 1.5]]),
+        [],
+        2.5,
+        SensorConfig(),
+    )
+    assert result["counts"] == [[1, 15, 0, 0], [1, 15, 0, 0]]

@@ -26,6 +26,16 @@ Rates below are raw estimates with 95% cluster-bootstrap intervals. Runtime like
 | L4 | 0.836 [0.776, 0.887] | 0.064 [0.023, 0.112] | 2110 | 0.458 → 0.406 | 0.789 → 0.709 |
 | L5 | 0.501 [0.424, 0.573] | 0.053 [0.016, 0.100] | 1594 | 0.538 → 0.461 | 1.018 → 0.800 |
 
+## Real T (held-out)
+
+| Level | Recall at tau [95% CI] | False alarms / 10k [95% CI] | Detected cells at tau_min | ECE raw → calibrated | BCE raw → calibrated |
+|---|---|---|---:|---|---|
+| L1 | 0.915 [0.855, 0.965] | 4.950 [1.886, 8.568] | 138 | 0.329 → 0.323 | 0.608 → 0.600 |
+| L2 | 0.810 [0.738, 0.874] | 4.118 [1.881, 7.134] | 187 | 0.369 → 0.290 | 0.686 → 0.688 |
+| L3 | 0.613 [0.526, 0.694] | 2.180 [0.727, 4.162] | 214 | 0.410 → 0.322 | 0.838 → 0.696 |
+| L4 | 0.802 [0.750, 0.853] | 1.503 [0.701, 2.527] | 219 | 0.448 → 0.414 | 0.785 → 0.705 |
+| L5 | 0.616 [0.550, 0.683] | 1.218 [0.427, 2.188] | 244 | 0.458 → 0.399 | 0.839 → 0.726 |
+
 ## Re-look and level-design check (B only)
 
 | Level | Temperature | P(hit second / missed first), tau [95% CI] | Same, tau_min [95% CI] | Full lattice sweep (s) |

@@ -20,7 +20,7 @@ Update as milestones complete (§21).
 | M3 Level design | done (2026-10-25): five levels at 30–89 m over 2.5 m cells, battery 500 s, coarsest rule loosened to ≤ 0.65 (D7, `configs/levels/default.yaml`); re-check at M6 |
 | M4 Worlds & renderer | done (2026-10-26): libraries B `6b541bb0ff9d062a` and T `181004cb84b676f1` (D26, D27); world sets regenerated without glint (D30); fidelity accepted on the paste test, within 0.10 at every level on B and T (D30, `docs/results.md`) |
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
-| M6 Sensor models | in progress: centre-cell rule confirmed; V0–V3 implementation and frozen evaluation protocol (D34) |
+| M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | not started |
 | M8 PPO | not started |
 | M9 Main experiments | not started |
@@ -891,7 +891,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D3 | Policies output high-level lattice moves; PX4 flies | The project is about where to look, not how to fly | Fixed |
 | D4 | Session-disjoint splits A/B/T | Leakage control | Fixed |
 | D5 | Auto-declare at τ_declare for main comparisons | Isolates search behaviour; learned declare is an ablation | Default |
-| D6 | Re-look rule: first observation per (cell, level) | Deterministic detector; revisit once conditional recall is measured | Provisional |
+| D6 | Re-look rule: first observation per (cell, level) | Deterministic detector; measured second-look recall after a miss is only 0.095–0.186 on sensor-fit B | Confirmed at M6 (D35) |
 | D7 | Camera, cells, levels and battery (§8). **Camera:** R = 640, HFOV 80°. **Area:** 300 m of 2.5 m cells (120 × 120). **Levels:** five, with footprints of 50/75/100/120/150 m (20/30/40/48/60 cells; stride half the footprint) at 29.8/44.7/59.6/71.5/89.4 m, i.e. 7.8–23.4 cm/px; B centre recall 0.87/0.81/0.75/0.71/0.65. **Battery:** 500 s. **Rule:** the coarsest level needs recall ≤ 0.65, not §8's ≤ 0.3. Owner's choice, 2026-10-25; the table is `configs/levels/default.yaml` | B's centre recall (D24, D25) falls only from 0.87 at 8 cm/px to 0.56 at 30 cm/px, so ≤ 0.3 is out of reach, and at ≤ 0.6 no whole-cell footprint tiles 300 m. This candidate keeps R at the detector's input size, puts L1 at the detector's best GSD and changes only the coarsest rule. design-levels proposed a 542 s battery, the cost of a full L1 sweep; 500 s keeps §14's example ratio, while a full L5 sweep costs 78 s | Provisional: re-check at M6 with r_ℓ and f_ℓ from rendered worlds |
 | D8 | Project name: AltiSeek (working title was SeaSearch) | Names the new idea (the drone chooses its own altitude); "Seasearch" is already a UK marine-survey programme | Fixed |
 | D9 | Python 3.12 and 3.13 (`requires-python = ">=3.12,<3.14"`); CI tests both. Revised 2026-10-24 from "3.12 everywhere" | ROS 2 Jazzy on Ubuntu 24.04 (PX4's recommendation) fixes 3.12 for the ROS nodes (rclpy is system Python); local dev has 3.12.10. A Kaggle probe kernel found **3.13.15**: the image builds on a Colab runtime newer than the 3.12-based 2026.07. Evidence in `docs/env.md` | Revised |

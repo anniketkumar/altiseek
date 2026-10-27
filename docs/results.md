@@ -531,4 +531,21 @@ input provenance and validation records. No full live re-inference was run local
 
 Source: `data/caches/collection-summary.json` and the archived production ZIP; reproduction and
 archive SHA-256 are documented in `docs/cache.md`. These are cache integrity/cost results, not
-sensor-model performance or final search results. M6 fitting is next.
+sensor-model performance or final search results.
+
+## M6 sensor models (completed 2026-10-27)
+
+Model `fcf8cdae58ca3947` implements V0–V3, fitted only on the 40 sensor-fit B worlds.
+Evaluation covers all 80 test worlds plus 688 real-T views from 405 frames, with CPU inference
+and no re-fitting. The frozen protocol, numeric results and reproduction instructions are in
+[sensor-protocol.md](sensor-protocol.md), [sensor-results.md](sensor-results.md) and
+[sensor-models.md](sensor-models.md).
+
+B cell recall falls from 0.794 at L1 to 0.446 at L5; second-look recall after a miss is
+0.095–0.186. The owner retained first observation per cell/level, five levels and a 500 s
+battery (D35). L1's slight shortfall from the original 0.80 recall goal is accepted explicitly.
+
+Temperature scaling leaves substantial error: calibrated ECE is 0.366–0.461 on test worlds
+and 0.290–0.414 on real T. These measurements complete M6's evaluation requirement; they do
+not establish reliable score calibration or improved search performance. Test worlds have no
+distractors, unlike B, and real exercise scenes differ again. No settings were changed using T.

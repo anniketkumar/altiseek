@@ -17,8 +17,8 @@ comes next.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
   add a Decision Log entry (§24) in the same commit. The next free ID is **D36**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
-- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 226
-  pass at M5 completion.
+- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 241
+  pass at M6 completion.
 
 ## Environment
 
@@ -38,7 +38,7 @@ comes next.
   - The token lives in `~/.kaggle/access_token`. Never print or commit it. The owner was asked to
     regenerate it.
 
-## Status: M0–M5 done, M6 in progress
+## Status: M0–M6 done, M7 next
 
 | Item | Value |
 |---|---|
@@ -108,12 +108,43 @@ All four sets are cached, verified locally and registered in `registry/manifest.
 - D33 fixes counts at 40/160/40/80. Test has 10 worlds per family: report limited statistical
   power and uncertainty. Test worlds still have no distractors (D30).
 
-## Next: M6 sensor models
+## M6 complete (2026-10-27)
 
-- **M6 sensor models:** fit them on the sensor-fit caches. Re-check D7 with the measured r_ℓ and
-  f_ℓ, then settle the re-look rule (D6).
-- **Boundary rule:** centre cell only, confirmed by owner (D34). M6 protocol is frozen in
-  `docs/sensor-protocol.md`; fit settings in `configs/sensor/default.yaml`.
+- Registered sensor model **`fcf8cdae58ca3947`**, detector `700e0ff3455259e8`, fit world set
+  `5dc45d0e1ea5afbd`. Local files: `data/sensor_models/<model_id>.json`, `.fit.json`,
+  `.test.json` and metadata. Fit uses all 40 sensor-fit worlds; no tuning on T.
+- V0–V3 share `SensorModel.posterior(prior, level, score, variant)`. Levels are zero-based;
+  pass the maximum **raw** swimmer score per observed cell, or None/zero for no detection.
+  V0–V2 use tau; V3 uses tau_min and calibrates internally. Loader validates content and
+  detector/fit-set identity, and can verify the cache contract.
+- Shared matching: `calibration.outcomes.cell_outcomes`, `observed_bounds`. Occupancy comes
+  from full world target centres, not only visible cache truth. Centre cell only (D34).
+- B cell recall L1–L5: 0.794/0.797/0.780/0.664/0.446. False alarms per 10k empty cell
+  observations: 2.985/3.819/3.785/3.858/3.870. Runtime rates/histograms are smoothed;
+  reports retain raw estimates and whole-world bootstrap intervals.
+- D35: owner confirmed the five levels, 500 s battery and first observation per (cell, level)
+  only. Second-look recall after a miss: 0.172/0.186/0.152/0.157/0.095. Fine/coarse full
+  sweeps cost 542/78 s. L1's slight shortfall from the 0.80 goal is explicitly accepted.
+- Held-out checks: all 80 test worlds and **688 real-T views from 405 frames**, CPU only.
+  Real report: `data/sensor_models/real-T/cb1a5bb437b21ea3/report.json`. Resumable per-view
+  output and source hashes remain alongside it. Completed successfully; no rerun needed.
+- **Calibration remains imperfect:** calibrated ECE is 0.366–0.461 on test worlds and
+  0.290–0.414 on real T. Never describe these scores as reliably calibrated probabilities.
+  Test worlds lack distractors and differ sharply from B; report that limitation.
+- Results/figures: `docs/sensor-results.md` and `.json`; reproduction and M7 integration:
+  `docs/sensor-models.md`. Frozen protocol: `docs/sensor-protocol.md`; settings:
+  `configs/sensor/default.yaml`. No bound was hit in temperature fitting (L2 is near 20).
+- Real-frame evaluation code was committed at `f1a59d6`; metadata's dirty flag reflects the
+  documentation being written during the detached run. Source-box centres are projected
+  directly with `box_centres_m`, avoiding view-clipping shifts. The initial v1 directory is
+  superseded; use only `cb1a5bb437b21ea3`.
+
+## Next: M7 environment and baselines
+
+- Implement stateful belief updates, resolved cells, found-target suppression and the D35
+  re-look gate; `SensorModel.posterior` itself is stateless. Keep the sensor model frozen.
+- Build the Gymnasium environment and random/oracle/B1–B5 baselines; run sanity checks on
+  rl-val and freeze baseline hyperparameters before M8. Do not use test outcomes for tuning.
 - **Open decisions (§25):** known vs unknown K, MaskablePPO vs a custom PPO,
   observation frame, tracker, and test-world distractors.
 
