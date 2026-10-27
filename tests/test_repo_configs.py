@@ -9,6 +9,7 @@ from altiseek.calibration.config import SensorConfig
 from altiseek.config import Config, load_config
 from altiseek.data.config import DataConfig
 from altiseek.detector.config import DetectorConfig
+from altiseek.env.config import SearchConfig
 from altiseek.env.energy import EnergyModel
 from altiseek.geometry.design_config import LevelDesign
 from altiseek.geometry.level_design import coverage_energy_s
@@ -23,6 +24,7 @@ SCHEMAS: dict[str, type[Config]] = {
     "data": DataConfig,
     "detector": DetectorConfig,
     "env/energy": EnergyModel,
+    "env/search": SearchConfig,
     "levels": LevelTable,
     "levels/design": LevelDesign,
     "sensor": SensorConfig,

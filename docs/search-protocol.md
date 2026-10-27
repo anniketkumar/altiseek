@@ -1,0 +1,65 @@
+# M7 implementation and validation protocol
+
+M7 uses B imagery and the `rl-val` worlds only for baseline selection. The sensor
+model `fcf8cdae58ca3947` is frozen. This is development/selection evidence, not a
+held-out test result or the M9 policy evaluation protocol.
+
+## Main settings (D36)
+
+The owner selected known K and an allocentric north-up map with coordinate
+channels after reviewing alternatives. Unknown K and egocentric maps remain
+ablations. Unknown-count support, when enabled, uses a configured assumed count
+and excludes actual K from observations; main runs use known K.
+
+- Six actions: N/E/S/W, ascend, descend. Each level change snaps to the nearest
+  new-level footprint centre; ties use south/west lattice order. Charge both the
+  horizontal snap and altitude change, plus dwell, through the shared energy model.
+- Start at L5, at a seeded random edge launch location snapped to its lattice.
+  The initial observation costs 2 s and can make declarations. Initial finds,
+  false declarations and energy enter episode metrics/reward accounting.
+- Auto-declare at posterior > 0.5, one fixed rule across V0–V3 and normal policies.
+  This is a decision threshold for the ablation, not a claim of reliable calibration.
+  Resolve the centre cell once, finding every remaining target in it or recording
+  one false declaration. Suppress later detections within 1 m of found positions.
+- A cell updates only on its first observation at each level (D35). Full world
+  truth is confined to declaration verification and diagnostic logging. Policies
+  receive no target cells, cache truth, true prior, family label or world identity.
+- Geometry masks apply in training and evaluation. Invalid masked actions are
+  zero-cost no-ops that consume the 300-step cap; baselines must never use them.
+  An action that cannot finish within remaining energy ends the episode without
+  moving/observing; remaining energy is charged as hover. There is no free last view.
+- Map channels: p, q, one observed mask per level, resolved, current footprint,
+  drone position, x and y. Tensor rows run north to south and columns west to east;
+  belief storage remains [ix,iy]. Vector: level one-hot, battery fraction, elapsed
+  time / battery, found / K, K. Returned arrays are distinct each step.
+- Reward: found count − 0.5 × false declarations − energy / initial budget.
+  Optional shaping uses gamma * next potential − previous potential, with
+  potential = −belief entropy and terminal potential zero. Main runs disable it.
+- The oracle is an explicit privileged bound: it knows target cells, follows
+  shortest energy paths to L1 views covering them, and verifies them without
+  detector misses once covered at L1. It pays the same move and dwell costs.
+  Its perfect verification distinguishes this bound from detector-limited policies.
+
+## Policy and metric contracts
+
+Normal policies implement observation + mask → action, using only public map/vector
+state and the frozen sensor model. B4's objective is expected entropy reduction per
+energy, with expected true positives as tie-breaker. V0 lacks a probabilistic score
+model, so its planner uses its stated binary r0=0.9/f=0 surrogate; belief updates
+remain the exact V0 rule. V3 integrates conditional histogram probabilities.
+
+Found-vs-time AUC integrates the stepwise found fraction to the 500 s horizon and
+divides by 500. After episode termination the last found fraction is carried to
+the horizon. Initial observations are included. Report energy and actual elapsed
+time separately; climbing energy can exceed wall-clock flight time. Normalised
+scores use paired random/oracle AUCs and are null if the denominator is nonpositive.
+
+Episode logs and hidden-truth diagnostics belong to a logging wrapper, not policy
+observations. Record world/cache/model/config IDs, seed, actions, event times,
+energy, found/false counts and altitude usage. Resume only matching run identities.
+
+## Dependency
+
+Gymnasium is pinned to 1.4.0. Its installed checker validates reset/step seeding,
+spaces and fresh returned arrays. Sources: [release notes](https://github.com/Farama-Foundation/Gymnasium/releases)
+and [environment API](https://gymnasium.farama.org/api/env/).

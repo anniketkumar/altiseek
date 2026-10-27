@@ -1,0 +1,290 @@
+"""Cache-backed Gymnasium search; policies receive no unfound target locations."""
+
+from pathlib import Path
+from typing import Any, ClassVar
+
+import gymnasium as gym
+import numpy as np
+from gymnasium import spaces
+
+from altiseek.belief.state import Belief, entropy
+from altiseek.cache.build import header_for
+from altiseek.cache.config import CacheConfig
+from altiseek.cache.storage import CachePool, draw_variant
+from altiseek.calibration.model import SensorModel
+from altiseek.calibration.outcomes import observed_bounds
+from altiseek.env.config import SearchConfig
+from altiseek.env.navigation import Navigation
+from altiseek.world.sampler import prior_grid
+from altiseek.world.spec import WorldSpec
+
+
+class SearchEnv(gym.Env):
+    """Six masked moves. Map layout is C/north-to-south rows/west-to-east columns.
+
+    Oracle mode is an explicitly privileged bound: it confirms targets whose cells
+    are covered at L1 without detector misses. All travel/dwell costs still apply.
+    Normal modes always declare from the same sensor posterior threshold.
+    """
+
+    metadata: ClassVar[dict[str, Any]] = {"render_modes": []}
+
+    def __init__(
+        self,
+        worlds: list[WorldSpec],
+        cache: CacheConfig,
+        sensor: SensorModel,
+        config: SearchConfig,
+        *,
+        pool: CachePool | None = None,
+        navigation: Navigation | None = None,
+        oracle: bool = False,
+    ) -> None:
+        if not worlds or config.start_level >= len(cache.render.levels.levels):
+            raise ValueError("empty worlds or invalid start level")
+        contract = header_for(worlds[0], cache).model_dump(
+            mode="json", exclude={"world_id", "cache_id"}
+        )
+        if (
+            sensor.detector_id != cache.detector_id
+            or sensor.cache_contract != contract
+            or sensor.sensor_model_id != sensor.content_id()
+        ):
+            raise ValueError("sensor/cache contract mismatch")
+        if config.energy.battery_s <= config.energy.dwell_s:
+            raise ValueError("battery must permit initial observation")
+        self._worlds, self.cache_config, self.sensor, self.config = worlds, cache, sensor, config
+        self.pool = pool or CachePool()
+        self.nav = navigation or Navigation(
+            cache.render.levels, cache.render.camera.hfov_deg, config.energy
+        )
+        if self.nav.table != cache.render.levels or self.nav.energy != config.energy:
+            raise ValueError("navigation configuration mismatch")
+        self.oracle = oracle
+        self.table = self.nav.table
+        self.level_count, self.grid = len(self.table.levels), self.table.grid_cells
+        channels = self.level_count + 5 + 2 * config.coordinate_channels
+        high = np.array([1.0] * (self.level_count + 3) + [config.max_targets], dtype=np.float32)
+        self.observation_space = spaces.Dict(
+            {
+                "map": spaces.Box(0, 1, (channels, self.grid, self.grid), dtype=np.float32),
+                "vector": spaces.Box(np.zeros_like(high), high, dtype=np.float32),
+            }
+        )
+        self.action_space = spaces.Discrete(6)
+        coords = (np.arange(self.grid, dtype=np.float32) + 0.5) / self.grid
+        self._coordinates = np.stack(np.meshgrid(coords, coords, indexing="ij"))
+        self._ended = True
+
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
+        super().reset(seed=seed)
+        options = options or {}
+        wi = int(options.get("world_index", self.np_random.integers(len(self._worlds))))
+        if not 0 <= wi < len(self._worlds):
+            raise ValueError("invalid world index")
+        self.world = self._worlds[wi]
+        if self.world.world_id != self.world.content_id():
+            raise ValueError("invalid world content ID")
+        expected = header_for(self.world, self.cache_config)
+        if (
+            expected.model_dump(mode="json", exclude={"world_id", "cache_id"})
+            != self.sensor.cache_contract
+        ):
+            raise ValueError("world cache contract mismatch")
+        path = self.cache_config.out_dir / self.world.world_set / f"{self.world.world_id}.npz"
+        self.cache = self.pool.get(Path(path), expected=expected)
+        self._targets = np.array([(t.x_m, t.y_m) for t in self.world.targets], dtype=float)
+        if not 0 < len(self._targets) <= self.config.max_targets:
+            raise ValueError("target count outside configured bounds")
+        self._target_cells = np.floor(self._targets / self.table.cell_m).astype(int)
+        self.found = np.zeros(len(self._targets), dtype=bool)
+        q = prior_grid(self.world.prior_given, self.world.area_m, self.world.cell_m)
+        count = len(self._targets) if self.config.known_count else self.config.assumed_count
+        self.belief = Belief(q, count, self.level_count, self.sensor)
+        self.episode_seed = int(self.np_random.integers(2**31))
+        # Random edge launch point, snapped to an admissible footprint centre.
+        edge, along = (
+            int(self.np_random.integers(4)),
+            float(self.np_random.uniform(0, self.table.area_m)),
+        )
+        area = self.table.area_m
+        position = ((0, along), (area, along), (along, 0), (along, area))[edge]
+        self.node = int(
+            options.get("start_node", self.nav.nearest(self.config.start_level, np.array(position)))
+        )
+        if not 0 <= self.node < len(self.nav.nodes):
+            raise ValueError("invalid start node")
+        self.steps, self.observations, self.false_declarations = 0, 0, 0
+        self.elapsed_s = self.energy_used_s = self.config.energy.dwell_s
+        self.path_m = 0.0
+        self.time_per_level = np.zeros(self.level_count)
+        self.time_per_level[self.nav.nodes[self.node].level] = self.elapsed_s
+        self._ended = False
+        self.last_events = self._observe()
+        self.initial_reward = self._reward(self.last_events, self.elapsed_s)
+        self._ended = bool(self.found.all())
+        return self._observation(), self._info()
+
+    def action_masks(self) -> np.ndarray:
+        return (self.nav.next[self.node] >= 0).copy()
+
+    def _reward(self, events: dict[str, Any], energy: float) -> float:
+        return (
+            events["found"]
+            - self.config.false_declaration_cost * events["false"]
+            - energy / self.config.energy.battery_s
+        )
+
+    def step(self, action: int) -> tuple[dict[str, np.ndarray], float, bool, bool, dict[str, Any]]:
+        if self._ended:
+            raise RuntimeError("reset required after episode end")
+        if not self.action_space.contains(action):
+            raise ValueError("action outside action space")
+        self.steps += 1
+        self.last_events = {"found": 0, "false": 0, "informative_cells": 0}
+        if not self.action_masks()[action]:
+            # Mask-ignoring callers get a zero-reward no-op, bounded by the step cap.
+            truncated = self.steps >= self.config.max_steps
+            self._ended = truncated
+            reward = 0.0
+            if self.config.shaping_weight:
+                potential = -float(entropy(self.belief.probabilities).sum())
+                following = 0.0 if truncated else potential
+                reward = self.config.shaping_weight * (self.config.discount * following - potential)
+            return self._observation(), reward, False, truncated, self._info()
+        remaining = self.config.energy.battery_s - self.energy_used_s
+        cost = float(self.nav.cost[self.node, action])
+        previous_potential = -float(entropy(self.belief.probabilities).sum())
+        if cost > remaining + 1e-9:
+            # Insufficient energy for the complete move + dwell: end without observing.
+            self.energy_used_s += remaining
+            self.elapsed_s += remaining
+            self.time_per_level[self.nav.nodes[self.node].level] += remaining
+            self._ended = True
+            reward = -remaining / self.config.energy.battery_s
+            if self.config.shaping_weight:
+                reward -= self.config.shaping_weight * previous_potential
+            return self._observation(), reward, False, True, self._info()
+        time = float(self.nav.time[self.node, action])
+        self.path_m += float(self.nav.distance_m[self.node, action])
+        self.node = int(self.nav.next[self.node, action])
+        self.elapsed_s += time
+        self.energy_used_s += cost
+        self.time_per_level[self.nav.nodes[self.node].level] += time
+        self.last_events = self._observe()
+        terminated = bool(self.found.all())
+        truncated = bool(
+            self.energy_used_s >= self.config.energy.battery_s - 1e-9
+            or self.steps >= self.config.max_steps
+        )
+        self._ended = terminated or truncated
+        reward = self._reward(self.last_events, cost)
+        if self.config.shaping_weight:
+            potential = 0.0 if self._ended else -float(entropy(self.belief.probabilities).sum())
+            reward += self.config.shaping_weight * (
+                self.config.discount * potential - previous_potential
+            )
+        return self._observation(), reward, terminated, truncated, self._info()
+
+    def _observe(self) -> dict[str, Any]:
+        node = self.nav.nodes[self.node]
+        variant = draw_variant(
+            self.episode_seed, self.observations, self.cache.header.render.variants.count
+        )
+        self.observations += 1
+        key = np.array([node.level, node.ix, node.iy, variant])
+        self.footprint = observed_bounds(self.world, self.cache, key)
+        detections, _ = self.cache.lookup(*map(int, key))
+        informative = self.belief.update(
+            detections,
+            self.footprint,
+            node.level,
+            variant,
+            self.config.sensor_variant,
+            self._targets[self.found],
+            self.config.suppression_radius_m,
+        )
+        if self.oracle:
+            candidates = np.empty((0, 2), dtype=int)
+            if node.level == 0:
+                x0, y0, x1, y1 = self.footprint
+                cells = self._target_cells[~self.found]
+                candidates = np.unique(
+                    cells[
+                        (cells[:, 0] >= x0)
+                        & (cells[:, 0] < x1)
+                        & (cells[:, 1] >= y0)
+                        & (cells[:, 1] < y1)
+                    ],
+                    axis=0,
+                )
+        else:
+            candidates = np.argwhere(
+                (self.belief.probabilities > self.config.declare_threshold) & ~self.belief.resolved
+            )
+        new_found, false = 0, 0
+        for cell in candidates:
+            matches = (self._target_cells == cell).all(axis=1) & ~self.found
+            count = int(matches.sum())
+            self.found[matches] = True
+            new_found += count
+            false += count == 0
+        self.belief.resolve(candidates)
+        self.false_declarations += false
+        return {
+            "found": new_found,
+            "false": false,
+            "informative_cells": informative,
+            "variant": variant,
+        }
+
+    def _observation(self) -> dict[str, np.ndarray]:
+        footprint, drone = np.zeros((2, self.grid, self.grid), dtype=np.float32)
+        x0, y0, x1, y1 = self.footprint
+        footprint[x0:x1, y0:y1] = 1
+        ix, iy = np.minimum(
+            (self.nav.positions[self.node] / self.table.cell_m).astype(int), self.grid - 1
+        )
+        drone[ix, iy] = 1
+        maps = [
+            self.belief.probabilities,
+            self.belief.prior,
+            *self.belief.observed,
+            self.belief.resolved,
+            footprint,
+            drone,
+        ]
+        if self.config.coordinate_channels:
+            maps.extend(self._coordinates)
+        # World arrays use [ix,iy]; image-style tensors have north at row zero.
+        tensor = np.stack(maps).astype(np.float32).transpose(0, 2, 1)[:, ::-1, :].copy()
+        one_hot = np.eye(self.level_count, dtype=np.float32)[self.nav.nodes[self.node].level]
+        found_fraction = (
+            self.found.sum() / len(self.found)
+            if self.config.known_count
+            else self.found.sum() / self.config.max_targets
+        )
+        vector = np.r_[
+            one_hot,
+            max(0, 1 - self.energy_used_s / self.config.energy.battery_s),
+            min(1, self.elapsed_s / self.config.energy.battery_s),
+            found_fraction,
+            len(self.found) if self.config.known_count else 0,
+        ].astype(np.float32)
+        return {"map": tensor, "vector": vector}
+
+    def _info(self) -> dict[str, Any]:
+        return {
+            "action_mask": self.action_masks(),
+            "found": int(self.found.sum()),
+            "false_declarations": self.false_declarations,
+            "time_s": self.elapsed_s,
+            "energy_s": self.energy_used_s,
+            "path_m": self.path_m,
+            "steps": self.steps,
+            "terminated": bool(self.found.all()),
+            "ended": self._ended,
+            "events": self.last_events.copy(),
+        }

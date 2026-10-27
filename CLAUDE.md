@@ -21,7 +21,7 @@ Update as milestones complete (§21).
 | M4 Worlds & renderer | done (2026-10-26): libraries B `6b541bb0ff9d062a` and T `181004cb84b676f1` (D26, D27); world sets regenerated without glint (D30); fidelity accepted on the paste test, within 0.10 at every level on B and T (D30, `docs/results.md`) |
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
-| M7 Environment & baselines | not started |
+| M7 Environment & baselines | in progress: cache-backed Gymnasium environment, stateful belief and movement graph implemented (D36) |
 | M8 PPO | not started |
 | M9 Main experiments | not started |
 | M10 PX4 / Gazebo / ROS 2 | not started |
@@ -551,7 +551,7 @@ A world is a lightweight **spec**, not a giant image. The renderer composes what
   - drone position;
   - optional x/y coordinate channels.
 - **Vector:** current level (one-hot), battery fraction, elapsed-time fraction, targets found / K, and K itself (known by default; unknown as an ablation).
-- Ground truth never enters observations.
+- Ground truth never enters observations. D36 fixes known K and a north-up allocentric map with coordinate channels as the main settings; see `docs/search-protocol.md` for channel order and episode edge cases.
 
 **Reward** (configurable; defaults)
 - +1 per target found.
@@ -575,7 +575,7 @@ Every policy implements the same interface: observation + action mask → action
 
 **Bounds**
 - **Random:** uniformly random valid action.
-- **Oracle:** knows the target cells and flies a short tour (nearest-neighbour or a TSP solver) visiting each one at the finest level. Used to normalise scores.
+- **Oracle:** knows the target cells and flies a short tour (nearest-neighbour or a TSP solver) visiting each one at the finest level. Used to normalise scores. D36 makes this a privileged perfect-verification bound once a target cell is covered at L1; normal policies remain detector-limited.
 
 **Classical baselines** (tune every hyperparameter on rl-val worlds only)
 - **B1 Lawnmower:** a boustrophedon sweep at one fixed level, chosen per family on rl-val.
@@ -924,14 +924,14 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D35 | M6 confirms the first observation per (cell, level) as informative; keep all five D7 levels and the 500 s battery. Owner confirmed on 2026-10-27, using B only. | Sensor-fit cell recall at tau is 0.794/0.797/0.780/0.664/0.446; second-look recall after a miss is 0.172/0.186/0.152/0.157/0.095. Correlated variants do not justify repeated independent updates. L1 falls just below the original 0.80 goal (95% CI 0.718-0.868); explicitly accept this measured shortfall. L5 meets the revised <=0.65 rule; existing fine/coarse coverage costs still satisfy the battery constraint. No T result informed this choice. | Confirmed |
 
+| D36 | M7 main setting: known K, allocentric north-up map with x/y channels (owner confirmed after discussing alternatives, 2026-10-27). Six moves, L5 edge launch, tau_declare 0.5, suppression radius 1 m, cap 300; operational contracts in `docs/search-protocol.md`. Gymnasium 1.4.0 is pinned. | Makes the main comparison focus on sensing. Unknown K and egocentric maps remain ablations. Snap travel and initial dwell are charged; no unaffordable final view. Oracle is a privileged L1 perfect-verification bound with identical movement costs, explicitly separated from detector-limited policies. | Implemented; baseline validation pending |
+
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
 - Test-world distractors: T has none within θ_lib, so test worlds have none (D29, D30), and RQ2(c) and E3's distractor test cannot run on them as they stand. The alternative is to reserve one B video's distractor crops for test worlds only, which bends split purity. Decide before M9.
-- Known vs unknown K as the default.
 - MaskablePPO vs a custom PPO.
-- Allocentric map with coordinate channels vs egocentric map as the default observation.
 - TensorBoard vs W&B.
 
 ---

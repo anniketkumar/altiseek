@@ -1,0 +1,14 @@
+energy:
+  _base_: energy.yaml
+sensor_variant: V3
+start_level: 4
+max_steps: 300
+declare_threshold: 0.5
+suppression_radius_m: 1.0
+false_declaration_cost: 0.5
+known_count: true
+assumed_count: 2.0
+max_targets: 16
+coordinate_channels: true
+shaping_weight: 0.0
+discount: 0.99
