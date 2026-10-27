@@ -22,9 +22,10 @@ from altiseek.data.splits import SplitRow
 from altiseek.data.tables import read_csv
 from altiseek.detector.config import DetectorConfig
 from altiseek.detector.infer import Detector, detector_id_of
-from altiseek.detector.views import CameraModel, frame_camera, labels_for, tile_windows
+from altiseek.detector.views import CameraModel, frame_camera, tile_windows
 from altiseek.geometry.rectify import rectify
 from altiseek.registry.run import sha256_file, write_metadata
+from altiseek.world.library import box_centres_m
 
 
 def main() -> None:
@@ -79,6 +80,7 @@ def main() -> None:
         boxes[box.image_id].append(box)
     cameras = json.loads((data / "camera_models.json").read_text(encoding="utf-8"))
     identity = {
+        "matching_version": "source-centres-v2",
         "model_sha256": sha256_file(args.model),
         "selection": selection,
         "detector_config": cfg.model_dump(mode="json"),
@@ -153,7 +155,7 @@ def main() -> None:
                 pipeline=cfg.camera.pipeline,
                 supersample=cfg.views.supersample,
             )
-            truth = labels_for(camera, window, boxes[image_id], view.valid)
+            truth = box_centres_m(camera, [b for b in boxes[image_id] if b.category == "swimmer"])
             detections = detector.detect(view.image[None])[0]
             row = real_outcomes(
                 window, view.valid, truth, detections, table.cell_m, model.fit_config
@@ -180,7 +182,7 @@ def main() -> None:
                 np.zeros((len(gsds), 2, 2), dtype=int),
                 np.asarray(levels),
                 np.asarray(scores),
-                np.asarray(labels),
+                np.asarray(labels, dtype=bool),
             )
         )
     report = measurements(groups, model.fit_config)

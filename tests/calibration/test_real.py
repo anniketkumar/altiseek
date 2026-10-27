@@ -4,14 +4,13 @@ import pytest
 from altiseek.calibration.config import SensorConfig
 from altiseek.calibration.real import real_outcomes
 from altiseek.detector.infer import Detection
-from altiseek.detector.views import Label
 from altiseek.geometry.rectify import ViewWindow
 
 
 def test_ground_grid_y_flip_boundary_and_fill():
     window = ViewWindow(0, 0, 1, 10)
     valid = np.ones((10, 10), dtype=bool)
-    truth = [Label(0, 1, 8, 2, 9)]
+    truth = np.array([[1.5, 1.5]])
     detections = [
         Detection(0, 0.8, 1, 8, 2, 9),
         Detection(0, 0.6, 1, 8, 2, 9),
@@ -34,7 +33,7 @@ def test_grid_origin_is_not_view_corner():
     first = real_outcomes(
         ViewWindow(0, 0, 1, 10),
         np.ones((10, 10), dtype=bool),
-        [Label(0, 2.3, 8, 2.5, 9)],
+        np.array([[2.4, 1.5]]),
         [Detection(0, 0.8, 2.5, 8, 2.7, 9)],
         2.5,
         SensorConfig(),
@@ -42,7 +41,7 @@ def test_grid_origin_is_not_view_corner():
     second = real_outcomes(
         ViewWindow(1, 0, 1, 10),
         np.ones((10, 10), dtype=bool),
-        [Label(0, 1.3, 8, 1.5, 9)],
+        np.array([[2.4, 1.5]]),
         [Detection(0, 0.8, 1.5, 8, 1.7, 9)],
         2.5,
         SensorConfig(),

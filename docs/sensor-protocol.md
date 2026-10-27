@@ -39,8 +39,10 @@ owner decisions and sensor-fit B only. Do not select models or settings on T.
   from tile geometry; the saved coordinates are rounded. Run the frozen detector
   on CPU at tau_min with the same NMS settings. Use a 2.5 m grid anchored at (0,0)
   in each source camera's ground frame, not at the view corner. Only cells whose
-  centres fall on valid source pixels are observed. Match target/detection centres
-  by cell and reduce scores as above. Report reliability/ECE and raw cell r/f;
+  centres fall on valid source pixels are observed. Project original source-box
+  centres to ground with the library's `box_centres_m`; never move a target centre
+  by clipping its box to the view. Match target/detection centres by cell and reduce
+  scores as above. Report reliability/ECE and raw cell r/f;
   bootstrap frames. Save per-view outcomes atomically so this CPU job resumes.
 - Re-check D7 using B cell recall, false alarms per 10,000 empty observations,
   and the existing coverage-energy calculation. A centre-cell metric is stricter

@@ -8,14 +8,13 @@ import numpy as np
 
 from altiseek.calibration.config import SensorConfig
 from altiseek.detector.infer import Detection
-from altiseek.detector.views import Label
 from altiseek.geometry.rectify import ViewWindow
 
 
 def real_outcomes(
     window: ViewWindow,
     valid: np.ndarray,
-    truth: Sequence[Label],
+    target_positions_m: np.ndarray,
     detections: Sequence[Detection],
     cell_m: float,
     cfg: SensorConfig,
@@ -41,12 +40,18 @@ def real_outcomes(
             if 0 <= row < size and 0 <= col < size and valid[row, col]:
                 observed.add((ix, iy))
 
-    def cell(box: Label | Detection) -> tuple[int, int]:
+    def cell(box: Detection) -> tuple[int, int]:
         x = window.x0_m + (box.x_min + box.x_max) / 2 * gsd
         y = window.y0_m + window.side_m - (box.y_min + box.y_max) / 2 * gsd
         return math.floor(x / cell_m), math.floor(y / cell_m)
 
-    occupied = {cell(t) for t in truth if t.class_id == 0} & observed
+    if target_positions_m.ndim != 2 or target_positions_m.shape[1] != 2:
+        raise ValueError("target positions must have shape (N, 2)")
+    occupied = {
+        (math.floor(x / cell_m), math.floor(y / cell_m))
+        for x, y in target_positions_m
+        if np.isfinite([x, y]).all()
+    } & observed
     outcomes: dict[tuple[int, int], float] = {}
     for d in detections:
         key = cell(d)

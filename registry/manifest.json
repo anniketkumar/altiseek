@@ -5082,5 +5082,25 @@
     "notes": {
       "views": 880
     }
+  },
+  {
+    "kind": "sensor_model",
+    "artifact_id": "fcf8cdae58ca3947",
+    "sha256": "274a79f9cbdb523322b4bd792aa2b86809e187a2b1f5ef166a7a6bafa03aac91",
+    "location": "data/sensor_models/fcf8cdae58ca3947.json",
+    "parents": {
+      "detector_id": "700e0ff3455259e8",
+      "world_set_id": "5dc45d0e1ea5afbd"
+    },
+    "created_utc": "2026-10-27T01:40:04+00:00",
+    "notes": {
+      "variants": [
+        "V0",
+        "V1",
+        "V2",
+        "V3"
+      ],
+      "boundary": "centre-cell"
+    }
   }
 ]
