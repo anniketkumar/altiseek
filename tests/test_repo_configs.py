@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from altiseek.cache.config import CacheConfig
+from altiseek.calibration.config import SensorConfig
 from altiseek.config import Config, load_config
 from altiseek.data.config import DataConfig
 from altiseek.detector.config import DetectorConfig
@@ -24,6 +25,7 @@ SCHEMAS: dict[str, type[Config]] = {
     "env/energy": EnergyModel,
     "levels": LevelTable,
     "levels/design": LevelDesign,
+    "sensor": SensorConfig,
     "world": WorldConfig,
     "world/library": LibraryConfig,
     "world/render": RenderConfig,

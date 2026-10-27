@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D34**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D35**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 226
   pass at M5 completion.
@@ -38,7 +38,7 @@ comes next.
   - The token lives in `~/.kaggle/access_token`. Never print or commit it. The owner was asked to
     regenerate it.
 
-## Status: M0–M4 done, M5 next
+## Status: M0–M5 done, M6 in progress
 
 | Item | Value |
 |---|---|
@@ -112,7 +112,9 @@ All four sets are cached, verified locally and registered in `registry/manifest.
 
 - **M6 sensor models:** fit them on the sensor-fit caches. Re-check D7 with the measured r_ℓ and
   f_ℓ, then settle the re-look rule (D6).
-- **Open decisions (§25):** boundary rule, known vs unknown K, MaskablePPO vs a custom PPO,
+- **Boundary rule:** centre cell only, confirmed by owner (D34). M6 protocol is frozen in
+  `docs/sensor-protocol.md`; fit settings in `configs/sensor/default.yaml`.
+- **Open decisions (§25):** known vs unknown K, MaskablePPO vs a custom PPO,
   observation frame, tracker, and test-world distractors.
 
 ## Caveats

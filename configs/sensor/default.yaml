@@ -1,0 +1,15 @@
+# M6: fixed before test evaluation; only sensor-fit B contributes to fitted parameters.
+boundary_rule: centre-cell
+calibration_unit: maximum-score-cell
+tau: 0.37650254368782043
+tau_min: 0.05
+histogram_bins: 10
+reliability_bins: 15
+pseudocount: 0.5
+bootstrap_samples: 2000
+seed: 20261027
+temperature_min: 0.05
+temperature_max: 20.0
+naive_recall: 0.9
+log_odds_limit: 20.0
+relook_rule: first-cell-level

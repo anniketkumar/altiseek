@@ -20,7 +20,7 @@ Update as milestones complete (§21).
 | M3 Level design | done (2026-10-25): five levels at 30–89 m over 2.5 m cells, battery 500 s, coarsest rule loosened to ≤ 0.65 (D7, `configs/levels/default.yaml`); re-check at M6 |
 | M4 Worlds & renderer | done (2026-10-26): libraries B `6b541bb0ff9d062a` and T `181004cb84b676f1` (D26, D27); world sets regenerated without glint (D30); fidelity accepted on the paste test, within 0.10 at every level on B and T (D30, `docs/results.md`) |
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
-| M6 Sensor models | not started |
+| M6 Sensor models | in progress: centre-cell rule confirmed; V0–V3 implementation and frozen evaluation protocol (D34) |
 | M7 Environment & baselines | not started |
 | M8 PPO | not started |
 | M9 Main experiments | not started |
@@ -142,7 +142,7 @@ Every policy is run with four ways of turning detections into belief updates (V0
 
 **IDs** (content-addressed; see §18)
 - `detector_id` = hash of the checkpoint file.
-- `sensor_model_id` = hash of (detector_id, fit config, fit world-set ID).
+- `sensor_model_id` = hash of (detector_id, fit config, fit world-set ID, cache contract, fit cache IDs and fitted parameters) (D34).
 - `world_id` = hash of the world spec.
 - `cache_id` = hash of (world_id, detector_id, camera spec, level spec, variant spec, τ_min, inference settings, schema and renderer versions) (D31).
 - Every artifact records the IDs it was built from.
@@ -355,7 +355,7 @@ These are two different things. Keep them separate in code and in the write-up.
 - A cell is *observed* at level ℓ if its centre lies inside the footprint.
 - r_ℓ(τ) = P(an observed cell containing a swimmer gets ≥1 swimmer detection with score ≥ τ in that cell).
 - f_ℓ(τ) = P(an observed cell with no swimmer gets ≥1 swimmer detection with score ≥ τ). This includes distractor cells at the world's distractor density.
-- **Swimmers near cell boundaries:** decide the rule (centre cell only, or centre cell plus neighbours) and log it. Use the same rule everywhere.
+- **Swimmers near cell boundaries:** centre cell only (owner's choice, D34). Full world target positions define occupancy, including when a target lies just outside a shifted view but its cell centre is observed. Multiple targets in one cell count once.
 
 **Fit data**
 - Cached detections on the *sensor-fit* world set: split-B imagery, with seeds disjoint from the RL worlds.
@@ -363,9 +363,15 @@ These are two different things. Keep them separate in code and in the write-up.
 - Validate on the test worlds and on real T frames (the fidelity check, §11).
 
 **Calibration method**
-- Per-level temperature scaling on score logits, fit by minimising the BCE of TP/FP labels on the sensor-fit set.
+- Per-level temperature scaling on score logits, fit by minimising BCE on the sensor-fit set. The calibration unit is the maximum-score swimmer detection per observed cell, labelled by cell occupancy, matching V3's outcome rather than per-box IoU matching (D34).
 - Report ECE and reliability diagrams per level, before and after calibration, on the test worlds and on real T frames.
 - Optional: an altitude-conditioned calibrator, e.g. logistic regression on score logit, GSD and box size.
+
+**M6 estimator and evaluation details (D34):** `configs/sensor/default.yaml` and
+`docs/sensor-protocol.md` freeze thresholds, smoothing, bins, bootstrap units, real-T
+view selection and matching before M6 test evaluation. Reports retain raw r/f with
+whole-world bootstrap intervals; runtime rates and conditional histograms use 0.5
+pseudocounts to avoid zero likelihoods. Test evaluation never re-fits the model.
 
 **Re-look correlation**
 - The detector is deterministic, so re-observing a cell from the same level gives highly correlated evidence.
@@ -914,11 +920,12 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D32 | M5 cloud inputs: transfer the original B/T libraries and all four world sets byte-for-byte as a private Kaggle dataset; use the verified bundle instead of rebuilding them for cache runs. SeaDronesSee CC0 terms checked. | First pilot reproduced all selections/statistics and all 2,807 decoded images exactly, but every PNG file hash changed; JSON line endings also differed. B/T rebuilt IDs were 98ad44c968c05f24 / e20c6b1f8e3dfde2. Preserve the accepted original IDs and bytes, never relabel rebuilt artifacts. The pilot also records and checks the imported NumPy version because distribution metadata reported a different version. Evidence: docs/cache.md. | Fallback implemented; private upload and GPU pilot pending |
 | D33 | M5 counts fixed at sensor-fit 40, rl-train 160, rl-val 40 and test 80, with existing seeds/IDs unchanged. Production uses an eight-hour generation limit, then validates completed files; partial output resumes in another saved session. | The original-input GPU pilot passed: 1,760 cached views, 40/40 live checks, 70.10 s/world mean. Full generation projects to 6.23 h; allow roughly 7?8 h including validation/overhead, below the 12 h session limit. Owner reported 22 h 36 min quota remaining. The desired 200 test scenarios per each of eight families would require about 31 h for test generation alone, beyond the approximate weekly quota before training/validation work. Retain 10 test worlds per family as a compute-limited evaluation and report its uncertainty; do not claim high-powered per-family results. No test results were used in this decision. | Fixed; production complete 2026-10-27 |
 
+| D34 | M6 uses centre-cell occupancy/matching, as chosen by the owner on 2026-10-27. Calibrate maximum-score detected cells at tau_min, not individual boxes. Freeze the estimator/evaluation details in `docs/sensor-protocol.md` and `configs/sensor/default.yaml`; model identity additionally hashes cache contract, cache IDs and numerical parameters. | Matches the probability-map event, keeps duplicate detections and targets from inflating cell counts, prevents zero likelihoods with fixed pseudocounts, and makes test calibration a held-out check. No T outcomes selected the settings. Full world occupancy prevents shifted boundary views from hiding legitimate misses. | Fixed; M6 fitting/evaluation pending |
+
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- Boundary rule for swimmers straddling cells.
 - Test-world distractors: T has none within θ_lib, so test worlds have none (D29, D30), and RQ2(c) and E3's distractor test cannot run on them as they stand. The alternative is to reserve one B video's distractor crops for test worlds only, which bends split purity. Decide before M9.
 - Known vs unknown K as the default.
 - MaskablePPO vs a custom PPO.
