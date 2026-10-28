@@ -22,7 +22,7 @@ Update as milestones complete (§21).
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
-| M8 PPO | in progress: six initial runs complete; poor search behavior diagnosed (D40). Reward/AUC mismatch and deterministic-action losses demonstrated; controlled learning works. Revised objective/protocol needed before further main training (`docs/ppo-diagnosis.md`) |
+| M8 PPO | in progress: six initial runs and D40 diagnosis complete. Owner approved AUC reward, gamma 1 and sampled primary evaluation (D41); revised pilot pending (`docs/ppo-auc-protocol.md`) |
 | M9 Main experiments | not started |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
@@ -559,6 +559,13 @@ A world is a lightweight **spec**, not a giant image. The renderer composes what
 - −(energy used this step / battery) per step, so spending the whole battery costs −1.
 - **Optional shaping must be potential-based:** F = γ·Φ(s′) − Φ(s), with Φ computed from the belief (e.g. −entropy, or −Σp over unresolved cells). Report results with and without shaping. Any other shaping can be farmed.
 
+**M8 revision (D41):** PPO's training wrapper replaces those legacy terms with
+`newly_found / K * max(0, 1 - elapsed_s / battery_s)`, gamma 1, no shaping or
+false-declaration penalty. Battery remains a hard constraint; false declarations
+and energy remain reported. Initial observation rewards are action-independent.
+The action reward sum plus the initial contribution equals found-fraction AUC.
+Core M7 rewards remain unchanged for historical comparisons. Known K is required.
+
 **Engineering requirements**
 - Passes Gymnasium's environment checker.
 - Fully deterministic given a seed.
@@ -601,8 +608,9 @@ Every policy implements the same interface: observation + action mask → action
   D40's completed diagnosis preserves that configuration: V0's reward prefers
   low-AUC PPO trajectories over B3/B5; sampled actions improve V3 AUC but leave
   a substantial gap. Per-action discounting also biases energy cost across levels.
-  Resolve the objective/selection mismatch under a new protocol before another
-  main run. No reward or architecture change has been made by the diagnosis.
+  D41 records the owner-approved AUC objective and sampled-action selection in
+  `docs/ppo-auc-protocol.md`, keeping architecture and inputs fixed. Three action
+  draws per validation world are primary; argmax is a secondary diagnostic.
 - **Network:**
   - A CNN over the map tensor (a few strided convolutions or small residual blocks).
   - Its output is concatenated with the vector features → MLP → policy and value heads.
@@ -951,6 +959,8 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D39 | M8 uses MaskablePPO 2.9.2, a custom spatial CNN and local TensorBoard 2.21.0, owner selected 2026-10-28. Initial CPU runs: V0/V3, seeds 17/29/43, 131,072 steps each, validation every 16,384; four subprocess environments and two torch threads. Full protocol: `docs/ppo-protocol.md`. | Fits existing Gymnasium/CPU torch pins; avoids default flattening of float maps. Fixed log scaling exposes sparse p/q without fitted statistics. Battery/cap endings are terminal to the learner, preventing timeout bootstrap beyond the finite task. Checkpoints preserve optimizer, worker state and all RNGs; exact continuation is tested. CPU pilots favored subprocess workers (148–185 steps/s at two epochs). No shaping or T tuning; baseline settings remain frozen. | Six runs complete; initial configuration underperforms, see D40 |
 
 | D40 | Diagnose the completed M8 initial configuration without replacing its results: replay all selected policies, compare argmax with three seeded action draws per validation world, perturb only public inputs, audit action returns against baseline rewards, and run a fixed four-world V3 learning probe. Details: `docs/ppo-diagnosis-protocol.md`. | Owner requested root-cause analysis. 960 episodes and 1,783 input probes demonstrate V0 reward/AUC ranking reversal and V3 argmax loss (0.439 to 0.597 with sampling). The same network learns the fixed four-world task (0.000 to 0.579 AUC; B5 0.613). Per-action discounting analytically favors smaller energy increments. Residual V3 optimization failure is not uniquely isolated. No T data, checkpoint reselection or main reward/architecture change. | Diagnosis complete; objective/protocol revision pending; M8 remains incomplete |
+
+| D41 | Owner approved AUC-aligned PPO reward: remaining-horizon fraction per find divided by K, gamma 1, hard battery constraint and false declarations reported separately. Keep the CNN and inputs fixed. Primary validation samples three action draws per world; argmax is secondary. Protocol: `docs/ppo-auc-protocol.md`. | D40 demonstrated reward/AUC ranking reversal and argmax losses. Action rewards sum to AUC apart from the initial observation. V3 seed 17 pauses at 65,536 steps before expanding to six runs. Preserve original runs and the zero-p gate; no T tuning. | Approved; pilot pending |
 
 ---
 

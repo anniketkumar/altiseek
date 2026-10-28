@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D41**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D42**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 274
   pass with the M8 training pipeline (M7 completion had 268).
@@ -230,3 +230,11 @@ All four sets are cached, verified locally and registered in `registry/manifest.
 - The `camera_models.json` hash in library metadata may not match a fresh checkout, because of
   line endings (CRLF vs LF). Compare file contents, not only hashes, before declaring a mismatch.
 - Never tune anything on split T, test worlds or test seeds (§23).
+
+## M8 approved continuation (D41)
+
+The owner approved AUC-aligned reward and gamma 1, with sampled-action primary
+validation. Follow docs/ppo-auc-protocol.md and configs/policy/ppo_auc.yaml.
+Preserve all initial runs. Start V3 seed 17 in runs/ppo/m8-auc/V3-seed17, pause
+at 65,536 steps, review the predeclared pilot gate, then resume the same run.
+The CNN, sensor, caches and worlds remain fixed. M8 is not yet complete.

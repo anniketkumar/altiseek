@@ -58,8 +58,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path, nargs="?", default=Path("runs/ppo/m8-initial"))
     parser.add_argument("--partial", action="store_true")
+    parser.add_argument("--config", type=Path, default=Path("configs/policy/ppo.yaml"))
     args = parser.parse_args()
-    cfg = load_config("configs/policy/ppo.yaml", PPOConfig)
+    cfg = load_config(args.config, PPOConfig)
+    revision = cfg.objective == "auc"
     baseline = read(Path("docs/baseline-results.json"))
     curves, selected, paths, configs = [], [], {}, []
     baseline_comparison = []
@@ -85,7 +87,7 @@ def main() -> None:
                 or plan["seed"] != seed
             ):
                 raise ValueError("production run identity mismatch")
-            if plan["config"] != cfg.model_dump(mode="json"):
+            if PPOConfig.model_validate(plan["config"]) != cfg:
                 raise ValueError("configuration changed across runs")
             configs.append((plan["source_hashes"], plan["input_hashes"], plan["world_sets"]))
             if configs[-1] != configs[0]:
@@ -94,8 +96,16 @@ def main() -> None:
             history = []
             for path in sorted(root.glob("eval-*.json")):
                 report = read(path)
-                if len(report["episodes"]) != 40:
+                if len(report["episodes"]) != 40 * cfg.evaluation_repeats:
                     raise ValueError("incomplete validation")
+                pairs = {(r["world_id"], r.get("repeat", 0)) for r in report["episodes"]}
+                if len(pairs) != len(report["episodes"]):
+                    raise ValueError("duplicate validation world/repeat")
+                if revision and (
+                    report["action_rule"] != cfg.evaluation_actions
+                    or report["repeats"] != cfg.evaluation_repeats
+                ):
+                    raise ValueError("evaluation protocol mismatch")
                 history.append(
                     {
                         k: report[k]
@@ -103,6 +113,19 @@ def main() -> None:
                     }
                 )
                 paths[f"eval_{variant}_{seed}_{report['steps']}"] = path
+                if revision:
+                    argmax_path = root / f"argmax-{report['steps']:09d}.json"
+                    if argmax_path.exists():
+                        secondary = read(argmax_path)
+                        if (
+                            len(secondary["episodes"]) != 40
+                            or secondary["action_rule"] != "deterministic"
+                        ):
+                            raise ValueError("invalid argmax evaluation")
+                        history[-1]["argmax_auc"] = secondary["mean_auc"]
+                        paths[f"argmax_{variant}_{seed}_{report['steps']}"] = argmax_path
+                    elif not args.partial:
+                        raise ValueError("missing argmax evaluation")
             curves.append(
                 {"variant": variant, "seed": seed, "run_id": root.name, "history": history}
             )
@@ -148,9 +171,16 @@ def main() -> None:
             ids = {r["world_id"] for r in best["episodes"]}
             if ids != set(refs["B2"]) or ids != {r["world_id"] for r in zero["episodes"]}:
                 raise ValueError("validation world identities differ from baselines")
+            if len(zero["episodes"]) != 40 * cfg.evaluation_repeats:
+                raise ValueError("incomplete zero-belief evaluation")
             zero_delta = [
-                r["metrics"]["auc"] - refs["B2"][r["world_id"]]["metrics"]["auc"]
-                for r in zero["episodes"]
+                float(
+                    np.mean(
+                        [r["metrics"]["auc"] for r in zero["episodes"] if r["world_id"] == world_id]
+                    )
+                )
+                - refs["B2"][world_id]["metrics"]["auc"]
+                for world_id in sorted(ids)
             ]
             metrics = {
                 key: float(np.mean([r["metrics"][key] for r in best["episodes"]]))
@@ -162,6 +192,13 @@ def main() -> None:
                     "false_declarations",
                 )
             }
+            if revision:
+                metrics.update(
+                    {
+                        key: float(np.mean([r["metrics"][key] for r in best["episodes"]]))
+                        for key in ("repeat_fraction", "zero_information_fraction", "energy_s")
+                    }
+                )
             altitude = np.mean(
                 [r["metrics"]["time_per_level_s"] for r in best["episodes"]], axis=0
             ).tolist()
@@ -187,6 +224,7 @@ def main() -> None:
                     "checkpoint": checkpoint.as_posix(),
                     "sha256": completion["checkpoint_sha256"],
                     "selected_step": best["steps"],
+                    "argmax_auc": expected.get("argmax_auc"),
                     "metrics": metrics,
                     "normalised_auc": best["mean_normalised_auc"],
                     "zero_belief_auc": zero["mean_auc"],
@@ -226,7 +264,9 @@ def main() -> None:
             all(r["finite_optimizer_losses"] for r in selected) if complete else None
         ),
     }
-    prefix = args.root / "progress-report" if args.partial else Path("docs/ppo-results")
+    stem = "ppo-auc-results" if revision else "ppo-results"
+    figure_name = "m8_auc_learning.png" if revision else "m8_learning.png"
+    prefix = args.root / "progress-report" if args.partial else Path("docs") / stem
     # Keep full selected trajectories beside the ignored run artifacts. Publish
     # per-world metrics without duplicating hundreds of thousands of step lines.
     public_summary = summary
@@ -246,9 +286,7 @@ def main() -> None:
         }
     write_json(prefix.with_suffix(".json"), public_summary)
     figure = (
-        args.root / "learning-progress.png"
-        if args.partial
-        else Path("docs/figures/m8_learning.png")
+        args.root / "learning-progress.png" if args.partial else Path("docs/figures") / figure_name
     )
     fig, axes = plt.subplots(
         1, len(cfg.variants), figsize=(12, 4), squeeze=False, constrained_layout=True
@@ -288,6 +326,9 @@ def main() -> None:
         "These are checkpoint-selection results on B, not held-out test performance. "
         "All training seeds are reported. Paired intervals resample worlds after selection; "
         "they do not correct selection bias or shared imagery.",
+        f"Primary action rule: {cfg.evaluation_actions}; "
+        f"{cfg.evaluation_repeats} draw(s) per world. "
+        "Repeated draws are averaged within worlds for paired intervals.",
         "",
         "| Variant | Seed | Selected step | AUC | Found | All found | False declarations "
         "| Zero-p AUC | Zero-p minus B2 |",
@@ -352,7 +393,7 @@ def main() -> None:
         "It is an input-removal check, not a separately trained prior-only policy.",
         "",
         "![Learning curves]("
-        + ("learning-progress.png" if args.partial else "figures/m8_learning.png")
+        + ("learning-progress.png" if args.partial else f"figures/{figure_name}")
         + ")",
         "",
     ]

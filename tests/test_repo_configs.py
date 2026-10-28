@@ -33,6 +33,7 @@ SCHEMAS: dict[str, type[Config]] = {
     "policy/baselines": BaselineRun,
     "policy/selected": SelectedBaselines,
     "policy/ppo": PPOConfig,
+    "policy/ppo_auc": PPOConfig,
     "world": WorldConfig,
     "world/library": LibraryConfig,
     "world/render": RenderConfig,

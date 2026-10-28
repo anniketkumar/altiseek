@@ -2,6 +2,7 @@
 
 import json
 import random
+from itertools import product
 from pathlib import Path
 from typing import Any
 
@@ -64,7 +65,9 @@ def vector_env(
 
     def create() -> FiniteSearch:
         torch.set_num_threads(cfg.threads)
-        return FiniteSearch(SearchEnv(worlds, cache, sensor, search, pool=CachePool(40)))
+        return FiniteSearch(
+            SearchEnv(worlds, cache, sensor, search, pool=CachePool(40)), objective=cfg.objective
+        )
 
     cls = DummyVecEnv if cfg.vectorization == "dummy" else SubprocVecEnv
     env = cls([create for _ in range(cfg.n_envs)])
@@ -147,25 +150,47 @@ def evaluate(
     search: SearchConfig,
     *,
     zero_belief: bool = False,
+    action_rule: str = "deterministic",
+    repeats: int = 1,
 ) -> dict[str, Any]:
-    """Deterministic masked actions, paired with M7 launch/variant seeds; rl-val only."""
+    """Masked B validation with independent seeded action draws; never changes training RNGs."""
     if any(w.world_set != "rl-val" for w in worlds):
         raise ValueError("M8 evaluation must use rl-val only")
+    if action_rule not in ("deterministic", "sampled") or repeats < 1:
+        raise ValueError("invalid evaluation action rule/repeat count")
+    if action_rule == "deterministic" and repeats != 1:
+        raise ValueError("deterministic evaluation needs one repeat")
     nav = Navigation(cache.render.levels, cache.render.camera.hfov_deg, search.energy)
     pool = CachePool(40)
     rows = []
     extractor = model.policy.features_extractor
+    model.policy.set_training_mode(False)
     old_zero = extractor.zero_belief
     extractor.zero_belief = zero_belief or old_zero
     try:
-        for world in worlds:
+        for world, repeat in product(worlds, range(repeats)):
             core = SearchEnv([world], cache, sensor, search, pool=pool, navigation=nav)
             env = EpisodeLog(core)
             obs, info = env.reset(seed=20261027 + world.seed)
+            rng = np.random.default_rng(20261028 + repeat * 1000000 + world.seed)
             opportunities, descents = 0, 0
+            visits, informative = [], []
             while not info["ended"]:
-                action, _ = model.predict(obs, deterministic=True, action_masks=info["action_mask"])
-                action = int(action)
+                if action_rule == "deterministic":
+                    action, _ = model.predict(
+                        obs, deterministic=True, action_masks=info["action_mask"]
+                    )
+                    action = int(action)
+                else:
+                    tensors, _ = model.policy.obs_to_tensor(obs)
+                    with torch.no_grad():
+                        p = (
+                            model.policy.get_distribution(tensors, action_masks=info["action_mask"])
+                            .distribution.probs.cpu()
+                            .numpy()[0]
+                            .astype(float)
+                        )
+                    action = int(rng.choice(len(p), p=p / p.sum()))
                 if not info["action_mask"][action]:
                     raise ValueError("evaluation selected a masked action")
                 node = core.nav.nodes[core.node]
@@ -182,12 +207,21 @@ def evaluate(
                     opportunities += detected
                     descents += detected and action == 5
                 obs, _, _, _, info = env.step(action)
+                visits.append(core.node)
+                informative.append(info["events"]["informative_cells"])
             rows.append(
                 {
                     "world_id": world.world_id,
+                    "repeat": repeat,
                     "family": world.family,
                     "cache_id": header_for(world, cache).cache_id,
-                    "metrics": env.summary(),
+                    "metrics": env.summary()
+                    | {
+                        "repeat_fraction": 1 - len(set(visits)) / len(visits) if visits else 0,
+                        "zero_information_fraction": float(np.mean(np.array(informative) == 0))
+                        if informative
+                        else 0,
+                    },
                     "coarse_cached_detection_opportunities": opportunities,
                     "immediate_descents_after_coarse_cached_detection": descents,
                     "records": env.records,
@@ -211,6 +245,8 @@ def evaluate(
         scores.append(float((mean - ref[family, "random"]) / den))
     return {
         "steps": model.num_timesteps,
+        "action_rule": action_rule,
+        "repeats": repeats,
         "zero_belief": zero_belief or old_zero,
         "mean_normalised_auc": float(np.mean(scores)),
         "mean_auc": float(np.mean([r["metrics"]["auc"] for r in rows])),

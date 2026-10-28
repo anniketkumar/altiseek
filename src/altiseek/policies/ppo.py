@@ -33,6 +33,9 @@ class PPOConfig(Config):
     target_kl: float = Field(default=0.03, gt=0)
     vectorization: Literal["dummy", "subproc"] = "dummy"
     zero_belief: bool = False
+    objective: Literal["legacy", "auc"] = "legacy"
+    evaluation_actions: Literal["deterministic", "sampled"] = "deterministic"
+    evaluation_repeats: int = Field(default=1, ge=1)
 
     @model_validator(mode="after")
     def valid_batches(self) -> "PPOConfig":
@@ -43,6 +46,10 @@ class PPOConfig(Config):
             raise ValueError("total steps must be a multiple of evaluation interval")
         if len(set(self.seeds)) != len(self.seeds):
             raise ValueError("duplicate training seeds")
+        if self.objective == "auc" and self.gamma != 1:
+            raise ValueError("AUC objective requires gamma=1")
+        if self.evaluation_actions == "deterministic" and self.evaluation_repeats != 1:
+            raise ValueError("deterministic evaluation needs only one repeat")
         return self
 
 
@@ -90,8 +97,15 @@ class FiniteSearch(gym.Wrapper):
     in evaluation logs; they precede every policy action and are not trainable.
     """
 
-    def __init__(self, env: SearchEnv) -> None:
+    def __init__(self, env: SearchEnv, objective: str = "legacy") -> None:
         super().__init__(env)
+        if objective not in ("legacy", "auc"):
+            raise ValueError("unknown objective")
+        if objective == "auc" and (
+            not env.unwrapped.config.known_count or env.unwrapped.config.shaping_weight
+        ):
+            raise ValueError("AUC training requires known K and no shaping")
+        self.objective = objective
 
     def action_masks(self) -> np.ndarray:
         return self.env.unwrapped.action_masks()
@@ -119,12 +133,15 @@ class FiniteSearch(gym.Wrapper):
         return deepcopy(
             {
                 "world_index": env._worlds.index(env.world),
+                "objective": self.objective,
                 "rng": env.np_random.bit_generator.state,
                 "values": {name: getattr(env, name) for name in names},
             }
         )
 
     def restore(self, state: dict[str, Any]) -> None:
+        if state.get("objective", "legacy") != self.objective:
+            raise ValueError("checkpoint objective mismatch")
         env = self.env.unwrapped
         env.reset(seed=0, options={"world_index": state["world_index"]})
         env.np_random.bit_generator.state = deepcopy(state["rng"])
@@ -135,4 +152,11 @@ class FiniteSearch(gym.Wrapper):
         if not self.action_masks()[action]:
             raise ValueError("training selected a masked action")
         obs, reward, terminated, truncated, info = self.env.step(action)
+        if self.objective == "auc":
+            core = self.env.unwrapped
+            reward = (
+                info["events"]["found"]
+                / len(core.found)
+                * max(0.0, 1 - info["time_s"] / core.config.energy.battery_s)
+            )
         return obs, reward, terminated or truncated, False, info

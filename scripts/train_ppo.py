@@ -34,6 +34,9 @@ def main() -> None:
     parser.add_argument("--n-envs", type=int)
     parser.add_argument("--threads", type=int)
     parser.add_argument("--vectorization", choices=("dummy", "subproc"))
+    parser.add_argument(
+        "--stop-after", type=int, help="pause at a complete evaluation boundary; same run identity"
+    )
     args = parser.parse_args()
     cfg = load_config(args.config, PPOConfig)
     changes = {}
@@ -45,6 +48,12 @@ def main() -> None:
     elif any(getattr(args, k) is not None for k in ("n_envs", "threads", "vectorization")):
         raise ValueError("production settings must be frozen in the config")
     cfg = PPOConfig.model_validate(cfg.model_dump() | changes)
+    if args.stop_after is not None and (
+        args.stop_after <= 0
+        or args.stop_after % cfg.eval_every
+        or args.stop_after > cfg.total_steps
+    ):
+        raise ValueError("stop-after must be an evaluation boundary within the configured budget")
     if args.seed not in cfg.seeds or args.variant not in cfg.variants:
         raise ValueError("seed or variant not in declared configuration")
     search = load_config("configs/env/search.yaml", SearchConfig).model_copy(
@@ -60,7 +69,7 @@ def main() -> None:
         *Path("src/altiseek/belief").glob("*.py"),
     ]
     plan = {
-        "implementation": "m8-maskable-v1",
+        "implementation": "m8-maskable-auc-v2" if cfg.objective == "auc" else "m8-maskable-v1",
         "config": cfg.model_dump(mode="json"),
         "search": search.model_dump(mode="json"),
         "seed": args.seed,
@@ -102,7 +111,15 @@ def main() -> None:
             step = model.num_timesteps
             evaluation = root / f"eval-{step:09d}.json"
             if not args.benchmark and not evaluation.exists():
-                result = evaluate(model, validation_worlds, cache, sensor, search)
+                result = evaluate(
+                    model,
+                    validation_worlds,
+                    cache,
+                    sensor,
+                    search,
+                    action_rule=cfg.evaluation_actions,
+                    repeats=cfg.evaluation_repeats,
+                )
                 write_json(evaluation, result)
                 logger.record("validation/auc", result["mean_auc"])
                 logger.record("validation/normalised_auc", result["mean_normalised_auc"])
@@ -112,6 +129,16 @@ def main() -> None:
                     f"normalised={result['mean_normalised_auc']:.4f}",
                     flush=True,
                 )
+            if not args.benchmark and cfg.evaluation_actions == "sampled":
+                argmax_path = root / f"argmax-{step:09d}.json"
+                if not argmax_path.exists():
+                    write_json(
+                        argmax_path, evaluate(model, validation_worlds, cache, sensor, search)
+                    )
+            if args.stop_after is not None and step >= args.stop_after and step < cfg.total_steps:
+                write_json(root / "paused.json", {"run_id": root.name, "steps": step})
+                print(f"Paused at {step}; resume this same run without --stop-after.", flush=True)
+                return
             if step >= cfg.total_steps:
                 break
             tick = time.perf_counter()
@@ -146,7 +173,16 @@ def main() -> None:
             )
             best_root = root / f"step-{best['steps']:09d}"
             best_model = load_checkpoint(best_root, env)
-            zero = evaluate(best_model, validation_worlds, cache, sensor, search, zero_belief=True)
+            zero = evaluate(
+                best_model,
+                validation_worlds,
+                cache,
+                sensor,
+                search,
+                zero_belief=True,
+                action_rule=cfg.evaluation_actions,
+                repeats=cfg.evaluation_repeats,
+            )
             write_json(root / "zero-belief.json", zero)
             result = {
                 "run_id": root.name,
