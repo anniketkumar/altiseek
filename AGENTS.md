@@ -218,8 +218,7 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   The network can learn the small task. V3 responds to belief/prior/coverage changes;
   do not claim it ignores the map entirely. Per-action discounting biases energy
   expenditure across levels, but its learned causal contribution was not retrained.
-- **Next:** agree the primary objective (AUC versus recovery minus false-alarm/energy
-  costs), record a new protocol and run a controlled revision. Do not merely extend
+- **Next:** complete the approved D41 revision below. Do not merely extend
   the failed configuration or change architecture and reward together. The residual
   V3 gap is not uniquely attributed to credit assignment, representation or budget.
 - Test-world distractors remain an open decision before M9 (§25).
@@ -238,3 +237,11 @@ validation. Follow docs/ppo-auc-protocol.md and configs/policy/ppo_auc.yaml.
 Preserve all initial runs. Start V3 seed 17 in runs/ppo/m8-auc/V3-seed17, pause
 at 65,536 steps, review the predeclared pilot gate, then resume the same run.
 The CNN, sensor, caches and worlds remain fixed. M8 is not yet complete.
+
+Launched from `696af49`; active V3 seed 17 identity `985e4600240c36a8`.
+The hidden detached `scripts/continue_ppo_auc.py` handles pilot gating, same-run
+continuation, the other five runs and reporting. Check `continuation-status.json`,
+`continuation.err`, `pilot-gate.json` and the seed logs under `runs/ppo/m8-auc`.
+Do not launch a duplicate. A pass expands automatically; a failure stops for review.
+Tests: full 280 passed, then the added sampled-evaluation RNG/replay regression and
+style checks passed. The 1,024-step real-cache smoke run `53dd79d4db8d575a` completed.

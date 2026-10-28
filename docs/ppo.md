@@ -5,8 +5,29 @@ TensorBoard. All code/configuration is committed; caches, checkpoints, TensorBoa
 events and episode logs remain gitignored. Numeric results include per-world
 metrics; full selected trajectories live in `runs/ppo/m8-initial/selected-results.json`.
 All six initial runs and the failure diagnosis
-are complete; M8 remains in progress because the configuration needs revision.
-Read [the diagnosis](ppo-diagnosis.md) before launching further training.
+are complete. The owner-approved [AUC revision](ppo-auc-protocol.md) is now running;
+M8 remains in progress until its six runs and scientific review are complete.
+
+## Active AUC revision
+
+Launched from `696af49`; V3 seed 17 is `985e4600240c36a8`. Do not start another
+copy while it runs. `scripts/continue_ppo_auc.py` owns the pilot, its predeclared
+gate, continuation of the same checkpoint, the other five runs and final reporting.
+It stops expansion if the pilot fails. The process is hidden and detached; its
+launcher PID is in `runs/ppo/m8-auc/launcher.pid`.
+
+```powershell
+Get-Content runs/ppo/m8-auc/continuation-status.json
+Get-Content runs/ppo/m8-auc/V3-seed17.log -Tail 12
+uv run python scripts/report_ppo.py runs/ppo/m8-auc --config configs/policy/ppo_auc.yaml --partial
+```
+
+If interrupted, check `continuation.err` and the individual run logs, then resume
+with `uv run python -u scripts/continue_ppo_auc.py` as a hidden detached process.
+Keep the source/configuration fixed so the run identity remains unchanged.
+`paused.json` records the pilot's historical boundary; use `continuation-status.json`
+and the latest checkpoint to determine current progress. Final reports are
+`docs/ppo-auc-results.md`/`.json`; original reports remain separate.
 
 ## Completed initial suite
 

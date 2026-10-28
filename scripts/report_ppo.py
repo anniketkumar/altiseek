@@ -171,6 +171,15 @@ def main() -> None:
             ids = {r["world_id"] for r in best["episodes"]}
             if ids != set(refs["B2"]) or ids != {r["world_id"] for r in zero["episodes"]}:
                 raise ValueError("validation world identities differ from baselines")
+            expected_pairs = {
+                (world_id, repeat) for world_id in ids for repeat in range(cfg.evaluation_repeats)
+            }
+            for evaluation in (best, zero):
+                actual_pairs = {(r["world_id"], r.get("repeat", 0)) for r in evaluation["episodes"]}
+                if actual_pairs != expected_pairs or len(evaluation["episodes"]) != len(
+                    expected_pairs
+                ):
+                    raise ValueError("validation repeat identities mismatch")
             if len(zero["episodes"]) != 40 * cfg.evaluation_repeats:
                 raise ValueError("incomplete zero-belief evaluation")
             zero_delta = [
@@ -341,6 +350,24 @@ def main() -> None:
             f"| {m['found_fraction']:.3f} | {m['success']:.3f} | {m['false_declarations']:.2f} "
             f"| {row['zero_belief_auc']:.3f} | {row['zero_minus_B2']:+.3f} |"
         )
+    if revision:
+        lines += [
+            "",
+            "## Action rule and search efficiency",
+            "",
+            "Argmax uses the checkpoint selected by sampled actions; it is not reselected.",
+            "",
+            "| Variant | Seed | Sampled AUC | Argmax AUC | Repeat fraction "
+            "| No-information fraction |",
+            "|---|---:|---:|---:|---:|---:|",
+        ]
+        for row in selected:
+            m = row["metrics"]
+            lines.append(
+                f"| {row['variant']} | {row['seed']} | {m['auc']:.3f} "
+                f"| {row['argmax_auc']:.3f} | {m['repeat_fraction']:.3f} "
+                f"| {m['zero_information_fraction']:.3f} |"
+            )
     lines += [
         "",
         "## Across-seed comparison",
