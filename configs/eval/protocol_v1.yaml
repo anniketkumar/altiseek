@@ -1,0 +1,15 @@
+schema_version: 1
+world_set_id: 22750c80717314c3
+sensor_model_id: fcf8cdae58ca3947
+environment_seed: 20261027
+action_seed: 20261028
+action_repeats: 3
+bootstrap_seed: 20261029
+bootstrap_samples: 2000
+scenarios:
+  - {name: nominal, battery_s: 500}
+  - {name: battery_tight, battery_s: 250}
+  - {name: battery_generous, battery_s: 750}
+  - {name: prior_shift, shift_east_m: 50}
+  - {name: prior_rotation, rotation_deg: 90}
+  - {name: prior_spread, spread_scale: 2}

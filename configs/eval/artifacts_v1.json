@@ -1,0 +1,378 @@
+{
+  "schema_version": 1,
+  "selection_report": "docs/ppo-auc-results.json",
+  "checkpoints": [
+    {
+      "variant": "V0",
+      "seed": 17,
+      "run_id": "fa3ffd47bdddf36d",
+      "checkpoint": "runs/ppo/m8-auc/V0-seed17/fa3ffd47bdddf36d/step-000081920/model.zip",
+      "sha256": "e20d86ee01ae4661c8040fadd2a83c6d65bffbb2593e2c8ababa6ec09e9c31cb",
+      "selected_step": 81920
+    },
+    {
+      "variant": "V0",
+      "seed": 29,
+      "run_id": "5f6184ef8d7a92f9",
+      "checkpoint": "runs/ppo/m8-auc/V0-seed29/5f6184ef8d7a92f9/step-000032768/model.zip",
+      "sha256": "0fba32b6c54a0a8eb6afdd344d256f8586fbd96575b1149d5d758230af05ae94",
+      "selected_step": 32768
+    },
+    {
+      "variant": "V0",
+      "seed": 43,
+      "run_id": "bb42c035c4d72d12",
+      "checkpoint": "runs/ppo/m8-auc/V0-seed43/bb42c035c4d72d12/step-000131072/model.zip",
+      "sha256": "a4821d68b280364fc74f51a24f30361aef774a3681cc736de5e4cce486b228c9",
+      "selected_step": 131072
+    },
+    {
+      "variant": "V3",
+      "seed": 17,
+      "run_id": "985e4600240c36a8",
+      "checkpoint": "runs/ppo/m8-auc/V3-seed17/985e4600240c36a8/step-000065536/model.zip",
+      "sha256": "9f914adcd25ec2a288795845b77ea63047ed76a502404827320d310aca29007a",
+      "selected_step": 65536
+    },
+    {
+      "variant": "V3",
+      "seed": 29,
+      "run_id": "24c1acc2a1dafcaf",
+      "checkpoint": "runs/ppo/m8-auc/V3-seed29/24c1acc2a1dafcaf/step-000098304/model.zip",
+      "sha256": "05d86ba76e478dc16e3400aa3152534697409042408868d25939c8615a52d0df",
+      "selected_step": 98304
+    },
+    {
+      "variant": "V3",
+      "seed": 43,
+      "run_id": "218c69d73dd19d38",
+      "checkpoint": "runs/ppo/m8-auc/V3-seed43/218c69d73dd19d38/step-000065536/model.zip",
+      "sha256": "96ae76b2ddee4506875fb7ebdf9f505259d56ae67336218d56a5b39d9de6bb88",
+      "selected_step": 65536
+    }
+  ],
+  "worlds": [
+    {
+      "world_id": "a6b130bde155f86a",
+      "seed": 4000000
+    },
+    {
+      "world_id": "cb3a25e316fe6425",
+      "seed": 4000001
+    },
+    {
+      "world_id": "bfb9c5c6cc75a148",
+      "seed": 4000002
+    },
+    {
+      "world_id": "192fa65f72e1f5d5",
+      "seed": 4000003
+    },
+    {
+      "world_id": "0f84edbbc5278b2b",
+      "seed": 4000004
+    },
+    {
+      "world_id": "0e64bf915c6921bf",
+      "seed": 4000005
+    },
+    {
+      "world_id": "ecf1fa376240deaa",
+      "seed": 4000006
+    },
+    {
+      "world_id": "4e0cc34a1693e97a",
+      "seed": 4000007
+    },
+    {
+      "world_id": "ac139e8cd91b4692",
+      "seed": 4000008
+    },
+    {
+      "world_id": "29885313173951b6",
+      "seed": 4000009
+    },
+    {
+      "world_id": "0203b1ba594eca51",
+      "seed": 4010000
+    },
+    {
+      "world_id": "7427925641155f9d",
+      "seed": 4010001
+    },
+    {
+      "world_id": "93da6f1a1b6789f0",
+      "seed": 4010002
+    },
+    {
+      "world_id": "8fba54ac6094eea6",
+      "seed": 4010003
+    },
+    {
+      "world_id": "3b6ad608424ffa9d",
+      "seed": 4010004
+    },
+    {
+      "world_id": "950864f40c2b7bdc",
+      "seed": 4010005
+    },
+    {
+      "world_id": "617d353a229230af",
+      "seed": 4010006
+    },
+    {
+      "world_id": "e7d789376f1b1e87",
+      "seed": 4010007
+    },
+    {
+      "world_id": "68df93a215c60acd",
+      "seed": 4010008
+    },
+    {
+      "world_id": "0cfe09ada1e0c911",
+      "seed": 4010009
+    },
+    {
+      "world_id": "853cc24704fc7f18",
+      "seed": 4020000
+    },
+    {
+      "world_id": "fdc2304c3bb432c0",
+      "seed": 4020001
+    },
+    {
+      "world_id": "aace274df71a6355",
+      "seed": 4020002
+    },
+    {
+      "world_id": "751637954200c61e",
+      "seed": 4020003
+    },
+    {
+      "world_id": "187701dbdd0d1418",
+      "seed": 4020004
+    },
+    {
+      "world_id": "09ff34b19b6a9bea",
+      "seed": 4020005
+    },
+    {
+      "world_id": "31eaffd3dca607bc",
+      "seed": 4020006
+    },
+    {
+      "world_id": "eed6c0b594c44d61",
+      "seed": 4020007
+    },
+    {
+      "world_id": "8f190adb262dee93",
+      "seed": 4020008
+    },
+    {
+      "world_id": "f47b77a0449bf76f",
+      "seed": 4020009
+    },
+    {
+      "world_id": "90f9766f7f933d5a",
+      "seed": 4030000
+    },
+    {
+      "world_id": "83f383c8dd0b275f",
+      "seed": 4030001
+    },
+    {
+      "world_id": "af286b5591e96397",
+      "seed": 4030002
+    },
+    {
+      "world_id": "5b2186df05068101",
+      "seed": 4030003
+    },
+    {
+      "world_id": "706c32aca433e8fa",
+      "seed": 4030004
+    },
+    {
+      "world_id": "cf2fc8e640e87e30",
+      "seed": 4030005
+    },
+    {
+      "world_id": "24b6b3eb7b6caae6",
+      "seed": 4030006
+    },
+    {
+      "world_id": "587d89617291c60c",
+      "seed": 4030007
+    },
+    {
+      "world_id": "09268676b6d31b04",
+      "seed": 4030008
+    },
+    {
+      "world_id": "1cf39aba6730ccbb",
+      "seed": 4030009
+    },
+    {
+      "world_id": "061b14d192828fe0",
+      "seed": 4040000
+    },
+    {
+      "world_id": "66ec6e9d63e7d533",
+      "seed": 4040001
+    },
+    {
+      "world_id": "00d0ac66a28ea370",
+      "seed": 4040002
+    },
+    {
+      "world_id": "eb21c3f7ee5206d4",
+      "seed": 4040003
+    },
+    {
+      "world_id": "e4fcdfafe5be1ff5",
+      "seed": 4040004
+    },
+    {
+      "world_id": "dcab44159215e6d8",
+      "seed": 4040005
+    },
+    {
+      "world_id": "5810b47286473a73",
+      "seed": 4040006
+    },
+    {
+      "world_id": "6336fea17e10ffaa",
+      "seed": 4040007
+    },
+    {
+      "world_id": "abcf9b7a4aea64bc",
+      "seed": 4040008
+    },
+    {
+      "world_id": "5c23b8b18172bba6",
+      "seed": 4040009
+    },
+    {
+      "world_id": "f29c5ba2616ac0f2",
+      "seed": 4050000
+    },
+    {
+      "world_id": "a6a9e4e09b11b524",
+      "seed": 4050001
+    },
+    {
+      "world_id": "7fd8514ab3df2b64",
+      "seed": 4050002
+    },
+    {
+      "world_id": "7fbcacd3614e51ea",
+      "seed": 4050003
+    },
+    {
+      "world_id": "5fa1cec546504d8f",
+      "seed": 4050004
+    },
+    {
+      "world_id": "5b02e486753cf5d6",
+      "seed": 4050005
+    },
+    {
+      "world_id": "1ffb0ce6ecc8b4c0",
+      "seed": 4050006
+    },
+    {
+      "world_id": "3441aa739ac0d4fb",
+      "seed": 4050007
+    },
+    {
+      "world_id": "ef7a227175fac00d",
+      "seed": 4050008
+    },
+    {
+      "world_id": "26158effd1dff1e2",
+      "seed": 4050009
+    },
+    {
+      "world_id": "a32700bca0a5fedf",
+      "seed": 4060000
+    },
+    {
+      "world_id": "42d4f76e55f2d9bd",
+      "seed": 4060001
+    },
+    {
+      "world_id": "c4fa321201a89b47",
+      "seed": 4060002
+    },
+    {
+      "world_id": "09128994f6d28cf7",
+      "seed": 4060003
+    },
+    {
+      "world_id": "fea55d4ed0cb6d19",
+      "seed": 4060004
+    },
+    {
+      "world_id": "64a1a025f0a934b9",
+      "seed": 4060005
+    },
+    {
+      "world_id": "21a55c96cf71cfe9",
+      "seed": 4060006
+    },
+    {
+      "world_id": "09b71ca458df1767",
+      "seed": 4060007
+    },
+    {
+      "world_id": "49ae9b72408651b8",
+      "seed": 4060008
+    },
+    {
+      "world_id": "f27b134f91a8d7ab",
+      "seed": 4060009
+    },
+    {
+      "world_id": "9f9d7230bbec0283",
+      "seed": 4070000
+    },
+    {
+      "world_id": "b5d9a84b32996e9c",
+      "seed": 4070001
+    },
+    {
+      "world_id": "4df9ea7bfc56641c",
+      "seed": 4070002
+    },
+    {
+      "world_id": "4614b9924e13066b",
+      "seed": 4070003
+    },
+    {
+      "world_id": "c9adad19b66d06b0",
+      "seed": 4070004
+    },
+    {
+      "world_id": "6ce68ec5b3c9e61f",
+      "seed": 4070005
+    },
+    {
+      "world_id": "e28a1d5a1146f782",
+      "seed": 4070006
+    },
+    {
+      "world_id": "107540898da5fc38",
+      "seed": 4070007
+    },
+    {
+      "world_id": "9da4366347431954",
+      "seed": 4070008
+    },
+    {
+      "world_id": "476baa344b756add",
+      "seed": 4070009
+    }
+  ],
+  "baselines_id": "8c15bae10fb2d9a6",
+  "selection_report_id": "1f6bdbc9213d3ec9"
+}

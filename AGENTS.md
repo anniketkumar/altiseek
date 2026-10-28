@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D44**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D45**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 274
   pass with the M8 training pipeline (M7 completion had 268).
@@ -288,3 +288,30 @@ Next: prepare and freeze the M9 protocol before main test evaluation; preserve
 all three selected PPO checkpoints per variant and the frozen M7 baselines.
 No M9 test run has been started. The last full pytest attempt was blocked by
 Windows Application Control; do not bypass it or claim a fresh passing suite.
+
+## M9 preparation and WSL preflight (2026-10-29; supersedes blocker above)
+
+WSL2 Ubuntu 24.04.5 now works on D:, with Linux user `aniket`, Python 3.12.3,
+uv 0.13.6 and a separate `/home/aniket/.venvs/altiseek`. Smart App Control remains
+enabled. `docs/env.md` gives the PowerShell command prefix. No Windows launcher
+policy was bypassed. The Linux account has no password yet; interactive sudo
+setup is optional and not needed for evaluation.
+
+Full Linux suite: **290 passed in 52.85 s**, including style, resume/checksum,
+prior-override, report aggregation and frozen-artifact checks. Final B smoke:
+`runs/eval/m9-v1/64717ac37c981377`, **59/59** episodes across all selected policies
+and perturbations. Earlier smoke `56b031428099c085` also verified stopping at five
+episodes and resuming without rerunning them. Preserve these smoke records.
+
+D44 freezes the existing-cache phase in `docs/m9-protocol.md`,
+`configs/eval/protocol_v1.yaml` and `artifacts_v1.json`: 25,920 episodes, six
+scenarios, all six selected PPO policies and frozen M7 settings. Other E3 work
+and ablations remain deferred. Prior overrides do not mutate worlds or cache IDs.
+
+`scripts/evaluate.py --smoke` is B-only. `--limit N` pauses after N new episodes;
+rerunning resumes the same identity. `scripts/continue_evaluation.py` runs the
+main evaluation and then the report. Check `runs/eval/m9-v1/continuation-status.json`
+and the content-addressed run's `status.json`; never launch a duplicate. Results
+are checksummed per episode, and a process lock rejects concurrent writers.
+`scripts/report_evaluation.py <run-directory>` regenerates tables and figures.
+No main T run had started at this preflight commit; check live status before acting.

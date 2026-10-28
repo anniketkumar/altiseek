@@ -16,7 +16,7 @@ from altiseek.calibration.outcomes import observed_bounds
 from altiseek.env.config import SearchConfig
 from altiseek.env.navigation import Navigation
 from altiseek.world.sampler import prior_grid
-from altiseek.world.spec import WorldSpec
+from altiseek.world.spec import Prior, WorldSpec
 
 
 class SearchEnv(gym.Env):
@@ -39,9 +39,13 @@ class SearchEnv(gym.Env):
         pool: CachePool | None = None,
         navigation: Navigation | None = None,
         oracle: bool = False,
+        prior_override: Prior | None = None,
     ) -> None:
         if not worlds or config.start_level >= len(cache.render.levels.levels):
             raise ValueError("empty worlds or invalid start level")
+        if prior_override is not None and len(worlds) != 1:
+            raise ValueError("a prior override requires exactly one physical world")
+        self.prior_override = prior_override
         contract = header_for(worlds[0], cache).model_dump(
             mode="json", exclude={"world_id", "cache_id"}
         )
@@ -100,7 +104,9 @@ class SearchEnv(gym.Env):
             raise ValueError("target count outside configured bounds")
         self._target_cells = np.floor(self._targets / self.table.cell_m).astype(int)
         self.found = np.zeros(len(self._targets), dtype=bool)
-        q = prior_grid(self.world.prior_given, self.world.area_m, self.world.cell_m)
+        q = prior_grid(
+            self.prior_override or self.world.prior_given, self.world.area_m, self.world.cell_m
+        )
         count = len(self._targets) if self.config.known_count else self.config.assumed_count
         self.belief = Belief(q, count, self.level_count, self.sensor)
         self._static_map = np.zeros(self.observation_space["map"].shape, dtype=np.float32)
