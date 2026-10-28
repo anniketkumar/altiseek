@@ -22,7 +22,7 @@ Update as milestones complete (§21).
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
-| M8 PPO | acceptance pending: all six D41 runs and reporting complete; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; one zero-p gate fails. Review and unapplied disposition proposal: `docs/ppo-acceptance.md` |
+| M8 PPO | complete with qualifications (D42, owner approved 2026-10-28): six D41 runs and report; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; historical zero-p gate failure retained. See `docs/ppo-acceptance.md`; revisit later using B only |
 | M9 Main experiments | not started |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
@@ -782,7 +782,7 @@ This avoids motion blur and synchronisation problems.
 - The oracle is far better than random on every family.
 - With unlimited battery, a lawnmower at the coarsest level finds fewer targets than at the finest. This is the premise.
 - With V0, a coarse-level-only lawnmower produces measurable false clears.
-- A PPO agent whose belief channels are zeroed does no better than a prior-only heuristic. If it does better, it is exploiting something it shouldn't see.
+- PPO belief removal is a diagnostic comparison with a prior-only heuristic. Superiority triggers a documented input-access audit and paired analysis; it does not alone prove leakage because other permitted feedback remains and the heuristic is not an upper bound. Prohibited input paths or artifact/split mismatches remain blocking. D42 replaces the original strict zero-p versus B2 gate prospectively; its failed M8 outcome remains in the historical report.
 
 M7 completion (D38): all 40 rl-val worlds pass the family/variant oracle-versus-random
 comparison; 320 full-coverage diagnostic episodes find more at L1 than L5 for every
@@ -839,7 +839,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | **M5** Detection cache | §12 | Caches for the sensor-fit, rl-train, rl-val and test sets; validation passes; manifest complete. |
 | **M6** Sensor models | §10 | V0–V3 fitted; ECE before/after reported; conditional recall measured; re-look rule confirmed in the Decision Log. |
 | **M7** Env + baselines | §13–§15, no RL yet | Env passes the checker and the tests; random, oracle and B1–B5 run on rl-val; sanity checks pass; baseline hyperparameters frozen. |
-| **M8** PPO | §15 | Stable learning curves over ≥3 seeds; checkpoint chosen on rl-val; behaviour analysis done. |
+| **M8** PPO | §15 | Learning curves over ≥3 seeds reviewed; checkpoint chosen on rl-val; behaviour analysis done. D42 accepts the declared-budget experiment with V0 stability explicitly not demonstrated, rather than claiming all configurations converged. |
 | **M9** Main experiments | §16: E1–E3 and the ablations on test worlds, under a frozen protocol | Every table and figure regenerates from saved results with one command each. |
 | **M10** Deployment | §17 | Matched scenarios run end-to-end in PX4/Gazebo; RQ3 comparison and the H3b re-fit done; demo video recorded. |
 | **M11** Write-up & polish | §20 | All deliverables complete. |
@@ -960,13 +960,18 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D40 | Diagnose the completed M8 initial configuration without replacing its results: replay all selected policies, compare argmax with three seeded action draws per validation world, perturb only public inputs, audit action returns against baseline rewards, and run a fixed four-world V3 learning probe. Details: `docs/ppo-diagnosis-protocol.md`. | Owner requested root-cause analysis. 960 episodes and 1,783 input probes demonstrate V0 reward/AUC ranking reversal and V3 argmax loss (0.439 to 0.597 with sampling). The same network learns the fixed four-world task (0.000 to 0.579 AUC; B5 0.613). Per-action discounting analytically favors smaller energy increments. Residual V3 optimization failure is not uniquely isolated. No T data, checkpoint reselection or main reward/architecture change. | Diagnosis complete; objective/protocol revision pending; M8 remains incomplete |
 
-| D41 | Owner approved AUC-aligned PPO reward: remaining-horizon fraction per find divided by K, gamma 1, hard battery constraint and false declarations reported separately. Keep the CNN and inputs fixed. Primary validation samples three action draws per world; argmax is secondary. Protocol: `docs/ppo-auc-protocol.md`. | D40 demonstrated reward/AUC ranking reversal and argmax losses. Action rewards sum to AUC apart from the initial observation. V3 seed 17 pauses at 65,536 steps before expanding to six runs. Preserve original runs and the zero-p gate; no T tuning. | Six runs and report complete; acceptance pending, see docs/ppo-acceptance.md |
+| D41 | Owner approved AUC-aligned PPO reward: remaining-horizon fraction per find divided by K, gamma 1, hard battery constraint and false declarations reported separately. Keep the CNN and inputs fixed. Primary validation samples three action draws per world; argmax is secondary. Protocol: `docs/ppo-auc-protocol.md`. | D40 demonstrated reward/AUC ranking reversal and argmax losses. Action rewards sum to AUC apart from the initial observation. V3 seed 17 pauses at 65,536 steps before expanding to six runs. Preserve original runs and the zero-p gate; no T tuning. | Six runs and report complete; qualified acceptance recorded in D42 |
+
+| D42 | Owner accepts M8 as a completed, budget-limited experiment with qualifications, 2026-10-28; revisit later. Preserve all six selected policies and historical failures. Accept V0 convergence not demonstrated within budget. Replace automatic leakage inference from zero-p superiority over B2 with documented input-access audit and paired diagnostic analysis; prohibited inputs and artifact/split mismatches still block. | V3/V0 mean validation AUC 0.720/0.212 trails B5 0.888/0.551. One original zero-p gate fails; its audit found no direct hidden-location path, while permitted feedback remains. This is an explicit post-B-review acceptance amendment, not a claim that the original checks passed. No T tuning; later changes require B-only selection and a new protocol. See docs/ppo-acceptance.md. | Owner approved; M8 complete with qualifications |
+
+| D43 | Owner keeps existing split-T worlds and caches unchanged for M9; document absent distractors and leave T distractor robustness untested. | Preserves split purity and artifact IDs, avoids importing B crops or rebuilding caches. Original low/high family tags do not establish actual T distractor-density differences. RQ2(c) and E3 higher-density claims cannot be supported by this T set. | Owner confirmed 2026-10-28 |
 
 ---
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
-- Test-world distractors: T has none within θ_lib, so test worlds have none (D29, D30), and RQ2(c) and E3's distractor test cannot run on them as they stand. The alternative is to reserve one B video's distractor crops for test worlds only, which bends split purity. Decide before M9.
+- Test-world distractors resolved by the owner (D43): retain the existing split-T worlds and caches unchanged. T has no distractors; RQ2(c) and E3's higher-distractor-density test remain untested on T. No B crops are transferred into T and no new cache build is required. Reports must not interpret the original low/high family labels as actual distractor-density differences on T.
+- Revisit M8's V0 stability and zero-p diagnostic later, as requested by the owner (D42). Any policy/configuration revision must be selected using B only, recorded under a new protocol and kept separate from the frozen M9 comparison. Do not use observed T outcomes to tune the revision.
 
 ---
 

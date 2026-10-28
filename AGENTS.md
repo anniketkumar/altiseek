@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D42**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D44**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 274
   pass with the M8 training pipeline (M7 completion had 268).
@@ -38,7 +38,7 @@ comes next.
   - The token lives in `~/.kaggle/access_token`. Never print or commit it. The owner was asked to
     regenerate it.
 
-## Status: M0–M7 done, M8 in progress
+## Status: M0–M8 done; M8 qualified acceptance (D42), M9 next
 
 | Item | Value |
 |---|---|
@@ -163,7 +163,7 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   `replay.json` records mean core step 1.590 ms, median 1.403 ms, p95 2.956 ms. The
   sub-millisecond aim is not met; measure full training throughput in M8. No GPU needed.
 
-## M8 PPO in progress
+## M8 PPO history (superseded by final disposition below)
 
 - Owner selected **MaskablePPO with a custom CNN and local TensorBoard** on 2026-10-28.
   Dependencies pinned: sb3-contrib/stable-baselines3 2.9.2, TensorBoard 2.21.0 (D39).
@@ -230,7 +230,7 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   line endings (CRLF vs LF). Compare file contents, not only hashes, before declaring a mismatch.
 - Never tune anything on split T, test worlds or test seeds (§23).
 
-## M8 approved continuation (D41)
+## M8 approved continuation (D41; historical, now complete)
 
 The owner approved AUC-aligned reward and gamma 1, with sampled-action primary
 validation. Follow docs/ppo-auc-protocol.md and configs/policy/ppo_auc.yaml.
@@ -255,7 +255,7 @@ The gate has NOT been relaxed; do not accept M8/M9 until it is explicitly resolv
 Reporting now includes paired full-p minus zero-p intervals. The 14 targeted
 environment/CNN/style checks pass. Training sources and run identities are unchanged.
 
-## M8 final run review
+## M8 final run review (before owner acceptance)
 
 All six D41 runs and automatic reporting are now complete. Do not restart them.
 `continuation-status.json` says `awaiting_scientific_review`; selected V0/V3 mean
@@ -267,3 +267,24 @@ still fails the historical zero-p point-mean gate. M8/M9 status is unchanged.
 The fresh full-test invocation was blocked before pytest started by Windows
 Application Control (OS error 4551). Preserve earlier passing test records;
 do not bypass the execution policy. No further training is queued.
+
+## Current hand-off: M8 accepted, M9 next (D42/D43)
+
+Owner approved qualified M8 acceptance and said to revisit it later. All six D41
+runs, reports and checkpoint selections are complete. No training is running or
+queued. Do not restart completed runs. Historical progress/pending notes above
+are superseded by this section and docs/ppo-acceptance.md.
+
+V0 stable convergence is not demonstrated; V3 seed 29 retains its original zero-p
+gate failure. D42 explicitly changes the acceptance disposition after B review;
+it does not relabel those findings as passing. Future policy changes use B only,
+a new protocol/version and separate results; never tune them on M9 T outcomes.
+
+D43: owner confirmed keeping existing T worlds/caches unchanged. No distractors
+exist on T, so RQ2(c)/E3 distractor robustness remains untested there. Do not import
+B crops. Original T low/high family tags are not actual density contrasts.
+
+Next: prepare and freeze the M9 protocol before main test evaluation; preserve
+all three selected PPO checkpoints per variant and the frozen M7 baselines.
+No M9 test run has been started. The last full pytest attempt was blocked by
+Windows Application Control; do not bypass it or claim a fresh passing suite.

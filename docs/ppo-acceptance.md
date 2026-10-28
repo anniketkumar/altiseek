@@ -3,8 +3,9 @@
 ## Current verdict
 
 All six D41 training runs, checkpoint selection and reporting are complete.
-M8 is **not yet accepted under the unchanged criteria**: the zero-p comparison
-fails for V3 seed 29, and stable learning across V0 seeds is not demonstrated.
+The owner **accepted M8 with qualifications on 2026-10-28 (D42)** and requested
+that the limitations be revisited later. Under the original criteria, the zero-p
+comparison fails for V3 seed 29, and stable learning across V0 seeds is not demonstrated.
 This is distinct from PPO losing to strong baselines, which is a valid result.
 No further training is currently queued. M9 has not started.
 
@@ -17,7 +18,7 @@ No further training is currently queued. M9 has not started.
 | Reproducible results and behavior analysis | Numeric results, all-seed curves, altitude use, first finds, repeated visits, no-information views and comparison with B3 | Complete |
 | Numerical training health | Optimizer losses finite for all six runs; no logged invalid-action failures | Passed, but finiteness does not imply learning |
 | Stable learning curves | V3 last-three AUC ranges 0.007/0.006/0.019; V0 0.060/0.072/0.125 | V3 supports practical stability within this budget; V0 does not establish stable convergence |
-| Zero-p policy does no better than B2 | Five runs pass; V3 seed 29 exceeds B2 by 0.025 AUC | Literal gate fails; investigated, not waived |
+| Historical zero-p policy does no better than B2 | Five runs pass; V3 seed 29 exceeds B2 by 0.025 AUC | Original gate fails; investigated and retained; D42 changes the acceptance disposition |
 
 The complete report is [ppo-auc-results.md](ppo-auc-results.md), with numeric
 results in [ppo-auc-results.json](ppo-auc-results.json) and the regenerated plot
@@ -55,10 +56,10 @@ Full-p minus zero-p AUC for V3 is +0.055/+0.015/+0.083; respective paired CIs ar
 seeds under this evaluation, while seed 29's benefit is uncertain. These intervals
 are selection-set diagnostics, not confirmatory hypothesis tests.
 
-## Proposed disposition — awaiting owner decision
+## Approved disposition (D42)
 
-Recommend closing M8 as a **completed, budget-limited experiment with a negative
-PPO-versus-baseline result**, using a separately recorded D42 amendment:
+The owner approved closing M8 as a **completed, budget-limited experiment with a
+negative PPO-versus-baseline result**, with the following D42 amendment:
 
 1. Preserve every score, checkpoint and failed diagnostic. Freeze the current
    selected policies; do not train until a preferred conclusion appears.
@@ -71,13 +72,15 @@ PPO-versus-baseline result**, using a separately recorded D42 amendment:
 4. Leave the D41 training/evaluation protocol and results untouched. Amend only
    the milestone disposition and future interpretation of the sanity check,
    explicitly acknowledging that this decision follows inspection of B results.
-5. Resolve the separate test-world distractor decision and freeze M9's evaluation
-   protocol before any main test evaluation. No test results informed this review.
+5. Keep the existing T worlds/caches unchanged (owner confirmed, D43), explicitly
+   leaving distractor robustness untested on T. Freeze M9's evaluation protocol
+   before any main test evaluation. No test results informed this review.
 
-This proposal is **not applied** by this document. The alternative is to keep M8
-open and predeclare a further B-only optimization experiment to address V0
-stability. That would require another training budget and would not guarantee
-better results. Blindly extending the current runs is not recommended.
+This is a qualified acceptance after inspection of B results, not a retrospective
+claim that the original criteria passed. The owner asked to revisit the findings
+later. Future optimization must use B only and receive a new protocol/version;
+the existing results and frozen M9 checkpoints remain preserved. No additional
+training is authorized by treating M9 test outcomes as optimization feedback.
 
 ## Verification record
 
