@@ -23,7 +23,7 @@ Update as milestones complete (§21).
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
 | M8 PPO | complete with qualifications (D42, owner approved 2026-10-28): six D41 runs and report; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; historical zero-p gate failure retained. See `docs/ppo-acceptance.md`; revisit later using B only |
-| M9 Main experiments | existing-cache phase running (D44), frozen commit `39903c4`, run `341aadf1366d8f05`; remaining experiments/ablations deferred |
+| M9 Main experiments | existing-cache phase complete and accepted (D44/D45): 25,920 episodes, run `341aadf1366d8f05`; remaining experiments/ablations deferred. See `docs/m9-acceptance.md` |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
 
@@ -971,7 +971,9 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D43 | Owner keeps existing split-T worlds and caches unchanged for M9; document absent distractors and leave T distractor robustness untested. | Preserves split purity and artifact IDs, avoids importing B crops or rebuilding caches. Original low/high family tags do not establish actual T distractor-density differences. RQ2(c) and E3 higher-density claims cannot be supported by this T set. | Owner confirmed 2026-10-28 |
 
-| D44 | Start M9 with the owner-approved existing-cache phase: frozen baselines and all six selected PPO checkpoints, batteries 250/500/750 s and separate prior shifts (+50 m east), rotations (+90 degrees) and spread scaling (2x). Details and fixed seeds in protocol v1. | Reuses accepted artifacts, with no T tuning or new training. Public-prior overrides precede initial observation and preserve physical world/cache IDs. Pool original T density tags into four actual prior/target families; report seed spread and paired world uncertainty. Remaining E3/ablations stay deferred. | Protocol preparation; tests and B smoke required before main T evaluation |
+| D44 | Start M9 with the owner-approved existing-cache phase: frozen baselines and all six selected PPO checkpoints, batteries 250/500/750 s and separate prior shifts (+50 m east), rotations (+90 degrees) and spread scaling (2x). Details and fixed seeds in protocol v1. | Reuses accepted artifacts, with no T tuning or new training. Public-prior overrides precede initial observation and preserve physical world/cache IDs. Pool original T density tags into four actual prior/target families; report seed spread and paired world uncertainty. Remaining E3/ablations stay deferred. | Frozen at `39903c4`; 290 tests and 59 B smoke episodes passed; 25,920 main episodes complete |
+
+| D45 | Accept the completed M9 existing-cache phase under the owner's direction to accept results unless seriously invalid, 2026-10-29. Preserve negative findings and all historical qualifications. | Every episode passed identity/checksum verification; numerical, budget, family/seed and curve checks found no blocking issue. V3 PPO AUC 0.744 trails B5 0.903; paired gap -0.160, 95% CI [-0.198, -0.121]. Accept valid negative evidence without T tuning. No claim that deferred experiments or ablations were completed. See `docs/m9-acceptance.md`. | Accepted; no rerun required |
 
 ---
 

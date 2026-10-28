@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D45**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D46**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 274
   pass with the M8 training pipeline (M7 completion had 268).
@@ -324,3 +324,22 @@ Check live status; do not start a second process or rerun completed training.
 The wrapper generates reports in `<run_id>/report/` and stops at `awaiting_review`.
 Next work is completion/report review and publishing numeric results, not tuning
 policies on the newly observed T outcomes. M9 beyond this phase remains deferred.
+
+## Latest hand-off: M9 existing-cache phase accepted (D45)
+
+The preceding active-run notes are historical. All 25,920 episodes and reports
+finished. No evaluation or training is queued. **Do not restart them.** The owner
+delegated acceptance unless results were seriously invalid; review found no
+blocking validity issue. `docs/m9-acceptance.md` records acceptance and checks.
+
+Published numeric results: `docs/m9-results/results.md` and `results.json`;
+figures: `docs/figures/m9_summary_V0.png` and `m9_summary_V3.png`. Local run remains
+`runs/eval/m9-v1/341aadf1366d8f05`. Its wrapper's `awaiting_review` marker is historical;
+D45 and the acceptance document are the final disposition.
+
+Nominal V3 PPO AUC 0.744 vs B5 0.903 (paired gap -0.160, 95% CI [-0.198, -0.121]);
+V0 PPO 0.242 vs B5 0.677. Accept these negative policy findings. V3 B5 exceeds V0
+by 0.227 [0.162, 0.293]. All three PPO seeds remain reported; no T tuning.
+Remaining detector/camera/appearance experiments and ablations are deferred, so
+do not describe the entire original M9 scope as completed. Any later policy
+revision must use B only and a separate protocol, retaining these test results.
