@@ -78,5 +78,24 @@ uv run pytest
 ## Machine state
 
 - No local GPU. Detector training and cache generation run on Kaggle (CLAUDE.md §2).
-- WSL2 is not installed on the development machine yet. It is needed from M10 (Ubuntu 24.04,
-  ROS 2 Jazzy, Gazebo Harmonic, PX4 SITL). Installing it needs administrator rights and a reboot.
+- WSL2 Ubuntu 24.04.5 is installed at `D:\WSL\AltiSeek-Ubuntu-24.04`. Windows
+  Smart App Control remains enabled; the blocked Windows pytest launcher is not used.
+  The Linux user is `aniket`; its password has not been set. Set it interactively with
+  `wsl -d Ubuntu-24.04 -u root -- passwd aniket` when interactive sudo access is needed.
+- Linux uses Python 3.12.3, uv 0.13.6 and CPU-only torch 2.11.0+cpu. Dependencies
+  were installed with `uv sync --locked`. Its separate environment is
+  `/home/aniket/.venvs/altiseek`; the Windows `.venv` is preserved. The source and
+  existing artifacts remain in the Windows checkout, mounted under `/mnt/c/`.
+- Full WSL preflight on 2026-10-29: **281 passed in 58.24 s**, including lint,
+  formatting and checkpoint-resume tests. This is a fresh Linux test result, not
+  a change to the historical Windows execution-policy failure.
+
+From PowerShell in the repository, run the Linux checks with:
+
+```powershell
+wsl -d Ubuntu-24.04 -u aniket --cd "$PWD" --exec env UV_PROJECT_ENVIRONMENT=/home/aniket/.venvs/altiseek /home/aniket/.local/bin/uv run --locked pytest
+```
+
+Use the same prefix for project scripts. Keep long jobs detached and resumable;
+installing WSL does not restart or resume any completed training run. ROS 2,
+Gazebo and PX4 have not been installed yet.
