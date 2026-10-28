@@ -22,7 +22,7 @@ Update as milestones complete (§21).
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
-| M8 PPO | in progress: six initial runs and D40 diagnosis complete. Owner approved AUC reward, gamma 1 and sampled primary evaluation (D41); revised pilot pending (`docs/ppo-auc-protocol.md`) |
+| M8 PPO | acceptance pending: all six D41 runs and reporting complete; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; one zero-p gate fails. Review and unapplied disposition proposal: `docs/ppo-acceptance.md` |
 | M9 Main experiments | not started |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
@@ -960,7 +960,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D40 | Diagnose the completed M8 initial configuration without replacing its results: replay all selected policies, compare argmax with three seeded action draws per validation world, perturb only public inputs, audit action returns against baseline rewards, and run a fixed four-world V3 learning probe. Details: `docs/ppo-diagnosis-protocol.md`. | Owner requested root-cause analysis. 960 episodes and 1,783 input probes demonstrate V0 reward/AUC ranking reversal and V3 argmax loss (0.439 to 0.597 with sampling). The same network learns the fixed four-world task (0.000 to 0.579 AUC; B5 0.613). Per-action discounting analytically favors smaller energy increments. Residual V3 optimization failure is not uniquely isolated. No T data, checkpoint reselection or main reward/architecture change. | Diagnosis complete; objective/protocol revision pending; M8 remains incomplete |
 
-| D41 | Owner approved AUC-aligned PPO reward: remaining-horizon fraction per find divided by K, gamma 1, hard battery constraint and false declarations reported separately. Keep the CNN and inputs fixed. Primary validation samples three action draws per world; argmax is secondary. Protocol: `docs/ppo-auc-protocol.md`. | D40 demonstrated reward/AUC ranking reversal and argmax losses. Action rewards sum to AUC apart from the initial observation. V3 seed 17 pauses at 65,536 steps before expanding to six runs. Preserve original runs and the zero-p gate; no T tuning. | Approved; pilot pending |
+| D41 | Owner approved AUC-aligned PPO reward: remaining-horizon fraction per find divided by K, gamma 1, hard battery constraint and false declarations reported separately. Keep the CNN and inputs fixed. Primary validation samples three action draws per world; argmax is secondary. Protocol: `docs/ppo-auc-protocol.md`. | D40 demonstrated reward/AUC ranking reversal and argmax losses. Action rewards sum to AUC apart from the initial observation. V3 seed 17 pauses at 65,536 steps before expanding to six runs. Preserve original runs and the zero-p gate; no T tuning. | Six runs and report complete; acceptance pending, see docs/ppo-acceptance.md |
 
 ---
 

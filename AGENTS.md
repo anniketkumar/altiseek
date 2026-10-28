@@ -254,3 +254,16 @@ failure (+0.025 vs B2, paired CI [-0.089, +0.143]) and input-isolation audit.
 The gate has NOT been relaxed; do not accept M8/M9 until it is explicitly resolved.
 Reporting now includes paired full-p minus zero-p intervals. The 14 targeted
 environment/CNN/style checks pass. Training sources and run identities are unchanged.
+
+## M8 final run review
+
+All six D41 runs and automatic reporting are now complete. Do not restart them.
+`continuation-status.json` says `awaiting_scientific_review`; selected V0/V3 mean
+AUC is 0.212/0.720 versus B5 0.551/0.888. `docs/ppo-auc-results.md`/`.json` and
+`docs/figures/m8_auc_learning.png` hold the full numeric report and curves.
+`docs/ppo-acceptance.md` reviews acceptance and proposes a D42 disposition; it is
+NOT approved/applied. V0 stable convergence is not demonstrated, and V3 seed 29
+still fails the historical zero-p point-mean gate. M8/M9 status is unchanged.
+The fresh full-test invocation was blocked before pytest started by Windows
+Application Control (OS error 4551). Preserve earlier passing test records;
+do not bypass the execution policy. No further training is queued.
