@@ -191,6 +191,19 @@ def main() -> None:
                 - refs["B2"][world_id]["metrics"]["auc"]
                 for world_id in sorted(ids)
             ]
+            belief_delta = [
+                float(
+                    np.mean(
+                        [r["metrics"]["auc"] for r in best["episodes"] if r["world_id"] == world_id]
+                    )
+                )
+                - float(
+                    np.mean(
+                        [r["metrics"]["auc"] for r in zero["episodes"] if r["world_id"] == world_id]
+                    )
+                )
+                for world_id in sorted(ids)
+            ]
             metrics = {
                 key: float(np.mean([r["metrics"][key] for r in best["episodes"]]))
                 for key in (
@@ -239,6 +252,8 @@ def main() -> None:
                     "zero_belief_auc": zero["mean_auc"],
                     "zero_minus_B2": float(np.mean(zero_delta)),
                     "zero_minus_B2_ci95": paired_interval(zero_delta),
+                    "belief_minus_zero": float(np.mean(belief_delta)),
+                    "belief_minus_zero_ci95": paired_interval(belief_delta),
                     "zero_belief_gate": float(np.mean(zero_delta)) <= 0,
                     "finite_optimizer_losses": finite_losses,
                     "last_three_auc_range": float(np.ptp([r["mean_auc"] for r in history[-3:]])),
@@ -388,6 +403,19 @@ def main() -> None:
         "",
         f"Zero-belief diagnostic gate: {summary['zero_belief_gate'] if complete else 'pending'}. "
         "A positive zero-p minus B2 triggers investigation; it must not be silently accepted.",
+        "",
+        "| Variant | Seed | Zero-p minus B2, 95% CI | Full p minus zero-p, 95% CI |",
+        "|---|---:|---|---|",
+    ]
+    for row in selected:
+        zlo, zhi = row["zero_minus_B2_ci95"]
+        plo, phi = row["belief_minus_zero_ci95"]
+        lines.append(
+            f"| {row['variant']} | {row['seed']} "
+            f"| {row['zero_minus_B2']:+.3f} [{zlo:+.3f}, {zhi:+.3f}] "
+            f"| {row['belief_minus_zero']:+.3f} [{plo:+.3f}, {phi:+.3f}] |"
+        )
+    lines += [
         "",
         "## Behaviour and stability",
         "",

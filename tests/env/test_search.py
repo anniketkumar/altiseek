@@ -100,9 +100,16 @@ def test_mask_energy_noop_and_budget(env):
 def test_observation_has_no_hidden_locations_and_is_not_reused(env):
     obs, _ = env.reset(seed=3)
     env._targets[:] = 0
+    env._target_cells[:] = 0
+    mask = env.action_masks()
     again = env._observation()
     np.testing.assert_array_equal(obs["map"], again["map"])
     np.testing.assert_array_equal(obs["vector"], again["vector"])
+    env._targets[:] = env.table.area_m - 1
+    env._target_cells[:] = env.grid - 1
+    np.testing.assert_array_equal(mask, env.action_masks())
+    np.testing.assert_array_equal(obs["map"], env._observation()["map"])
+    np.testing.assert_array_equal(obs["vector"], env._observation()["vector"])
     obs["map"][:] = 0
     assert env._observation()["map"].sum() > 0
     # x increases to the right, y increases toward the top of a north-up tensor.

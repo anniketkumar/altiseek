@@ -245,3 +245,12 @@ continuation, the other five runs and reporting. Check `continuation-status.json
 Do not launch a duplicate. A pass expands automatically; a failure stops for review.
 Tests: full 280 passed, then the added sampled-evaluation RNG/replay regression and
 style checks passed. The 1,024-step real-cache smoke run `53dd79d4db8d575a` completed.
+
+Interim review: V3 seeds 17 and 29 completed (IDs `985e4600240c36a8` and
+`24c1acc2a1dafcaf`), selected AUC 0.713/0.719. Seed 43 is training; check live
+status rather than treating this hand-off as current. The pilot gate passed and
+the same first run resumed. `docs/ppo-auc-audit.md` records the seed-29 zero-p gate
+failure (+0.025 vs B2, paired CI [-0.089, +0.143]) and input-isolation audit.
+The gate has NOT been relaxed; do not accept M8/M9 until it is explicitly resolved.
+Reporting now includes paired full-p minus zero-p intervals. The 14 targeted
+environment/CNN/style checks pass. Training sources and run identities are unchanged.
