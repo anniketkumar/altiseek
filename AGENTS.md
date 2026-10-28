@@ -315,3 +315,12 @@ and the content-addressed run's `status.json`; never launch a duplicate. Results
 are checksummed per episode, and a process lock rejects concurrent writers.
 `scripts/report_evaluation.py <run-directory>` regenerates tables and figures.
 No main T run had started at this preflight commit; check live status before acting.
+
+Main evaluation subsequently launched detached from **`39903c4`** on 2026-10-29.
+Run **`341aadf1366d8f05`** is active under `runs/eval/m9-v1/`; initial progress
+passed 260/25,920 episodes with no stderr. The launcher PID is saved in
+`runs/eval/m9-v1/launcher.pid`; logs are `continuation.log` and `continuation.err`.
+Check live status; do not start a second process or rerun completed training.
+The wrapper generates reports in `<run_id>/report/` and stops at `awaiting_review`.
+Next work is completion/report review and publishing numeric results, not tuning
+policies on the newly observed T outcomes. M9 beyond this phase remains deferred.

@@ -23,7 +23,7 @@ Update as milestones complete (§21).
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
 | M8 PPO | complete with qualifications (D42, owner approved 2026-10-28): six D41 runs and report; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; historical zero-p gate failure retained. See `docs/ppo-acceptance.md`; revisit later using B only |
-| M9 Main experiments | preparing existing-cache phase (D44); no main T evaluation started |
+| M9 Main experiments | existing-cache phase running (D44), frozen commit `39903c4`, run `341aadf1366d8f05`; remaining experiments/ablations deferred |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
 
