@@ -581,3 +581,30 @@ The optimized environment replayed 320 saved random/oracle episodes and 7,606
 steps without changing outcomes. Mean core step time is 1.590 ms, above the
 sub-ms aim; M8 must benchmark full CPU training throughput. The PPO-specific
 zero-belief check remains for M8. No test worlds or detector inference were used.
+
+## M8 initial training and failure diagnosis (2026-10-28)
+
+All six initial runs completed: V0/V3, seeds 17/29/43, 131,072 transitions each.
+Selected validation AUC averages 0.072 (V0) and 0.439 (V3), versus B5's 0.551 and
+0.888. The all-seed [results](ppo-results.md) preserve this negative outcome.
+M8 is not declared complete.
+
+The [diagnosis](ppo-diagnosis.md) uses 240 exact deterministic replays, 720
+sampled-action episodes, 1,783 public-input probes and a separate fixed four-world
+training check. It finds:
+
+- All V0 PPO seeds earn higher discounted action return than B3/B5 despite much
+  lower AUC. Removing the false-declaration term on the same trajectories reverses
+  the ranking. The reward and selection metric conflict.
+- Sampling raises V3 AUC from 0.439 to 0.597 (paired-world bootstrap increase
+  +0.158, 95% CI +0.101 to +0.215), still below random and B5. Deterministic action
+  selection contributes to repetitive behavior but is not the full explanation.
+- Per-action discounting favors splitting the same battery into more low-level
+  moves; the analytical bias is distinct from a demonstrated retraining effect.
+- The unchanged network learns the small fixed task: argmax AUC 0.000 -> 0.579,
+  against B5 0.613. V3 responds to belief/prior/coverage changes, so total map
+  blindness or a completely broken training path is not supported by these checks.
+
+Original checkpoints, rewards and evaluation rules remain unchanged. No T data
+were used. The remaining V3 learning gap is not uniquely attributed; settle the
+objective and use a new controlled protocol before another main training suite.

@@ -2,15 +2,19 @@
 
 The [initial protocol](ppo-protocol.md) uses CPU MaskablePPO, a custom CNN and local
 TensorBoard. All code/configuration is committed; caches, checkpoints, TensorBoard
-events and episode logs remain gitignored. M8 is still in progress until all
-training seeds and the diagnostic/behaviour review finish.
+events and episode logs remain gitignored. Numeric results include per-world
+metrics; full selected trajectories live in `runs/ppo/m8-initial/selected-results.json`.
+All six initial runs and the failure diagnosis
+are complete; M8 remains in progress because the configuration needs revision.
+Read [the diagnosis](ppo-diagnosis.md) before launching further training.
 
-## Active suite
+## Completed initial suite
 
-The initial suite was launched from `321a1c9` on 2026-10-28. It runs V3 then V0,
-each with seeds 17, 29 and 43, serially. Each seed has 131,072 transitions and
-evaluates all 40 rl-val worlds every 16,384 steps. The process is detached and
-hidden; closing the agent session does not stop it. Keep the computer awake.
+The initial suite was launched from `321a1c9` on 2026-10-28 and has completed.
+It ran V3 then V0, each with seeds 17, 29 and 43, serially. Each seed had 131,072
+transitions and evaluated all 40 rl-val worlds every 16,384 steps. Preserve these
+runs; they do not need restarting. The commands below document recovery for an
+interrupted run, not an instruction to repeat the completed suite.
 
 `runs/ppo/m8-initial/status.json` records suite progress. `suite.log` and
 `suite.err` capture the launcher; `V3-seed17.log` (and the other seed logs) record

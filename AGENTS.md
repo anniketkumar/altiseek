@@ -15,7 +15,7 @@ comes next.
   views, caches and checkpoints. `data/` and `runs/` are gitignored. Plots of numbers may go in
   `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log entry (§24) in the same commit. The next free ID is **D40**.
+  add a Decision Log entry (§24) in the same commit. The next free ID is **D41**.
 - **Tell the owner** where their input is needed, and give detailed progress updates.
 - **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint; all 274
   pass with the M8 training pipeline (M7 completion had 268).
@@ -182,9 +182,9 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   the last complete checkpoint; do not restart or combine different run identities.
 - Initial suite launched detached from `321a1c9`, launcher PID saved in
   `runs/ppo/m8-initial/launcher.pid`. V3 seed 17 run ID: `c4bcf40c608ec14a`.
-  Training is active; inspect status/logs before launching anything. At 32,768 steps,
-  validation AUC was 0.376 versus 0.244 initially; about 101 production steps/s.
-  This is early progress, not M8 completion. All six curves/diagnostics remain to review.
+  All six initial runs completed and the automatic report succeeded. Mean selected
+  validation AUC: V0 0.072, V3 0.439; B5 0.551/0.888. V3 stays at L5, V0 mostly L1.
+  M8 is not accepted as complete; the owner requested root-cause diagnosis (D40).
 - `scripts/report_ppo.py --partial` reads current output without changing training.
   Full `scripts/report_ppo.py` checks all six completed runs, hashes and paired worlds;
   writes all-seed numeric results and learning curves. `docs/ppo.md` documents operation.
@@ -197,8 +197,31 @@ All four sets are cached, verified locally and registered in `registry/manifest.
   scientific review of learning stability and the zero-belief gate before M8 is complete.
 - Train on rl-train only; select checkpoints on rl-val with frozen baseline settings.
   At least three seeds per configuration; report every seed. No test-world tuning.
-- Check zeroed belief channels against the prior-only heuristic once PPO exists. This
-  M8 check has not yet run. Preserve the M6 sensor model and M7 observation contract.
+- The initial zero-p diagnostic is below B2 for all six seeds, but removing p barely
+  harms PPO. Passing this weak check does not demonstrate use of the belief map.
+  Preserve the M6 sensor model and M7 observation contract.
+- D40 diagnostics: `scripts/diagnose_ppo.py` -> `data/ppo-diagnosis/6493069c0f288c5c`,
+  logs `data/ppo-diagnosis/run.log/.err`; frozen argmax replay, three sampled draws/world,
+  input sensitivity and reward audit. `scripts/check_ppo_overfit.py` ->
+  `data/ppo-diagnosis/fe40bd44ec290dd2`, logs `overfit.log/.err`; separate 32,768-step
+  controlled four-world training probe. **Both completed; do not restart them.**
+- Root-cause report: `docs/ppo-diagnosis.md`/`.json`, regenerated from completed files
+  with `scripts/report_ppo_diagnosis.py`. All 960 diagnostic episodes and 1,783 input
+  probes are saved locally. V3 argmax AUC 0.439 rises to 0.597 with sampling, still below
+  random 0.659/B5 0.888. V0 PPO earns higher training return than B3/B5 despite much
+  lower AUC; removing the false-penalty term on identical paths reverses that ranking.
+- Full selected trajectories were archived byte-for-byte at
+  `runs/ppo/m8-initial/selected-results.json` (same SHA-256 as the diagnostic input).
+  `docs/ppo-results.json` is the compact public report with per-world metrics. Use
+  the local archive for trajectory audits; historical metadata names the old docs path.
+- Fixed four-world probe: argmax AUC 0.000 -> 0.579, sampled 0.241 -> 0.593, B5 0.613.
+  The network can learn the small task. V3 responds to belief/prior/coverage changes;
+  do not claim it ignores the map entirely. Per-action discounting biases energy
+  expenditure across levels, but its learned causal contribution was not retrained.
+- **Next:** agree the primary objective (AUC versus recovery minus false-alarm/energy
+  costs), record a new protocol and run a controlled revision. Do not merely extend
+  the failed configuration or change architecture and reward together. The residual
+  V3 gap is not uniquely attributed to credit assignment, representation or budget.
 - Test-world distractors remain an open decision before M9 (§25).
 
 ## Caveats

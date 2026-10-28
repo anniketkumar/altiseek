@@ -227,7 +227,24 @@ def main() -> None:
         ),
     }
     prefix = args.root / "progress-report" if args.partial else Path("docs/ppo-results")
-    write_json(prefix.with_suffix(".json"), summary)
+    # Keep full selected trajectories beside the ignored run artifacts. Publish
+    # per-world metrics without duplicating hundreds of thousands of step lines.
+    public_summary = summary
+    if not args.partial:
+        write_json(args.root / "selected-results.json", summary)
+        public_summary = summary | {
+            "selected": [
+                row
+                | {
+                    "episodes": [
+                        {k: v for k, v in episode.items() if k != "records"}
+                        for episode in row["episodes"]
+                    ]
+                }
+                for row in selected
+            ]
+        }
+    write_json(prefix.with_suffix(".json"), public_summary)
     figure = (
         args.root / "learning-progress.png"
         if args.partial
@@ -328,8 +345,8 @@ def main() -> None:
         "",
         "First-find times are censored at 500 s. Coarse-detection counts use raw cached "
         "views, including resolved/suppressed detections. The final-three range describes "
-        "curve variation; it is not a convergence proof. Optimizer finiteness and complete "
-        "per-world trajectories are in the JSON.",
+        "curve variation; it is not a convergence proof. Optimizer finiteness and per-world "
+        "metrics are in the JSON; full trajectories remain in the local run archive.",
         "",
         "The zero-p diagnostic retains prior, coverage, resolved cells and vector inputs. "
         "It is an input-removal check, not a separately trained prior-only policy.",
@@ -349,6 +366,7 @@ def main() -> None:
             "report": prefix.with_suffix(".json"),
             "table": prefix.with_suffix(".md"),
             "figure": figure,
+            **({"trajectories": args.root / "selected-results.json"} if not args.partial else {}),
         },
     )
     print(

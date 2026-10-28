@@ -22,7 +22,7 @@ Update as milestones complete (§21).
 | M5 Detection cache | done (2026-10-27): all 320 worlds / 281,600 views cached; 6,400 sampled live checks passed at fixed tolerances; downloaded files verified and 320 caches registered (`data/caches/`, `docs/cache.md`) |
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
-| M8 PPO | in progress: MaskablePPO/custom CNN and local TensorBoard selected; CPU training, exact checkpoint recovery and validation pipeline implemented (D39) |
+| M8 PPO | in progress: six initial runs complete; poor search behavior diagnosed (D40). Reward/AUC mismatch and deterministic-action losses demonstrated; controlled learning works. Revised objective/protocol needed before further main training (`docs/ppo-diagnosis.md`) |
 | M9 Main experiments | not started |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
@@ -598,6 +598,11 @@ Every policy implements the same interface: observation + action mask → action
 - **Algorithm:** masked PPO — either sb3-contrib's MaskablePPO with a multi-input policy, or a single-file PPO if you want full control. Record which.
   D39 selects MaskablePPO 2.9.2 with a custom float32 CNN extractor and local
   TensorBoard 2.21.0. `docs/ppo-protocol.md` freezes the initial CPU training protocol.
+  D40's completed diagnosis preserves that configuration: V0's reward prefers
+  low-AUC PPO trajectories over B3/B5; sampled actions improve V3 AUC but leave
+  a substantial gap. Per-action discounting also biases energy cost across levels.
+  Resolve the objective/selection mismatch under a new protocol before another
+  main run. No reward or architecture change has been made by the diagnosis.
 - **Network:**
   - A CNN over the map tensor (a few strided convolutions or small residual blocks).
   - Its output is concatenated with the vector features → MLP → policy and value heads.
@@ -943,7 +948,9 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D38 | M7 completion uses corrected fixed-level-routing run `8cd76bdb72f965a1` (3,520 episodes); freeze `configs/policy/selected.yaml`. Complete the step-only false-clear measurement with the separately recorded initial-observation check, keeping its original failed summary and the 0.01 threshold. | One initial V0 coarse crossing verifies the mechanism; 75/78 priors already lie below the threshold, so this is weak diagnostic evidence, not a strong H1 result. Fine/coarse coverage and oracle/random family checks pass. Numeric reports expose selection bias and the oracle's non-bound status. Optimized core replay preserves 320 episodes/7,606 steps; mean 1.590 ms misses the sub-ms aim, so M8 must measure full training throughput. No T tuning or sensor refitting. | M7 complete; PPO-specific checks deferred to M8 |
 
-| D39 | M8 uses MaskablePPO 2.9.2, a custom spatial CNN and local TensorBoard 2.21.0, owner selected 2026-10-28. Initial CPU runs: V0/V3, seeds 17/29/43, 131,072 steps each, validation every 16,384; four subprocess environments and two torch threads. Full protocol: `docs/ppo-protocol.md`. | Fits existing Gymnasium/CPU torch pins; avoids default flattening of float maps. Fixed log scaling exposes sparse p/q without fitted statistics. Battery/cap endings are terminal to the learner, preventing timeout bootstrap beyond the finite task. Checkpoints preserve optimizer, worker state and all RNGs; exact continuation is tested. CPU pilots favored subprocess workers (148–185 steps/s at two epochs), so budget is provisional pending full learning curves. No shaping or T tuning; baseline settings remain frozen. | Implemented; multi-seed training and diagnostics pending |
+| D39 | M8 uses MaskablePPO 2.9.2, a custom spatial CNN and local TensorBoard 2.21.0, owner selected 2026-10-28. Initial CPU runs: V0/V3, seeds 17/29/43, 131,072 steps each, validation every 16,384; four subprocess environments and two torch threads. Full protocol: `docs/ppo-protocol.md`. | Fits existing Gymnasium/CPU torch pins; avoids default flattening of float maps. Fixed log scaling exposes sparse p/q without fitted statistics. Battery/cap endings are terminal to the learner, preventing timeout bootstrap beyond the finite task. Checkpoints preserve optimizer, worker state and all RNGs; exact continuation is tested. CPU pilots favored subprocess workers (148–185 steps/s at two epochs). No shaping or T tuning; baseline settings remain frozen. | Six runs complete; initial configuration underperforms, see D40 |
+
+| D40 | Diagnose the completed M8 initial configuration without replacing its results: replay all selected policies, compare argmax with three seeded action draws per validation world, perturb only public inputs, audit action returns against baseline rewards, and run a fixed four-world V3 learning probe. Details: `docs/ppo-diagnosis-protocol.md`. | Owner requested root-cause analysis. 960 episodes and 1,783 input probes demonstrate V0 reward/AUC ranking reversal and V3 argmax loss (0.439 to 0.597 with sampling). The same network learns the fixed four-world task (0.000 to 0.579 AUC; B5 0.613). Per-action discounting analytically favors smaller energy increments. Residual V3 optimization failure is not uniquely isolated. No T data, checkpoint reselection or main reward/architecture change. | Diagnosis complete; objective/protocol revision pending; M8 remains incomplete |
 
 ---
 

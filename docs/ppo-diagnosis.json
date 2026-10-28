@@ -1,0 +1,416 @@
+{
+  "diagnostic_run_id": "6493069c0f288c5c",
+  "probe_run_id": "fe40bd44ec290dd2",
+  "episodes": 960,
+  "sampling_effects": [
+    {
+      "variant": "V0",
+      "deterministic_auc": 0.07218858626635045,
+      "stochastic_auc": 0.1155233962814594,
+      "delta": 0.043334810015108936,
+      "paired_world_ci95": [
+        0.0031371852309041957,
+        0.08553572551904484
+      ]
+    },
+    {
+      "variant": "V3",
+      "deterministic_auc": 0.4386131944444444,
+      "stochastic_auc": 0.5971049712785315,
+      "delta": 0.15849177683408694,
+      "paired_world_ci95": [
+        0.10094053645359359,
+        0.21503059594426333
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "variant": "V0",
+      "seed": 17,
+      "mode": "deterministic",
+      "episodes": 40,
+      "auc": 0.08479940856136745,
+      "found_fraction": 0.1,
+      "reward": -1.4438933627688395,
+      "action_return": -1.0523933627688433,
+      "discounted_action_return": -0.6975544520304329,
+      "repeat_fraction": 0.7607476635514019,
+      "zero_information_fraction": 0.7607476635514019,
+      "action_entropy": 0.7024637036241381
+    },
+    {
+      "variant": "V0",
+      "seed": 17,
+      "mode": "stochastic",
+      "episodes": 120,
+      "auc": 0.1253831682515776,
+      "found_fraction": 0.15625,
+      "reward": -1.5464629715361558,
+      "action_return": -1.1549629715361587,
+      "discounted_action_return": -0.7715882469414441,
+      "repeat_fraction": 0.6853008765654065,
+      "zero_information_fraction": 0.692389486490041,
+      "action_entropy": 0.8221105301667236
+    },
+    {
+      "variant": "V0",
+      "seed": 29,
+      "mode": "deterministic",
+      "episodes": 40,
+      "auc": 0.07714555369873836,
+      "found_fraction": 0.0875,
+      "reward": -1.4096927759551523,
+      "action_return": -1.018192775955156,
+      "discounted_action_return": -0.6778588120328191,
+      "repeat_fraction": 0.799260670411702,
+      "zero_information_fraction": 0.799260670411702,
+      "action_entropy": 0.7558101692904455
+    },
+    {
+      "variant": "V0",
+      "seed": 29,
+      "mode": "stochastic",
+      "episodes": 120,
+      "auc": 0.1358211696467651,
+      "found_fraction": 0.16666666666666666,
+      "reward": -1.5775901354781843,
+      "action_return": -1.1860901354781863,
+      "discounted_action_return": -0.8469072188767257,
+      "repeat_fraction": 0.6682536991090301,
+      "zero_information_fraction": 0.6731870286196049,
+      "action_entropy": 0.7790387086714472
+    },
+    {
+      "variant": "V0",
+      "seed": 43,
+      "mode": "deterministic",
+      "episodes": 40,
+      "auc": 0.05462079653894555,
+      "found_fraction": 0.0625,
+      "reward": -1.4938933627688398,
+      "action_return": -1.1023933627688431,
+      "discounted_action_return": -0.7447587548439887,
+      "repeat_fraction": 0.8182242990654206,
+      "zero_information_fraction": 0.8182242990654206,
+      "action_entropy": 1.1373471337222607
+    },
+    {
+      "variant": "V0",
+      "seed": 43,
+      "mode": "stochastic",
+      "episodes": 120,
+      "auc": 0.08536585094603548,
+      "found_fraction": 0.12013888888888888,
+      "reward": -1.690907548521898,
+      "action_return": -1.2994075485219,
+      "discounted_action_return": -0.9306125883677894,
+      "repeat_fraction": 0.6173890302591298,
+      "zero_information_fraction": 0.6358801574343441,
+      "action_entropy": 1.1946200757760164
+    },
+    {
+      "variant": "V3",
+      "seed": 17,
+      "mode": "deterministic",
+      "episodes": 40,
+      "auc": 0.44368125,
+      "found_fraction": 0.4541666666666666,
+      "reward": 0.08060000000000009,
+      "action_return": -0.1779,
+      "discounted_action_return": -0.02810123838585373,
+      "repeat_fraction": 0.6650943396226415,
+      "zero_information_fraction": 0.6716981132075472,
+      "action_entropy": 0.914880880896213
+    },
+    {
+      "variant": "V3",
+      "seed": 17,
+      "mode": "stochastic",
+      "episodes": 120,
+      "auc": 0.6154253446088813,
+      "found_fraction": 0.7208333333333333,
+      "reward": 0.20205967879140535,
+      "action_return": -0.0564403212085948,
+      "discounted_action_return": 0.043570754252566915,
+      "repeat_fraction": 0.45478488258372324,
+      "zero_information_fraction": 0.49062928526929045,
+      "action_entropy": 0.9650173575489364
+    },
+    {
+      "variant": "V3",
+      "seed": 29,
+      "mode": "deterministic",
+      "episodes": 40,
+      "auc": 0.4328875,
+      "found_fraction": 0.4458333333333333,
+      "reward": -0.0803750000000001,
+      "action_return": -0.33887500000000004,
+      "discounted_action_return": -0.18561466371856278,
+      "repeat_fraction": 0.6641509433962265,
+      "zero_information_fraction": 0.6669811320754716,
+      "action_entropy": 0.775491100268544
+    },
+    {
+      "variant": "V3",
+      "seed": 29,
+      "mode": "stochastic",
+      "episodes": 120,
+      "auc": 0.5469645258940806,
+      "found_fraction": 0.6361111111111111,
+      "reward": 0.18409100520160374,
+      "action_return": -0.07440899479839638,
+      "discounted_action_return": 0.029051799895360213,
+      "repeat_fraction": 0.5153463193607674,
+      "zero_information_fraction": 0.5393498010636832,
+      "action_entropy": 0.818458143681662
+    },
+    {
+      "variant": "V3",
+      "seed": 43,
+      "mode": "deterministic",
+      "episodes": 40,
+      "auc": 0.43927083333333333,
+      "found_fraction": 0.4520833333333333,
+      "reward": -0.03380000000000018,
+      "action_return": -0.29230000000000006,
+      "discounted_action_return": -0.14291527529060372,
+      "repeat_fraction": 0.6608490566037736,
+      "zero_information_fraction": 0.6650943396226415,
+      "action_entropy": 0.9552012461508219
+    },
+    {
+      "variant": "V3",
+      "seed": 43,
+      "mode": "stochastic",
+      "episodes": 120,
+      "auc": 0.6289250433326323,
+      "found_fraction": 0.81875,
+      "reward": 0.03128286777587383,
+      "action_return": -0.2272171322241258,
+      "discounted_action_return": -0.1623486228070564,
+      "repeat_fraction": 0.2956914395908984,
+      "zero_information_fraction": 0.3230050459647096,
+      "action_entropy": 1.0949128531512022
+    }
+  ],
+  "input_sensitivity": [
+    {
+      "variant": "V0",
+      "intervention": "flip_belief",
+      "observations": 1250,
+      "mean_tv": 0.0076043826192151755,
+      "argmax_change_fraction": 0.0056
+    },
+    {
+      "variant": "V0",
+      "intervention": "zero_belief",
+      "observations": 1250,
+      "mean_tv": 0.009247703963844106,
+      "argmax_change_fraction": 0.0048
+    },
+    {
+      "variant": "V0",
+      "intervention": "flip_prior",
+      "observations": 1250,
+      "mean_tv": 0.005463373816898092,
+      "argmax_change_fraction": 0.0024
+    },
+    {
+      "variant": "V0",
+      "intervention": "zero_coverage",
+      "observations": 1250,
+      "mean_tv": 0.10289373987931758,
+      "argmax_change_fraction": 0.1424
+    },
+    {
+      "variant": "V0",
+      "intervention": "flip_drone",
+      "observations": 1250,
+      "mean_tv": 1.7285740561783315e-05,
+      "argmax_change_fraction": 0.0
+    },
+    {
+      "variant": "V0",
+      "intervention": "zero_map",
+      "observations": 1250,
+      "mean_tv": 0.2166314882785082,
+      "argmax_change_fraction": 0.0392
+    },
+    {
+      "variant": "V3",
+      "intervention": "flip_belief",
+      "observations": 533,
+      "mean_tv": 0.07303985286640322,
+      "argmax_change_fraction": 0.13696060037523453
+    },
+    {
+      "variant": "V3",
+      "intervention": "zero_belief",
+      "observations": 533,
+      "mean_tv": 0.06552162508027694,
+      "argmax_change_fraction": 0.17823639774859287
+    },
+    {
+      "variant": "V3",
+      "intervention": "flip_prior",
+      "observations": 533,
+      "mean_tv": 0.10683993351214179,
+      "argmax_change_fraction": 0.25140712945590993
+    },
+    {
+      "variant": "V3",
+      "intervention": "zero_coverage",
+      "observations": 533,
+      "mean_tv": 0.09316752849611512,
+      "argmax_change_fraction": 0.25328330206378985
+    },
+    {
+      "variant": "V3",
+      "intervention": "flip_drone",
+      "observations": 533,
+      "mean_tv": 3.063024063620849e-05,
+      "argmax_change_fraction": 0.0
+    },
+    {
+      "variant": "V3",
+      "intervention": "zero_map",
+      "observations": 533,
+      "mean_tv": 0.1827880437145146,
+      "argmax_change_fraction": 0.31144465290806755
+    }
+  ],
+  "reward_audit": [
+    {
+      "variant": "V0",
+      "method": "PPO seed 17",
+      "auc": 0.08479940856136745,
+      "discounted_return": -0.6975544520304329,
+      "without_false_penalty": -0.42519508014768237
+    },
+    {
+      "variant": "V0",
+      "method": "PPO seed 29",
+      "auc": 0.07714555369873836,
+      "discounted_return": -0.6778588120328191,
+      "without_false_penalty": -0.45169871525458305
+    },
+    {
+      "variant": "V0",
+      "method": "PPO seed 43",
+      "auc": 0.05462079653894555,
+      "discounted_return": -0.7447587548439887,
+      "without_false_penalty": -0.5325023252504266
+    },
+    {
+      "variant": "V3",
+      "method": "PPO seed 17",
+      "auc": 0.44368125,
+      "discounted_return": -0.02810123838585373,
+      "without_false_penalty": 0.04689876161414626
+    },
+    {
+      "variant": "V3",
+      "method": "PPO seed 29",
+      "auc": 0.4328875,
+      "discounted_return": -0.18561466371856278,
+      "without_false_penalty": 0.022938700278937203
+    },
+    {
+      "variant": "V3",
+      "method": "PPO seed 43",
+      "auc": 0.43927083333333333,
+      "discounted_return": -0.14291527529060372,
+      "without_false_penalty": -0.006162775290603726
+    },
+    {
+      "variant": "V0",
+      "method": "random",
+      "auc": 0.2293808605798171,
+      "discounted_return": -1.5714023899186944,
+      "without_false_penalty": -0.08317545912289362
+    },
+    {
+      "variant": "V0",
+      "method": "B3",
+      "auc": 0.45658922449839967,
+      "discounted_return": -1.013912475709768,
+      "without_false_penalty": 0.5010761161825836
+    },
+    {
+      "variant": "V0",
+      "method": "B5",
+      "auc": 0.5514200572098499,
+      "discounted_return": -1.1734733250043838,
+      "without_false_penalty": 0.6906280953348063
+    },
+    {
+      "variant": "V3",
+      "method": "random",
+      "auc": 0.6590933395650144,
+      "discounted_return": -0.060138239353115616,
+      "without_false_penalty": 0.7737736869884726
+    },
+    {
+      "variant": "V3",
+      "method": "B3",
+      "auc": 0.8679951868681574,
+      "discounted_return": 0.4458743339765192,
+      "without_false_penalty": 1.2101736079265213
+    },
+    {
+      "variant": "V3",
+      "method": "B5",
+      "auc": 0.8875569726122995,
+      "discounted_return": 0.28588256655151223,
+      "without_false_penalty": 1.302575707888483
+    }
+  ],
+  "constant_empty_move_energy": [
+    {
+      "level": "L1",
+      "move_cost_s": 4.5,
+      "undiscounted_return": -0.996,
+      "discounted_return": -0.6040564190410131
+    },
+    {
+      "level": "L5",
+      "move_cost_s": 9.5,
+      "undiscounted_return": -0.996,
+      "discounted_return": -0.7781074834083624
+    }
+  ],
+  "controlled_learning": [
+    {
+      "steps": 0,
+      "deterministic_auc": 0.0,
+      "stochastic_auc": 0.240984796591875,
+      "deterministic_reward": -1.1249999999999998
+    },
+    {
+      "steps": 8192,
+      "deterministic_auc": 0.2836474558467347,
+      "stochastic_auc": 0.5122411631843468,
+      "deterministic_reward": -0.025040044153265995
+    },
+    {
+      "steps": 16384,
+      "deterministic_auc": 0.5007963787276878,
+      "stochastic_auc": 0.5323720902866679,
+      "deterministic_reward": 0.3249199116934701
+    },
+    {
+      "steps": 24576,
+      "deterministic_auc": 0.5399394388397973,
+      "stochastic_auc": 0.5611313053290843,
+      "deterministic_reward": 0.4594199116934691
+    },
+    {
+      "steps": 32768,
+      "deterministic_auc": 0.5791699116934693,
+      "stochastic_auc": 0.5932275486756238,
+      "deterministic_reward": 0.9594199116934695
+    }
+  ],
+  "controlled_B5_auc": 0.6128390129759098
+}
