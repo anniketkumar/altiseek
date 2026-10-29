@@ -100,6 +100,13 @@ Submit using `kaggle kernels push -p data/kaggle/m9-kernel --accelerator
 NvidiaTeslaT4 -t 24000`. Attach previous output with `--resume-source` when
 resuming a partial job. Never start duplicate jobs or overwrite old outputs.
 
+`scripts/watch_m9_cache.py` monitors the submitted kernel without launching
+another. It downloads the saved output, calls `collect_robustness.py` to import
+only complete cases through the strict M5 verifier, and fits detector/camera
+sensors on B. Per-case ZIPs preserve all original cache/metadata/validation bytes;
+their derived summary records the downloaded summary's SHA-256. This watcher
+stops at review and never runs held-out policy evaluation.
+
 ## Evaluation and completion
 
 Before further test/stress evaluation, freeze selected checkpoints, generated

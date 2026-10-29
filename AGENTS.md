@@ -360,7 +360,24 @@ and the launcher logs/PID before launching. Never duplicate an active suite.
 
 Linux Kaggle CLI works using the existing private credential. The private
 `aniketkumarpradhan/altiseek-m5-inputs` dataset contains the original libraries;
-its listing size of zero is misleading. No new GPU job has launched yet.
+its listing size of zero is misleading.
 Next: production CPU training, paired B stress worlds, detector/camera GPU
 caches, B sensor refits, then freeze selected artifacts before extended test
 evaluation. The entire M9 scope remains incomplete until these results exist.
+
+Production CPU suite launched detached from `f4fb1e8`; launcher PID 5228 is in
+`runs/ppo/m9-ablations/launcher.pid`. First control seed 17 run is
+`ad93ce727e7b1dc7`, first 16,384-step block about 68 steps/s. Check status/logs;
+do not duplicate or change training sources/configs while the suite runs.
+
+Private GPU kernel `aniketkumarpradhan/altiseek-m9-cache` version 1 launched
+from `8893925`, 24,000 s hard limit, 19,000 s build budget plus validation.
+It pilots all cases before continuing. Paired B stress sets are low
+`2ad630d766f25e9b`, high `dcd091267fc6eb58`; original T remains untouched.
+`scripts/watch_m9_cache.py` monitors this existing kernel, downloads output,
+imports complete cases through the strict M5 verifier, and fits replacement
+sensors on B only. Check `data/kaggle/altiseek-m9-cache/watch-status.json` and
+watcher logs/PID before launching. It never submits a kernel or runs T evaluation.
+If quota stops production, preserve partial output and resume after refresh.
+After CPU/GPU completion, freeze selected artifacts and implement/check the
+extended evaluator before any further held-out policy evaluation.
