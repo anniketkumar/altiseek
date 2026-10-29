@@ -381,3 +381,15 @@ watcher logs/PID before launching. It never submits a kernel or runs T evaluatio
 If quota stops production, preserve partial output and resume after refresh.
 After CPU/GPU completion, freeze selected artifacts and implement/check the
 extended evaluator before any further held-out policy evaluation.
+
+GPU version 1 finished partially at its planned budget. Detector and camera
+cases each have all 120 worlds imported with strict checks; both B sensor fits
+finished. Stress has 31 low + 1 high worlds validated in the saved output.
+Owner reports 1 h 41 min quota left. A separate `altiseek-m9-stress-finish`
+kernel resumes only stress from `altiseek-m9-cache`, with 4,500 s generation
+budget and 5,700 s session limit. Check live status before any submission.
+Its watcher uses `--slug altiseek-m9-stress-finish`, separate local logs/output.
+Collection merges case summaries and does not refit completed swap sensors.
+CPU suite resumed after local shutdown; seven completed runs were preserved
+and DECLARE seed 29 resumed at 49,152. Latest observed: nine complete, unknown-K
+seed 17 active. Check live status; no training sources/configs changed.

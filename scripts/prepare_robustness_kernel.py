@@ -16,7 +16,7 @@ subprocess.run(['git', 'checkout', '--quiet', {commit!r}], cwd=repo, check=True)
 subprocess.run([sys.executable, '-m', 'pip', 'install', '--quiet', '--no-input',
                 '-e', '.'], cwd=repo, check=True)
 with Path('/kaggle/working/cache-robustness.log').open('w') as log:
-    process = subprocess.Popen([sys.executable, '-u', 'scripts/cache_robustness.py'],
+    process = subprocess.Popen([sys.executable, '-u', 'scripts/cache_robustness.py', *{options!r}],
                                cwd=repo, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT, text=True)
     for line in process.stdout:
@@ -34,12 +34,21 @@ def main() -> None:
     parser.add_argument("--commit", required=True)
     parser.add_argument("--slug", default="altiseek-m9-cache")
     parser.add_argument("--resume-source", action="append", default=[])
+    parser.add_argument("--case", choices=("detector", "camera", "stress"), action="append")
+    parser.add_argument("--max-seconds", type=int, default=19000)
     parser.add_argument("--out", type=Path, default=Path("data/kaggle/m9-kernel"))
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit):
         parser.error("commit must be a full git SHA")
+    if not 0 < args.max_seconds <= 19000:
+        parser.error("max-seconds must be positive and at most 19000")
+    options = ["--max-seconds", str(args.max_seconds)]
+    for case in args.case or []:
+        options.extend(["--case", case])
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "run.py").write_text(RUNNER.format(commit=args.commit), encoding="utf-8")
+    (args.out / "run.py").write_text(
+        RUNNER.format(commit=args.commit, options=options), encoding="utf-8"
+    )
     metadata = {
         "id": f"aniketkumarpradhan/{args.slug}",
         "title": args.slug,

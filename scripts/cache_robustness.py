@@ -38,6 +38,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--max-seconds", type=float, default=19000)
     parser.add_argument("--pilot-only", action="store_true")
+    parser.add_argument("--case", choices=CASES, action="append")
     args = parser.parse_args()
     if not 0 < args.max_seconds <= 19000:
         parser.error("budget must be positive and at most 19000 seconds")
@@ -62,7 +63,7 @@ def main() -> None:
     )
     checkpoints = {detector_id_of(p): p for p in inputs.rglob("best.pt")}
     configs = {}
-    for case in CASES:
+    for case in args.case or CASES:
         cfg = case_config(attached, case, out)
         if cfg.detector_id not in checkpoints:
             raise ValueError(f"missing checkpoint {cfg.detector_id}")

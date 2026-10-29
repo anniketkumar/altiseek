@@ -26,8 +26,11 @@ def main() -> None:
     summary_path = args.source / "robustness-summary.json"
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     original = load_config("configs/cache/default.yaml", CacheConfig)
-    results = {}
-    for case in CASES:
+    previous = args.out / "collection.json"
+    results = json.loads(previous.read_text())["cases"] if previous.exists() else {}
+    if not summary["cases"] or not set(summary["cases"]) <= set(CASES):
+        raise ValueError("unknown or empty cache case selection")
+    for case in summary["cases"]:
         record = summary["cases"][case]
         if not record["pilot_passed"] or any(
             s["expected"] != s["built"] or s["expected"] != s["validated"]

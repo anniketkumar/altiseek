@@ -3,6 +3,7 @@
 Never submits a kernel or starts held-out evaluation. Partial jobs stop for review.
 """
 
+import argparse
 import json
 import shutil
 import subprocess
@@ -40,11 +41,14 @@ def network_command(command: list[str], status_path: Path) -> str:
 
 
 def main() -> None:
-    root = Path("data/kaggle/altiseek-m9-cache")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--slug", default="altiseek-m9-cache")
+    args = parser.parse_args()
+    root = Path("data/kaggle") / args.slug
     root.mkdir(parents=True, exist_ok=True)
     status_path = root / "watch-status.json"
     cli = shutil.which("kaggle") or str(Path.home() / ".local/bin/kaggle")
-    kernel = "aniketkumarpradhan/altiseek-m9-cache"
+    kernel = f"aniketkumarpradhan/{args.slug}"
     with FileLock(root / "watch.lock", timeout=0):
         while True:
             status = network_command([cli, "kernels", "status", kernel], status_path)
@@ -64,8 +68,9 @@ def main() -> None:
             [sys.executable, "scripts/collect_robustness.py", str(markers[0].parent)], check=True
         )
         collection = json.loads(Path("data/m9-robustness/collection.json").read_text())
+        imported = json.loads(markers[0].read_text())["cases"]
         for case in ("detector", "camera"):
-            if collection["cases"][case].get("complete") is not True:
+            if case not in imported or collection["cases"][case].get("complete") is not True:
                 continue
             target = Path("data/m9-robustness") / case
             write_json(status_path, {"state": "fitting_B_sensor", "case": case})
