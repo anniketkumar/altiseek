@@ -86,6 +86,20 @@ sessions with headroom for validation/saving. Resume partial output after the
 weekly quota refresh if necessary; never silently reduce the experiment or run
 bulk inference locally to meet a deadline.
 
+Frozen stress set IDs: low `2ad630d766f25e9b`, high `dcd091267fc6eb58`.
+`scripts/generate_stress_worlds.py` recreates the 40 pairs from the original B
+library, rejecting changed pairs or insufficient placed distractors. Pair
+membership is recorded in `data/m9-stress/worlds/pairs.json`.
+`scripts/cache_robustness.py` pilots one world per set for all three cases,
+then continues the same artifacts, bounded to 19,000 seconds before validation
+headroom. Each world receives 20 live checks at the unchanged M5 tolerances.
+Saved cases have separate cache directories and resumable metadata.
+`scripts/prepare_robustness_kernel.py --commit <full-pushed-SHA>` prepares the
+private kernel with the M5 input dataset and both detector notebook outputs.
+Submit using `kaggle kernels push -p data/kaggle/m9-kernel --accelerator
+NvidiaTeslaT4 -t 24000`. Attach previous output with `--resume-source` when
+resuming a partial job. Never start duplicate jobs or overwrite old outputs.
+
 ## Evaluation and completion
 
 Before further test/stress evaluation, freeze selected checkpoints, generated
