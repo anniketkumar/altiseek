@@ -18,6 +18,7 @@ from altiseek.policies.training import (
     load_checkpoint,
     make_model,
     save_checkpoint,
+    training_worlds,
     vector_env,
 )
 from altiseek.registry.run import sha256_file, write_metadata
@@ -26,6 +27,7 @@ from altiseek.registry.run import sha256_file, write_metadata
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=Path("configs/policy/ppo.yaml"))
+    parser.add_argument("--search-config", type=Path, default=Path("configs/env/search.yaml"))
     parser.add_argument("--variant", choices=("V0", "V3"), default="V3")
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--out", type=Path, default=Path("runs/ppo"))
@@ -56,11 +58,12 @@ def main() -> None:
         raise ValueError("stop-after must be an evaluation boundary within the configured budget")
     if args.seed not in cfg.seeds or args.variant not in cfg.variants:
         raise ValueError("seed or variant not in declared configuration")
-    search = load_config("configs/env/search.yaml", SearchConfig).model_copy(
+    search = load_config(args.search_config, SearchConfig).model_copy(
         update={"sensor_variant": args.variant, "discount": cfg.gamma}
     )
     cache, sensor, worlds, paths = inputs()
-    paths.update({"config": args.config, "search": Path("configs/env/search.yaml")})
+    worlds = training_worlds(worlds, cfg)
+    paths.update({"config": args.config, "search": args.search_config})
     paths["lockfile"] = Path("uv.lock")
     sources = [
         Path("scripts/train_ppo.py"),
@@ -79,6 +82,7 @@ def main() -> None:
         "source_hashes": {p.as_posix(): sha256_file(p) for p in sorted(sources)},
         "input_hashes": {name: sha256_file(p) for name, p in paths.items()},
         "world_sets": {s: cache.world_set_ids[s] for s in worlds},
+        "world_ids": {s: [w.world_id for w in specs] for s, specs in worlds.items()},
         "sensor_model_id": sensor.sensor_model_id,
     }
     root = args.out / digest(plan)
@@ -169,7 +173,7 @@ def main() -> None:
             ]
             trained = [(p, r) for p, r in reports if r["steps"] > 0]
             best_path, best = max(
-                trained, key=lambda pr: (pr[1]["mean_normalised_auc"], -pr[1]["steps"])
+                trained, key=lambda pr: (pr[1][cfg.selection_metric], -pr[1]["steps"])
             )
             best_root = root / f"step-{best['steps']:09d}"
             best_model = load_checkpoint(best_root, env)

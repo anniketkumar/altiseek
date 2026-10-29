@@ -1,0 +1,3 @@
+_base_: search.yaml
+known_count: false
+assumed_count: 2.0

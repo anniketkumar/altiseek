@@ -1,0 +1,3 @@
+_base_: ppo_auc.yaml
+variants: [V3]
+selection_metric: mean_auc

@@ -1,0 +1,3 @@
+_base_: search.yaml
+observation_frame: egocentric
+coordinate_channels: false

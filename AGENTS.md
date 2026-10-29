@@ -340,6 +340,27 @@ D45 and the acceptance document are the final disposition.
 Nominal V3 PPO AUC 0.744 vs B5 0.903 (paired gap -0.160, 95% CI [-0.198, -0.121]);
 V0 PPO 0.242 vs B5 0.677. Accept these negative policy findings. V3 B5 exceeds V0
 by 0.227 [0.162, 0.293]. All three PPO seeds remain reported; no T tuning.
-Remaining detector/camera/appearance experiments and ablations are deferred, so
+Remaining detector/camera/appearance experiments and ablations were deferred, so
 do not describe the entire original M9 scope as completed. Any later policy
 revision must use B only and a separate protocol, retaining these test results.
+
+## Current work: complete M9 extension (D46)
+
+The owner authorized the full remaining scope and a separate paired B distractor
+stress test. T remains unchanged. Read `docs/m9-remaining-protocol.md`; next free
+decision ID is D47. GPU allowance reported as 7 h 4 min, with weekly refresh.
+
+Eight B-only 1,024-step smoke runs completed in `runs/ppo/m9-ablations/smoke`.
+All 309 tests passed under WSL, including format/lint. New modes cover distinct
+variant re-looks, learned DECLARE, unknown K, shaping, egocentric observations
+and policy appearance holdout with a matched-size mixed control. Production is
+24 runs (eight cases, three seeds), each 131,072 steps, selected on B raw AUC.
+Use `scripts/run_m9_ablations.py`; check `runs/ppo/m9-ablations/status.json`
+and the launcher logs/PID before launching. Never duplicate an active suite.
+
+Linux Kaggle CLI works using the existing private credential. The private
+`aniketkumarpradhan/altiseek-m5-inputs` dataset contains the original libraries;
+its listing size of zero is misleading. No new GPU job has launched yet.
+Next: production CPU training, paired B stress worlds, detector/camera GPU
+caches, B sensor refits, then freeze selected artifacts before extended test
+evaluation. The entire M9 scope remains incomplete until these results exist.

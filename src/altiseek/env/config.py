@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from altiseek.config import Config
 from altiseek.env.energy import EnergyModel
@@ -22,3 +22,12 @@ class SearchConfig(Config):
     coordinate_channels: bool = True
     shaping_weight: float = Field(default=0.0, ge=0)
     discount: float = Field(default=0.99, gt=0, le=1)
+    relook_rule: Literal["first", "distinct_variant"] = "first"
+    declaration_mode: Literal["auto", "learned"] = "auto"
+    observation_frame: Literal["north_up", "egocentric"] = "north_up"
+
+    @model_validator(mode="after")
+    def valid_frame(self) -> "SearchConfig":
+        if self.observation_frame == "egocentric" and self.coordinate_channels:
+            raise ValueError("egocentric ablation excludes absolute coordinate channels")
+        return self

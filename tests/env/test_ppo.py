@@ -118,8 +118,9 @@ def test_auc_configuration_and_checkpoint_guards(env):
     with pytest.raises(ValueError, match="objective mismatch"):
         FiniteSearch(env, "auc").restore(legacy.snapshot())
     env.config = env.config.model_copy(update={"known_count": False})
-    with pytest.raises(ValueError, match="known K"):
-        FiniteSearch(env, "auc")
+    unknown = FiniteSearch(env, "auc")
+    obs, _ = unknown.reset(seed=1)
+    assert obs["vector"][-1] == 0
 
 
 def test_auc_initial_completion_is_not_credited_to_an_action(env):

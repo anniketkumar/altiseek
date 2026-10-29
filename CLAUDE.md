@@ -564,7 +564,10 @@ A world is a lightweight **spec**, not a giant image. The renderer composes what
 false-declaration penalty. Battery remains a hard constraint; false declarations
 and energy remain reported. Initial observation rewards are action-independent.
 The action reward sum plus the initial contribution equals found-fraction AUC.
-Core M7 rewards remain unchanged for historical comparisons. Known K is required.
+Core M7 rewards remain unchanged for historical comparisons. D41 requires known K.
+D46's unknown-K ablation uses the true count only in simulator reward/AUC, never
+in policy observations. D46 also permits AUC potential shaping, with terminal
+potential zero and gamma 1.
 
 **Engineering requirements**
 - Passes Gymnasium's environment checker.
@@ -681,7 +684,9 @@ Test scenario seeds are fixed and shared by every method, so all comparisons are
 D44 starts with the existing-cache phase: frozen policies, battery sweep and prior
 misspecification. `docs/m9-protocol.md` and `configs/eval/protocol_v1.yaml` declare
 the comparison; `configs/eval/artifacts_v1.json` pins checkpoints and test seeds.
-Other E3 experiments and ablations remain deferred, not completed by this phase.
+Other E3 experiments and ablations were not completed by that phase. The owner
+subsequently requested completion (D46); `docs/m9-remaining-protocol.md` defines
+the B-only training, new GPU artifacts and separate B distractor stress test.
 
 **Hygiene**
 - Freeze the protocol in `configs/eval/protocol_vN.yaml` before any test-set run.
@@ -974,6 +979,8 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D44 | Start M9 with the owner-approved existing-cache phase: frozen baselines and all six selected PPO checkpoints, batteries 250/500/750 s and separate prior shifts (+50 m east), rotations (+90 degrees) and spread scaling (2x). Details and fixed seeds in protocol v1. | Reuses accepted artifacts, with no T tuning or new training. Public-prior overrides precede initial observation and preserve physical world/cache IDs. Pool original T density tags into four actual prior/target families; report seed spread and paired world uncertainty. Remaining E3/ablations stay deferred. | Frozen at `39903c4`; 290 tests and 59 B smoke episodes passed; 25,920 main episodes complete |
 
 | D45 | Accept the completed M9 existing-cache phase under the owner's direction to accept results unless seriously invalid, 2026-10-29. Preserve negative findings and all historical qualifications. | Every episode passed identity/checksum verification; numerical, budget, family/seed and curve checks found no blocking issue. V3 PPO AUC 0.744 trails B5 0.903; paired gap -0.160, 95% CI [-0.198, -0.121]. Accept valid negative evidence without T tuning. No claim that deferred experiments or ablations were completed. See `docs/m9-acceptance.md`. | Accepted; no rerun required |
+
+| D46 | Complete remaining M9 under a separate protocol, preserving v1. Owner approved B-only distractor stress and reports 7 h 4 min GPU allowance. Train 24 V3 runs across a fresh control, five ablations and appearance holdout/matched control; see `docs/m9-remaining-protocol.md`. | Implements previously listed experiments without T-driven tuning. Common raw-AUC B selection avoids selection-rule confounding. Appearance is a policy-training holdout, not an unseen-perception claim. Paid declaration, count-hidden inputs, distinct-variant coverage, terminal-zero shaping and lossless centred maps have explicit contracts. Detector/camera caches get new IDs; T stays pure. | Implementation and B preflight underway; full M9 not complete |
 
 ---
 

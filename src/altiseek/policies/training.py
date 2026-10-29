@@ -30,6 +30,39 @@ SENSOR_PATH = Path("data/sensor_models/fcf8cdae58ca3947.json")
 BASELINE_PATH = Path("docs/baseline-results.json")
 
 
+def training_worlds(
+    worlds: dict[str, list[WorldSpec]], cfg: PPOConfig
+) -> dict[str, list[WorldSpec]]:
+    """B-only appearance restrictions; matched controls preserve family sample counts."""
+    if set(worlds) != {"rl-train", "rl-val"} or any(
+        w.world_set != name or w.split != "B" for name, specs in worlds.items() for w in specs
+    ):
+        raise ValueError("training selectors require B train/validation worlds only")
+    selected = {name: list(specs) for name, specs in worlds.items()}
+    if cfg.training_conditions is not None:
+        selected["rl-train"] = [
+            w for w in selected["rl-train"] if w.condition in cfg.training_conditions
+        ]
+    if cfg.match_training_condition_counts is not None:
+        if cfg.training_conditions is not None:
+            raise ValueError("matched control must sample from all training conditions")
+        rng = np.random.default_rng(20261029)
+        chosen = []
+        for family in sorted({w.family for w in worlds["rl-train"]}):
+            candidates = [w for w in worlds["rl-train"] if w.family == family]
+            count = sum(w.condition == cfg.match_training_condition_counts for w in candidates)
+            indices = rng.choice(len(candidates), size=count, replace=False)
+            chosen.extend(candidates[int(i)] for i in sorted(indices))
+        selected["rl-train"] = chosen
+    if cfg.validation_conditions is not None:
+        selected["rl-val"] = [
+            w for w in selected["rl-val"] if w.condition in cfg.validation_conditions
+        ]
+    if any(not specs for specs in selected.values()):
+        raise ValueError("appearance restriction leaves an empty training/validation set")
+    return selected
+
+
 def inputs() -> tuple[CacheConfig, SensorModel, dict[str, list[WorldSpec]], dict[str, Path]]:
     cache = load_config("configs/cache/default.yaml", CacheConfig)
     sensor = SensorModel.load(

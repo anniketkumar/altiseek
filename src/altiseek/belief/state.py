@@ -12,10 +12,20 @@ def entropy(p: np.ndarray) -> np.ndarray:
 
 
 class Belief:
-    def __init__(self, prior: np.ndarray, count: float, levels: int, model: SensorModel) -> None:
+    def __init__(
+        self,
+        prior: np.ndarray,
+        count: float,
+        levels: int,
+        model: SensorModel,
+        relook_rule: str = "first",
+    ) -> None:
         if prior.ndim != 2 or (prior < 0).any() or not np.isclose(prior.sum(), 1) or count <= 0:
             raise ValueError("invalid prior/count")
         self.prior, self.model = prior.copy(), model
+        if relook_rule not in ("first", "distinct_variant"):
+            raise ValueError("unknown re-look rule")
+        self.relook_rule = relook_rule
         self.limit = model.fit_config.log_odds_limit
         p = np.clip(
             -np.expm1(count * np.log1p(-np.minimum(prior, 1 - 1e-12))),
@@ -52,6 +62,10 @@ class Belief:
         x0, y0, x1, y1 = bounds
         region = np.s_[x0:x1, y0:y1]
         informative = ~self.observed[level][region] & ~self.resolved[region]
+        if self.relook_rule == "distinct_variant":
+            informative = (
+                (self.used_variants[level][region] & np.uint32(1 << variant)) == 0
+            ) & ~self.resolved[region]
         scores = np.zeros((x1 - x0, y1 - y0))
         for (ix, iy), score in cell_outcomes(detections, bounds).items():
             scores[ix - x0, iy - y0] = score

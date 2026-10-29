@@ -11,6 +11,7 @@ from pydantic import Field, model_validator
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 from torch import nn
 
+from altiseek.belief.state import entropy
 from altiseek.config import Config
 from altiseek.env.search import SearchEnv
 
@@ -36,6 +37,10 @@ class PPOConfig(Config):
     objective: Literal["legacy", "auc"] = "legacy"
     evaluation_actions: Literal["deterministic", "sampled"] = "deterministic"
     evaluation_repeats: int = Field(default=1, ge=1)
+    selection_metric: Literal["mean_normalised_auc", "mean_auc"] = "mean_normalised_auc"
+    training_conditions: tuple[int, ...] | None = None
+    validation_conditions: tuple[int, ...] | None = None
+    match_training_condition_counts: int | None = Field(default=None, ge=0)
 
     @model_validator(mode="after")
     def valid_batches(self) -> "PPOConfig":
@@ -101,10 +106,12 @@ class FiniteSearch(gym.Wrapper):
         super().__init__(env)
         if objective not in ("legacy", "auc"):
             raise ValueError("unknown objective")
-        if objective == "auc" and (
-            not env.unwrapped.config.known_count or env.unwrapped.config.shaping_weight
+        if (
+            objective == "auc"
+            and env.unwrapped.config.discount != 1
+            and env.unwrapped.config.shaping_weight
         ):
-            raise ValueError("AUC training requires known K and no shaping")
+            raise ValueError("AUC shaping requires discount=1")
         self.objective = objective
 
     def action_masks(self) -> np.ndarray:
@@ -151,6 +158,10 @@ class FiniteSearch(gym.Wrapper):
     def step(self, action: int) -> tuple[dict[str, np.ndarray], float, bool, bool, dict[str, Any]]:
         if not self.action_masks()[action]:
             raise ValueError("training selected a masked action")
+        core = self.env.unwrapped
+        before = (
+            -float(entropy(core.belief.probabilities).sum()) if core.config.shaping_weight else 0.0
+        )
         obs, reward, terminated, truncated, info = self.env.step(action)
         if self.objective == "auc":
             core = self.env.unwrapped
@@ -159,4 +170,11 @@ class FiniteSearch(gym.Wrapper):
                 / len(core.found)
                 * max(0.0, 1 - info["time_s"] / core.config.energy.battery_s)
             )
+            if core.config.shaping_weight:
+                after = (
+                    0.0
+                    if terminated or truncated
+                    else -float(entropy(core.belief.probabilities).sum())
+                )
+                reward += core.config.shaping_weight * (after - before)
         return obs, reward, terminated or truncated, False, info

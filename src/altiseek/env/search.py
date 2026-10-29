@@ -68,14 +68,15 @@ class SearchEnv(gym.Env):
         self.table = self.nav.table
         self.level_count, self.grid = len(self.table.levels), self.table.grid_cells
         channels = self.level_count + 5 + 2 * config.coordinate_channels
+        self.map_size = 2 * self.grid - 1 if config.observation_frame == "egocentric" else self.grid
         high = np.array([1.0] * (self.level_count + 3) + [config.max_targets], dtype=np.float32)
         self.observation_space = spaces.Dict(
             {
-                "map": spaces.Box(0, 1, (channels, self.grid, self.grid), dtype=np.float32),
+                "map": spaces.Box(0, 1, (channels, self.map_size, self.map_size), dtype=np.float32),
                 "vector": spaces.Box(np.zeros_like(high), high, dtype=np.float32),
             }
         )
-        self.action_space = spaces.Discrete(6)
+        self.action_space = spaces.Discrete(7 if config.declaration_mode == "learned" else 6)
         coords = (np.arange(self.grid, dtype=np.float32) + 0.5) / self.grid
         self._coordinates = np.stack(np.meshgrid(coords, coords, indexing="ij"))
         self._ended = True
@@ -108,8 +109,10 @@ class SearchEnv(gym.Env):
             self.prior_override or self.world.prior_given, self.world.area_m, self.world.cell_m
         )
         count = len(self._targets) if self.config.known_count else self.config.assumed_count
-        self.belief = Belief(q, count, self.level_count, self.sensor)
-        self._static_map = np.zeros(self.observation_space["map"].shape, dtype=np.float32)
+        self.belief = Belief(q, count, self.level_count, self.sensor, self.config.relook_rule)
+        self._static_map = np.zeros(
+            (self.observation_space["map"].shape[0], self.grid, self.grid), dtype=np.float32
+        )
         self._static_map[1] = q.T[::-1]
         if self.config.coordinate_channels:
             self._static_map[-2:] = self._coordinates.transpose(0, 2, 1)[:, ::-1, :]
@@ -139,7 +142,11 @@ class SearchEnv(gym.Env):
         return self._observation(), self._info()
 
     def action_masks(self) -> np.ndarray:
-        return (self.nav.next[self.node] >= 0).copy()
+        movement = (self.nav.next[self.node] >= 0).copy()
+        if self.config.declaration_mode == "learned":
+            x0, y0, x1, y1 = self.footprint
+            return np.r_[movement, (~self.belief.resolved[x0:x1, y0:y1]).any()]
+        return movement
 
     def _reward(self, events: dict[str, Any], energy: float) -> float:
         return (
@@ -172,7 +179,8 @@ class SearchEnv(gym.Env):
                 reward = self.config.shaping_weight * (self.config.discount * following - potential)
             return self._observation(), reward, False, truncated, self._info()
         remaining = self.config.energy.battery_s - self.energy_used_s
-        cost = float(self.nav.cost[self.node, action])
+        declaring = action == 6
+        cost = self.config.energy.dwell_s if declaring else float(self.nav.cost[self.node, action])
         previous_potential = (
             -float(entropy(self.belief.probabilities).sum()) if self.config.shaping_weight else 0.0
         )
@@ -186,6 +194,29 @@ class SearchEnv(gym.Env):
             if self.config.shaping_weight:
                 reward -= self.config.shaping_weight * previous_potential
             return self._observation(), reward, False, True, self._info()
+        if declaring:
+            self.energy_used_s += cost
+            self.elapsed_s += cost
+            self.time_per_level[self.nav.nodes[self.node].level] += cost
+            x0, y0, x1, y1 = self.footprint
+            probabilities = self.belief.probabilities[x0:x1, y0:y1].copy()
+            probabilities[self.belief.resolved[x0:x1, y0:y1]] = -1
+            cx, cy = np.unravel_index(np.argmax(probabilities), probabilities.shape)
+            found, false = self._resolve(np.array([[cx + x0, cy + y0]]))
+            self.last_events = {"found": found, "false": false, "informative_cells": 0}
+            terminated = bool(self.found.all())
+            truncated = (
+                self.energy_used_s >= self.config.energy.battery_s
+                or self.steps >= self.config.max_steps
+            )
+            self._ended = terminated or truncated
+            reward = self._reward(self.last_events, cost)
+            if self.config.shaping_weight:
+                following = 0.0 if self._ended else -float(entropy(self.belief.probabilities).sum())
+                reward += self.config.shaping_weight * (
+                    self.config.discount * following - previous_potential
+                )
+            return self._observation(), reward, terminated, truncated, self._info()
         time = float(self.nav.time[self.node, action])
         self.path_m += float(self.nav.distance_m[self.node, action])
         self.node = int(self.nav.next[self.node, action])
@@ -239,11 +270,23 @@ class SearchEnv(gym.Env):
                     ],
                     axis=0,
                 )
-        else:
+        elif self.config.declaration_mode == "auto":
             threshold = np.log(self.config.declare_threshold) - np.log1p(
                 -self.config.declare_threshold
             )
             candidates = np.argwhere((self.belief.log_odds > threshold) & ~self.belief.resolved)
+        else:
+            candidates = np.empty((0, 2), dtype=int)
+        new_found, false = self._resolve(candidates)
+        return {
+            "found": new_found,
+            "false": false,
+            "informative_cells": informative,
+            "variant": variant,
+        }
+
+    def _resolve(self, candidates: np.ndarray) -> tuple[int, int]:
+        """Resolve specified cells against truth; only verified outcomes reach observations."""
         new_found, false = 0, 0
         for cell in candidates:
             matches = (self._target_cells == cell).all(axis=1) & ~self.found
@@ -253,17 +296,16 @@ class SearchEnv(gym.Env):
             false += count == 0
         self.belief.resolve(candidates)
         self.false_declarations += false
-        return {
-            "found": new_found,
-            "false": false,
-            "informative_cells": informative,
-            "variant": variant,
-        }
+        return new_found, false
 
     def _observation(self) -> dict[str, np.ndarray]:
         tensor = self._static_map.copy()
         tensor[0] = self.belief.probabilities.T[::-1]
         tensor[2 : self.level_count + 2] = self.belief.observed.transpose(0, 2, 1)[:, ::-1, :]
+        if self.config.relook_rule == "distinct_variant":
+            count = self.cache.header.render.variants.count
+            coverage = sum((self.belief.used_variants >> i) & 1 for i in range(count)) / count
+            tensor[2 : self.level_count + 2] = coverage.transpose(0, 2, 1)[:, ::-1, :]
         tensor[self.level_count + 2] = self.belief.resolved.T[::-1]
         x0, y0, x1, y1 = self.footprint
         tensor[self.level_count + 3, self.grid - y1 : self.grid - y0, x0:x1] = 1
@@ -284,6 +326,13 @@ class SearchEnv(gym.Env):
             found_fraction,
             len(self.found) if self.config.known_count else 0,
         ].astype(np.float32)
+        if self.config.observation_frame == "egocentric":
+            # Retain the full world without wraparound or clipping. North remains up.
+            centred = np.zeros(self.observation_space["map"].shape, dtype=np.float32)
+            row, column = self.grid - iy - 1, ix
+            r0, c0 = self.grid - 1 - row, self.grid - 1 - column
+            centred[:, r0 : r0 + self.grid, c0 : c0 + self.grid] = tensor
+            tensor = centred
         return {"map": tensor, "vector": vector}
 
     def _info(self) -> dict[str, Any]:
