@@ -15,6 +15,30 @@ from filelock import FileLock
 from altiseek.cache.jobs import write_json
 
 
+def network_command(command: list[str], status_path: Path) -> str:
+    """Wait through network/API failures without interrupting the remote job."""
+    failures = 0
+    while True:
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                return result.stdout.strip()
+            code = result.returncode
+        except OSError:
+            code = None
+        failures += 1
+        write_json(
+            status_path,
+            {
+                "state": "waiting_for_kaggle",
+                "failed_attempts": failures,
+                "returncode": code,
+            },
+        )
+        print(f"Kaggle request failed (attempt {failures}); retrying in 60 s", flush=True)
+        time.sleep(60)
+
+
 def main() -> None:
     root = Path("data/kaggle/altiseek-m9-cache")
     root.mkdir(parents=True, exist_ok=True)
@@ -23,16 +47,13 @@ def main() -> None:
     kernel = "aniketkumarpradhan/altiseek-m9-cache"
     with FileLock(root / "watch.lock", timeout=0):
         while True:
-            result = subprocess.run(
-                [cli, "kernels", "status", kernel], capture_output=True, text=True, check=True
-            )
-            status = result.stdout.strip()
+            status = network_command([cli, "kernels", "status", kernel], status_path)
             write_json(status_path, {"state": "monitoring", "cloud": status})
             print(status, flush=True)
             if any(word in status.upper() for word in ("COMPLETE", "ERROR", "CANCEL")):
                 break
             time.sleep(60)
-        subprocess.run([cli, "kernels", "output", kernel, "-p", str(root / "output")], check=True)
+        network_command([cli, "kernels", "output", kernel, "-p", str(root / "output")], status_path)
         if "COMPLETE" not in status.upper():
             write_json(status_path, {"state": "cloud_failed", "cloud": status})
             return
