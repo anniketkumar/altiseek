@@ -12,15 +12,28 @@ costs far more battery. AltiSeek studies that tradeoff end to end:
    updates of a per-cell probability map;
 3. a policy (classical search baselines vs. PPO) reads the map and chooses the next horizontal move,
    climb or descent;
-4. the same pipeline runs closed-loop in PX4 SITL + Gazebo through ROS 2.
+4. planned M10 work will run the pipeline closed-loop in PX4 SITL + Gazebo through ROS 2.
 
 Simulation only; no hardware, and no real-world performance claims.
 
 The design, data contracts, milestones and decision log are in [CLAUDE.md](CLAUDE.md).
 
+## Current results
+
+M0-M9 are complete, with the documented M8 qualifications and M9 scope limits.
+The frozen nominal V3 PPO achieves AUC 0.744 versus B5's 0.903. Re-look improves
+PPO but remains below B5; detector/camera changes hurt frozen PPO, and distractors
+increase false declarations. These are simulation findings, with no T-driven tuning.
+
+See the [M9 acceptance review](docs/m9-extension-acceptance.md),
+[main results](docs/m9-results/results.md),
+[extension results](docs/m9-extension-results/results.md) and
+[all-seed training report](docs/m9-training-results.md) for uncertainty,
+limitations and reproduction commands. M10 deployment and M11 write-up remain.
+
 ## Setup
 
-Requires [uv](https://docs.astral.sh/uv/) ≥ 0.13.4. Python 3.12 is used everywhere (see
+Requires [uv](https://docs.astral.sh/uv/) ≥ 0.13.4. Python 3.12 is used locally and in WSL; Kaggle uses Python 3.13 (see
 [docs/env.md](docs/env.md)).
 
 ```bash

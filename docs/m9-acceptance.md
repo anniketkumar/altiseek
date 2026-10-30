@@ -1,5 +1,9 @@
 # M9 existing-cache phase: accepted
 
+This is the historical D45 phase review. The remaining experiments subsequently
+completed; [D48 accepts full M9](m9-extension-acceptance.md), retaining the
+qualifications below and the separate B-only distractor stress scope.
+
 Accepted on 2026-10-29 under the owner's instruction to accept the results unless
 a serious validity problem is found. The review found no blocking validity issue.
 This accepts the completed D44 phase, not experiments that have not been run.

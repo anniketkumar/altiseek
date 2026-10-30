@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "aggregate_rows": 1106,
+  "paired_rows": 805,
+  "new_episodes": 18720,
+  "reference_episodes": 4320,
+  "paid_declare_actions_checked": 42535,
+  "unaffordable_declare_attempts_checked": 92,
+  "report_sha256": "79148c958a0c6031bb38d970b97cd4b4cc60b724073d13e1499ff56f1ab5b745"
+}

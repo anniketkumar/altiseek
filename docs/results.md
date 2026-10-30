@@ -3,6 +3,17 @@
 Result tables and the figure index (CLAUDE.md §6). Each number comes from the saved output of the
 stage named with it, and each figure is that stage's own plot.
 
+## Latest milestone disposition
+
+M8 has qualified acceptance (D42); M9 is complete (D48, 2026-10-30).
+Historical pending statements below describe earlier stages. Current evidence:
+[M9 acceptance](m9-extension-acceptance.md),
+[main tables](m9-results/results.md),
+[extension tables](m9-extension-results/results.md),
+[all-seed training curves](m9-training-results.md).
+The nominal V3 PPO trails B5; the full review retains negative robustness
+findings, imperfect calibration and the separate B-only distractor scope.
+
 ## Figures
 
 | Figure | Stage | Shows |

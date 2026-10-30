@@ -1,5 +1,20 @@
 # AGENTS.md: hand-off for coding agents
 
+> Latest status: **M9 complete, D48 (2026-10-30)**. Read
+> `docs/m9-extension-acceptance.md` for the final disposition; earlier pending
+> notes below are historical. Next free decision ID is **D49**.
+>
+> Both evaluation phases are complete: v1 `341aadf1366d8f05` (25,920 episodes),
+> v2 `1c19752957aabaa0` (18,720 new, 4,320 reused nominal references). All 24
+> ablation runs and 320 additional GPU caches are complete. Do not restart them.
+> The v2 wrapper's `awaiting_review` marker is superseded by D48. No further
+> training/evaluation is queued. Numeric publications are in `docs/m9-results/`
+> and `docs/m9-extension-results/`; all-seed training is in
+> `docs/m9-training-results.md`. Preflight: 322 tests and 288 B smoke episodes;
+> final numeric/declaration audit passed. Preserve negative policy results,
+> calibration/convergence caveats, and B-only stress scope. No T tuning.
+> M10 deployment and M11 write-up remain; neither is started.
+
 This file hands AltiSeek over to a new coding agent (2026-10-28). **CLAUDE.md is the source of
 truth** for goals, design, data contracts and working rules. Read it in full before changing
 anything. This file only adds where the work stands, how the owner wants you to work, and what
