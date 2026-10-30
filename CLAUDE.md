@@ -24,7 +24,7 @@ Update as milestones complete (§21).
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
 | M8 PPO | complete with qualifications (D42, owner approved 2026-10-28): six D41 runs and report; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; historical zero-p gate failure retained. See `docs/ppo-acceptance.md`; revisit later using B only |
 | M9 Main experiments | complete (D48, 2026-10-30): both frozen phases accepted, 44,640 unique evaluation episodes, all 24 ablation training runs and 320 additional caches verified. Negative policy findings and separate B-only distractor scope retained. See `docs/m9-extension-acceptance.md` |
-| M10 PX4 / Gazebo / ROS 2 | first flight passed (D50, 2026-10-30): 5 m takeoff, 10 s offboard hold, landing and disarm. Stopped at owner-requested boundary; no camera/search/transfer work yet. Full M10 incomplete; see `docs/m10-first-flight.md` |
+| M10 PX4 / Gazebo / ROS 2 | full continuation authorized (D51, 2026-10-31); completed first flight preserved. Camera geometry and live pipeline integration underway; no transfer result yet. See `docs/m10-continuation.md` |
 | M11 Write-up & polish | not started |
 
 ---
@@ -991,6 +991,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D49 | Begin M10 on existing Ubuntu 24.04 WSL with ROS 2 Jazzy, Gazebo Harmonic, PX4 v1.17.0, matching release/1.17 px4_msgs and Micro-XRCE-DDS-Agent v2.4.3; exact commits in `docs/deployment.md`. | Follows upstream compatibility guidance. Keep native sources/builds on D: inside WSL (C: nearly full), two build workers, a separate PX4 Python venv and detached logged jobs. Start with basic flight and B-only integration; freeze transfer settings before new T evaluation. No changes to M9 policies or results. | Setup underway; no flight or deployment acceptance yet |
 
 | D50 | Accept only the completed first-flight check and stop further M10 work, as explicitly requested by the owner. Clear the px4_msgs clock-skew warning by a clean-object rebuild; verify live takeoff, 10 s offboard hold at 5 m, landing and automatic disarm. | Warning-free rebuild and ROS type-support checks passed. Run `20261030T084811Z` passed in 48.546 s; independent telemetry audit confirms the hold limits and landing/disarm. All owned processes stopped. Earlier unarmed startup attempts are retained. No search or transfer result is claimed. See `docs/m10-first-flight.md`. | First-flight increment complete; full M10 remains incomplete and further work awaits owner instruction |
+| D51 | Owner authorizes completing full M10 on 2026-10-31, lifting D50's stop. Log failed online operations, continue independent offline work and retry when access returns. | Preserve completed flights/training/evaluations. Installed software rendering and CPU inference must be profiled on B before fixing deployment timing or transfer scope. Camera scale/orientation, pose synchronization, shared search logic, B sensor refit and the demo remain required; no pending check is waived for connectivity. See `docs/m10-continuation.md`. | Full M10 implementation underway; transfer protocol not yet frozen |
 ---
 
 

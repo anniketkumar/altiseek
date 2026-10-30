@@ -1,5 +1,14 @@
 # AGENTS.md: hand-off for coding agents
 
+> **D51: full M10 authorized again (2026-10-31).** The owner lifted D50's stop.
+> Read `docs/m10-continuation.md`; proceed through the full deployment/transfer
+> scope without restarting completed work. Internet can be intermittent: record
+> failed online operations, continue independent offline work, and retry later.
+> Required checks remain pending until passed. Runtime ROS/detector imports pass;
+> static camera geometry is the current gate. WSL uses software llvmpipe rendering.
+> Check `data/m10/camera-check-path.txt` and continuation logs before launching.
+> No T transfer evaluation or refit has started. Next decision D52.
+
 > **D50: first flight passed; STOP here per owner (2026-10-30).**
 > `docs/m10-first-flight.md` and `.json` record the clean message rebuild,
 > 5 m takeoff, 10 s offboard hold, landing and automatic disarm. Run

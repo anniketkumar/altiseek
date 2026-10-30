@@ -2,7 +2,7 @@
 
 **Latest:** [first flight passed](m10-first-flight.md) on 2026-10-30 (D50).
 The clock-skew warning was cleared by a clean message rebuild. All test-owned
-processes are stopped. The owner requested no further M10 work for now.
+processes were stopped. The owner authorized [full continuation](m10-continuation.md) on 2026-10-31 (D51).
 
 M10 started on 2026-10-30 after D48 accepted M9. This document tracks setup;
 it is not a completed transfer study or a frozen held-out evaluation protocol.

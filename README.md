@@ -29,7 +29,9 @@ See the [M9 acceptance review](docs/m9-extension-acceptance.md),
 [main results](docs/m9-results/results.md),
 [extension results](docs/m9-extension-results/results.md) and
 [all-seed training report](docs/m9-training-results.md) for uncertainty,
-limitations and reproduction commands. [M10 first flight](docs/m10-first-flight.md) passed; further M10 work is stopped at the owner-requested boundary. M11 write-up remains.
+limitations and reproduction commands. [M10 first flight](docs/m10-first-flight.md) passed;
+[full M10 continuation](docs/m10-continuation.md) is authorized and its static camera gate
+has passed. Live flight/search integration and transfer evaluation remain. M11 write-up remains.
 
 ## Setup
 
