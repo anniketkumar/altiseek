@@ -52,9 +52,15 @@ class Belief:
         sensor_variant: str,
         found_positions_m: np.ndarray,
         suppression_radius_m: float,
+        visible_cells: np.ndarray | None = None,
     ) -> int:
+        """Update shared evidence; optional full-grid mask excludes partial live cells."""
         if not 0 <= variant < 32:
             raise ValueError("variant outside bitset")
+        if visible_cells is not None and (
+            visible_cells.shape != self.prior.shape or visible_cells.dtype != np.bool_
+        ):
+            raise ValueError("visible_cells must be a boolean mask matching the belief grid")
         if len(found_positions_m):
             points = np.column_stack((detections["x_m"], detections["y_m"]))
             distance2 = ((points[:, None] - found_positions_m[None, :]) ** 2).sum(axis=2)
@@ -66,6 +72,8 @@ class Belief:
             informative = (
                 (self.used_variants[level][region] & np.uint32(1 << variant)) == 0
             ) & ~self.resolved[region]
+        visible = np.ones_like(informative) if visible_cells is None else visible_cells[region]
+        informative &= visible
         scores = np.zeros((x1 - x0, y1 - y0))
         for (ix, iy), score in cell_outcomes(detections, bounds).items():
             scores[ix - x0, iy - y0] = score
@@ -76,8 +84,8 @@ class Belief:
             odds[informative] = np.clip(
                 np.log(posterior) - np.log1p(-posterior), -self.limit, self.limit
             )
-        self.observed[level][region] = True
-        self.used_variants[level][region] |= np.uint32(1 << variant)
+        self.observed[level][region] |= visible
+        self.used_variants[level][region] |= visible.astype(np.uint32) * np.uint32(1 << variant)
         return int(informative.sum())
 
     def resolve(self, cells: np.ndarray) -> None:

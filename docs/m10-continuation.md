@@ -63,3 +63,69 @@ needed unit ambient reflectance to avoid darkening the source texture. These fai
 attempts remain in native camera-check storage. Use `--render-engine ogre` for the
 verified local configuration. This renderer choice is part of the deployment
 configuration, not a change to the frozen Python camera or historical results.
+
+## Flight camera and live B hover integration
+
+Synthetic camera flight `20261030T221404Z` completed takeoff to approximately
+30 m, a 20 s hold, landing and disarm. All 23 images matched Gazebo model-pose
+timestamps exactly; projected marker error was at most 0.116 m. Visual review
+found a small magnetic-heading/world-north offset, despite the north command.
+This initial diagnostic is retained in `m10-flight-camera.json`.
+
+The controller now compensates from measured Gazebo world heading and gates
+capture on heading error below 1 degree and tilt below 2 degrees, in addition
+to the existing position/speed settle checks. Follow-up `20261030T221659Z`
+passed 20 image/pose pairs, maximum heading error 0.016 degrees and marker
+error 0.135 m; see `m10-flight-camera-north.json`. Both flights landed and
+disarmed, and all owned processes stopped. These use simulator ground-truth
+pose, not a claim of real-world localization accuracy.
+
+B world `003b0c54f581c65b` was composed with the existing world compositor and
+exported without resampling, in 20.7 s. Native assets and checksums are under
+`/home/aniket/altiseek-m10/worlds/003b0c54f581c65b`. The exporter rejects T and
+checks existing exports before reuse.
+
+Live perception flight `20261030T222009Z` passed: 20 frames processed during
+a 25 s hover, 376 belief cells updated, 1–2 raw swimmer detections per frame,
+then landing/disarm. See `m10-perception-hover.json`. Detector, camera finishing,
+centre-cell projection, sensor and belief updates use existing shared contracts.
+Only fully visible cells update or consume a first look. An inference worker
+keeps ROS offboard heartbeats independent. Mean processing including image/evidence
+logging was 0.610 s, range 0.258–3.487 s including first-inference startup; this is
+not full-search throughput. A prior startup failed from a ROS property-name
+collision before takeoff; its logs are preserved.
+
+This is a hover integration pilot, not closed-loop search, sensor fitting or
+transfer evidence. It uses a B target-centred integration view explicitly; no
+performance claim is made from that selection. Shared search evidence application
+is shared with the waypoint-policy integration. The final full regression suite
+passed 347 tests in 40.85 s, including cached environment regressions, live-source
+cache exclusion, partial-cell first-look protection, projection, format and lint.
+
+## First closed-loop policy pilot
+
+B5 pilot `20261030T222617Z` (the exact native path is retained alongside its
+launcher logs) observed at L1, selected ASCEND, flew to the L2 goal and observed
+again. The shared declaration logic then verified the sole target and terminated
+the episode; it correctly stopped before the three-view cap. Actual camera-goal
+errors were 0.224 m and 0.265 m. Both images matched pose timestamps exactly.
+Landing/disarm completed. See `m10-search-pilot.json` for the numeric trace.
+
+The pilot starts near a known B target for integration only and still uses ideal
+M7 energy accounting. It is not a transfer performance result. The live adapter
+never loads cached detections, preserves shared policy observations/masks and
+verification, and supplies an actual-footprint mask. Measured flight energy,
+budget expiry during movement, normal edge launch, ROS component separation,
+calibration sweeps and the frozen transfer protocol remain outstanding.
+
+The original generic pilot flight-summary field `hold_s=1000` was the requested
+hold timeout, not the observed hold duration; policy completion landed earlier.
+The logger now records measured `hold_s` separately from `requested_hold_s`.
+The original files are retained; do not interpret that field as a 1000 s hover.
+
+`scripts/run_deploy_pilots.py` runs the same bounded B integration with each of
+the three frozen V3 PPO checkpoints. It verifies checkpoint hashes, preserves
+all seeds, resumes only verified completions and stops on any failure. Its identity
+includes source hashes and the frozen policy manifest. Check
+`data/m10/ppo-pilots-path.txt` and that directory's `status.json` before launching.
+This suite does not start transfer evaluation or retrain a policy.

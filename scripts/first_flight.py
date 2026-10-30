@@ -32,8 +32,12 @@ def topic(direction: str, name: str, message: type) -> str:
 
 
 class FirstFlight(Node):
-    def __init__(self, output: Path) -> None:
+    def __init__(
+        self, output: Path, altitude_m: float = 5, hold_s: float = 10, deadline_s: float = 150
+    ) -> None:
         super().__init__("altiseek_first_flight")
+        self.altitude_m, self.hold_s, self.deadline_s = altitude_m, hold_s, deadline_s
+        self.yaw_ned_rad = enu_yaw_to_ned(math.pi / 2)
         self.output = output
         self.stream = (output / "telemetry.jsonl").open("w", encoding="utf-8")
         qos = QoSProfile(
@@ -75,6 +79,7 @@ class FirstFlight(Node):
         self.passed = False
         self.reason = ""
         self.land_started = 0.0
+        self.completed_hold_s = 0.0
         self.create_timer(0.05, self.tick)
 
     def on_position(self, message: VehicleLocalPosition) -> None:
@@ -114,16 +119,23 @@ class FirstFlight(Node):
         self.reason = reason
         self.phase = "landing"
         self.land_started = time.monotonic()
+        self.completed_hold_s = (
+            max(0.0, self.land_started - self.hold_since) if self.hold_since is not None else 0.0
+        )
         self.command(VehicleCommand.VEHICLE_CMD_NAV_LAND)
         print(f"Landing: {reason or 'hold complete'}", flush=True)
+
+    def extra_settled(self) -> bool:
+        """Additional sensor gates supplied by a camera integration controller."""
+        return True
 
     def tick(self) -> None:
         now = time.monotonic()
         elapsed = now - self.started
         p, status = self.position, self.status
         fresh = now - self.last_position < 1 and now - self.last_status < 2
-        if elapsed > 150 and self.phase != "landing":
-            self.start_landing("150 s deadline exceeded")
+        if elapsed > self.deadline_s and self.phase != "landing":
+            self.start_landing(f"{self.deadline_s:g} s deadline exceeded")
         if self.phase == "landing":
             if now - self.last_command > 2:
                 self.command(VehicleCommand.VEHICLE_CMD_NAV_LAND)
@@ -142,7 +154,7 @@ class FirstFlight(Node):
                 self.done = True
         elif p is not None and status is not None and fresh and p.xy_valid and p.z_valid:
             if self.target is None:
-                offset = enu_to_ned([0, 0, 5])
+                offset = enu_to_ned([0, 0, self.altitude_m])
                 self.target = [float(a + b) for a, b in zip(offset, (p.x, p.y, p.z), strict=True)]
                 self.pre_roll = now
                 self.phase = "pre_roll"
@@ -156,7 +168,7 @@ class FirstFlight(Node):
             setpoint.position = self.target
             setpoint.velocity = [math.nan] * 3
             setpoint.acceleration = [math.nan] * 3
-            setpoint.yaw = enu_yaw_to_ned(math.pi / 2)  # Face north.
+            setpoint.yaw = self.yaw_ned_rad
             self.setpoint_pub.publish(setpoint)
             if now - self.pre_roll > 3 and now - self.last_command > 2:
                 if status.nav_state != VehicleStatus.NAVIGATION_STATE_OFFBOARD:
@@ -170,15 +182,17 @@ class FirstFlight(Node):
                 status.arming_state == VehicleStatus.ARMING_STATE_ARMED
                 and status.nav_state == VehicleStatus.NAVIGATION_STATE_OFFBOARD
             )
-            if controlled and error < 0.5 and speed < 0.3:
+            if controlled and error < 0.5 and speed < 0.3 and self.extra_settled():
                 self.airborne = True
                 if self.hold_since is None:
                     self.hold_since = now
                     self.hold_errors = []
                     self.phase = "holding"
-                    print("Reached 5 m; holding for 10 s", flush=True)
+                    print(
+                        f"Reached {self.altitude_m:g} m; holding for {self.hold_s:g} s", flush=True
+                    )
                 self.hold_errors.append(error)
-                if now - self.hold_since >= 10:
+                if now - self.hold_since >= self.hold_s:
                     self.start_landing()
             else:
                 self.hold_since = None
@@ -202,7 +216,8 @@ class FirstFlight(Node):
             "reason": self.reason,
             "elapsed_s": time.monotonic() - self.started,
             "target_ned_m": self.target,
-            "hold_s": 10 if self.passed else None,
+            "hold_s": self.completed_hold_s,
+            "requested_hold_s": self.hold_s,
             "hold_max_error_m": max(self.hold_errors, default=None),
             "landed_and_disarmed": self.passed,
         }

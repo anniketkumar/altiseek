@@ -10,7 +10,7 @@ from gymnasium import spaces
 from altiseek.belief.state import Belief, entropy
 from altiseek.cache.build import header_for
 from altiseek.cache.config import CacheConfig
-from altiseek.cache.storage import CachePool, draw_variant
+from altiseek.cache.storage import CacheHeader, CachePool, WorldCache, draw_variant
 from altiseek.calibration.model import SensorModel
 from altiseek.calibration.outcomes import observed_bounds
 from altiseek.env.config import SearchConfig
@@ -98,8 +98,7 @@ class SearchEnv(gym.Env):
             != self.sensor.cache_contract
         ):
             raise ValueError("world cache contract mismatch")
-        path = self.cache_config.out_dir / self.world.world_set / f"{self.world.world_id}.npz"
-        self.cache = self.pool.get(Path(path), expected=expected)
+        self.cache = self._load_cache(expected)
         self._targets = np.array([(t.x_m, t.y_m) for t in self.world.targets], dtype=float)
         if not 0 < len(self._targets) <= self.config.max_targets:
             raise ValueError("target count outside configured bounds")
@@ -140,6 +139,11 @@ class SearchEnv(gym.Env):
         self._pending_termination = bool(self.found.all())
         self._ended = False
         return self._observation(), self._info()
+
+    def _load_cache(self, expected: CacheHeader) -> WorldCache | None:
+        """Live integration overrides only the observation source, not search state."""
+        path = self.cache_config.out_dir / self.world.world_set / f"{self.world.world_id}.npz"
+        return self.pool.get(Path(path), expected=expected)
 
     def action_masks(self) -> np.ndarray:
         movement = (self.nav.next[self.node] >= 0).copy()
@@ -247,18 +251,31 @@ class SearchEnv(gym.Env):
         key = np.array([node.level, node.ix, node.iy, variant])
         self.footprint = observed_bounds(self.world, self.cache, key)
         detections, _ = self.cache.lookup(*map(int, key))
+        return self._apply_evidence(detections, self.footprint, node.level, variant)
+
+    def _apply_evidence(
+        self,
+        detections: np.ndarray,
+        bounds: tuple[int, int, int, int],
+        level: int,
+        variant: int,
+        visible_cells: np.ndarray | None = None,
+    ) -> dict[str, Any]:
+        """Shared cached/live evidence, declarations and verification semantics."""
+        self.footprint = bounds
         informative = self.belief.update(
             detections,
             self.footprint,
-            node.level,
+            level,
             variant,
             self.config.sensor_variant,
             self._targets[self.found],
             self.config.suppression_radius_m,
+            visible_cells=visible_cells,
         )
         if self.oracle:
             candidates = np.empty((0, 2), dtype=int)
-            if node.level == 0:
+            if level == 0:
                 x0, y0, x1, y1 = self.footprint
                 cells = self._target_cells[~self.found]
                 candidates = np.unique(

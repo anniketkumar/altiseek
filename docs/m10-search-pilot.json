@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "scope": "B three-view closed-loop pilot; ideal energy only; not transfer scores",
+  "world_id": "003b0c54f581c65b",
+  "error": "",
+  "views": [
+    {
+      "stamp_s": 29.5,
+      "pose_stamp_s": 29.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        225.08252155493759,
+        200.1939995799407,
+        29.717428734936234
+      ],
+      "detections": 2,
+      "swimmer_detections": 2,
+      "elapsed_s": 2.9730861689999983,
+      "goal_enu_m": [
+        225.0,
+        200.0,
+        29.793839814855254
+      ],
+      "level": 0,
+      "goal_error_m": 0.22424160448248462,
+      "flight_and_inference_wall_s": 31.860143599
+    },
+    {
+      "stamp_s": 41.5,
+      "pose_stamp_s": 41.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        225.04533347467657,
+        187.75440313409075,
+        44.63145921379723
+      ],
+      "detections": 2,
+      "swimmer_detections": 1,
+      "elapsed_s": 0.41409034900000563,
+      "goal_enu_m": [
+        225.0,
+        187.5,
+        44.69075972228288
+      ],
+      "level": 1,
+      "goal_error_m": 0.2651275709316254,
+      "flight_and_inference_wall_s": 9.403938640000007
+    }
+  ],
+  "search": [
+    {
+      "observation": 0,
+      "action_mask": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false
+      ],
+      "found": 0,
+      "false_declarations": 0,
+      "time_s": 2.0,
+      "energy_s": 2.0,
+      "path_m": 0.0,
+      "steps": 0,
+      "terminated": false,
+      "ended": false,
+      "events": {
+        "found": 0,
+        "false": 0,
+        "informative_cells": 359,
+        "variant": 0
+      }
+    },
+    {
+      "action": 4,
+      "action_mask": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "found": 1,
+      "false_declarations": 0,
+      "time_s": 10.21563996914254,
+      "energy_s": 12.698459953713812,
+      "path_m": 12.5,
+      "steps": 1,
+      "terminated": true,
+      "ended": true,
+      "events": {
+        "found": 1,
+        "false": 0,
+        "informative_cells": 829,
+        "variant": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,313 @@
+{
+  "passed": true,
+  "world_id": "003b0c54f581c65b",
+  "split": "B",
+  "scope": "hover integration only",
+  "detector_id": "700e0ff3455259e8",
+  "sensor_model_id": "fcf8cdae58ca3947",
+  "failures": [],
+  "frames_processed": 20,
+  "updated_cells": 376,
+  "rows": [
+    {
+      "stamp_s": 27.5,
+      "pose_stamp_s": 27.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.58513816913168,
+        209.75133805357171,
+        29.50862636803639
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 342,
+      "visible_cells": 342,
+      "elapsed_s": 3.486552366000012
+    },
+    {
+      "stamp_s": 31.5,
+      "pose_stamp_s": 31.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.64780189422868,
+        209.77631370125195,
+        29.598607784486724
+      ],
+      "detections": 2,
+      "swimmer_detections": 2,
+      "informative_cells": 19,
+      "visible_cells": 361,
+      "elapsed_s": 0.2605694920000019
+    },
+    {
+      "stamp_s": 32.5,
+      "pose_stamp_s": 32.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.67143657372299,
+        209.7923535932781,
+        29.649493388514482
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 355,
+      "elapsed_s": 0.31026306100000056
+    },
+    {
+      "stamp_s": 33.5,
+      "pose_stamp_s": 33.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.63653342332483,
+        209.79935888722378,
+        29.681852305341607
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 361,
+      "elapsed_s": 0.41650026100001014
+    },
+    {
+      "stamp_s": 34.0,
+      "pose_stamp_s": 34.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.61601639996377,
+        209.79525988398004,
+        29.701764846775347
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 341,
+      "elapsed_s": 0.3161101009999925
+    },
+    {
+      "stamp_s": 34.5,
+      "pose_stamp_s": 34.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.60122678355987,
+        209.78689615683868,
+        29.719574164220035
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 15,
+      "visible_cells": 345,
+      "elapsed_s": 0.29353952000002437
+    },
+    {
+      "stamp_s": 35.0,
+      "pose_stamp_s": 35.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.59828098958897,
+        209.77023708212977,
+        29.737221658091535
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 359,
+      "elapsed_s": 0.30767429299999094
+    },
+    {
+      "stamp_s": 35.5,
+      "pose_stamp_s": 35.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.59702015356527,
+        209.75669899917384,
+        29.74287695320616
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 361,
+      "elapsed_s": 0.2596811319999688
+    },
+    {
+      "stamp_s": 36.5,
+      "pose_stamp_s": 36.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.5750970518776,
+        209.76431240019662,
+        29.645592141450315
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 342,
+      "elapsed_s": 0.3433180019999895
+    },
+    {
+      "stamp_s": 37.5,
+      "pose_stamp_s": 37.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.56149428670966,
+        209.76170422936121,
+        29.619730896415742
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 324,
+      "elapsed_s": 0.3623383550000199
+    },
+    {
+      "stamp_s": 39.0,
+      "pose_stamp_s": 39.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.569923199966,
+        209.72506210309407,
+        29.65395538470443
+      ],
+      "detections": 2,
+      "swimmer_detections": 2,
+      "informative_cells": 0,
+      "visible_cells": 354,
+      "elapsed_s": 0.37062222299999803
+    },
+    {
+      "stamp_s": 39.5,
+      "pose_stamp_s": 39.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.5700162904029,
+        209.72485531945097,
+        29.667016424843705
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 342,
+      "elapsed_s": 1.104125325000041
+    },
+    {
+      "stamp_s": 40.5,
+      "pose_stamp_s": 40.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.57952810680843,
+        209.72943990795363,
+        29.625300910033697
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 361,
+      "elapsed_s": 1.5737917239999888
+    },
+    {
+      "stamp_s": 43.5,
+      "pose_stamp_s": 43.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.5852807858581,
+        209.71431812976587,
+        29.20085100912927
+      ],
+      "detections": 2,
+      "swimmer_detections": 2,
+      "informative_cells": 0,
+      "visible_cells": 324,
+      "elapsed_s": 0.37917897699998093
+    },
+    {
+      "stamp_s": 44.0,
+      "pose_stamp_s": 44.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.5882678233207,
+        209.71500803559027,
+        29.233276716695418
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 324,
+      "elapsed_s": 0.25811179900000525
+    },
+    {
+      "stamp_s": 45.0,
+      "pose_stamp_s": 45.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.6014422663401,
+        209.71910563026427,
+        29.335563673284252
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 324,
+      "elapsed_s": 0.28526660099998935
+    },
+    {
+      "stamp_s": 45.5,
+      "pose_stamp_s": 45.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.61508117800005,
+        209.71343703067058,
+        29.392114095672234
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 328,
+      "elapsed_s": 0.266137614999991
+    },
+    {
+      "stamp_s": 46.0,
+      "pose_stamp_s": 46.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.627415038937,
+        209.7106089936996,
+        29.44931117680392
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 352,
+      "elapsed_s": 0.2814658639999834
+    },
+    {
+      "stamp_s": 46.5,
+      "pose_stamp_s": 46.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.62871117671736,
+        209.70806453277137,
+        29.504203147568774
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 361,
+      "elapsed_s": 1.0543236769999567
+    },
+    {
+      "stamp_s": 49.0,
+      "pose_stamp_s": 49.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        232.60988923859475,
+        209.73082678897342,
+        29.636259654630834
+      ],
+      "detections": 1,
+      "swimmer_detections": 1,
+      "informative_cells": 0,
+      "visible_cells": 361,
+      "elapsed_s": 0.27457247199998847
+    }
+  ]
+}
