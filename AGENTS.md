@@ -393,3 +393,23 @@ Collection merges case summaries and does not refit completed swap sensors.
 CPU suite resumed after local shutdown; seven completed runs were preserved
 and DECLARE seed 29 resumed at 49,152. Latest observed: nine complete, unknown-K
 seed 17 active. Check live status; no training sources/configs changed.
+
+## Current hand-off: M9 extension evaluation (D47, 2026-10-30)
+
+All 24 D46 training runs completed; never restart training. All 320 new GPU
+caches are strictly collected and both B sensor fits are complete. D47 freezes
+24 new selections plus six historical PPO selections in
+`configs/eval/artifacts_v2.json`, alongside 1,169 input checksums. Protocol:
+`docs/m9-extension-protocol.md`, `configs/eval/protocol_v2.yaml`. Next ID D48.
+
+Full preflight: 322 tests passed, including lint/format. B-only integration run
+`runs/eval/m9-v2-smoke/67c0dc7a1bcaceb9` completed all 288 episodes. It covers
+every selected seed, all action/map variants and both replacement sensor contracts.
+No T/stress outcome was used for selection or this smoke.
+
+`scripts/continue_m9_extension.py` runs 18,720 new episodes and then reporting.
+Check `runs/eval/m9-v2/continuation-status.json`, logs and launcher PID before
+launching; never duplicate an active run. The report reuses 4,320 original
+nominal episodes with published checksum verification, without rerunning them.
+`scripts/report_m9_extension.py <run-directory>` rebuilds numeric tables/figures.
+Stop at scientific review; full M9 is not complete until that review is recorded.

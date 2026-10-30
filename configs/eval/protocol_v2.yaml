@@ -1,0 +1,9 @@
+schema_version: 2
+environment_seed: 20261027
+action_seed: 20261028
+action_repeats: 3
+bootstrap_seed: 20261029
+bootstrap_samples: 2000
+battery_s: 500
+ablations: [control, relook, declare, unknown_k, shaping, egocentric, appearance, appearance_control]
+robustness: [detector, camera, stress-low, stress-high]

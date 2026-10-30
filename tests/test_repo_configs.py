@@ -12,6 +12,7 @@ from altiseek.detector.config import DetectorConfig
 from altiseek.env.config import SearchConfig
 from altiseek.env.energy import EnergyModel
 from altiseek.eval.config import EvaluationProtocol
+from altiseek.eval.extension import ExtensionProtocol
 from altiseek.geometry.design_config import LevelDesign
 from altiseek.geometry.level_design import coverage_energy_s
 from altiseek.geometry.levels import LevelTable
@@ -30,6 +31,7 @@ SCHEMAS: dict[str, type[Config]] = {
     "env/search": SearchConfig,
     "env": SearchConfig,
     "eval": EvaluationProtocol,
+    "eval/protocol_v2": ExtensionProtocol,
     "levels": LevelTable,
     "levels/design": LevelDesign,
     "sensor": SensorConfig,

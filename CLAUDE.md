@@ -23,7 +23,7 @@ Update as milestones complete (§21).
 | M6 Sensor models | done (2026-10-27): V0–V3 model `fcf8cdae58ca3947`, fitted on 40 B worlds, evaluated on 80 test worlds and 688 real-T views; ECE/reliability and conditional recall reported, defaults confirmed (D34, D35; `docs/sensor-results.md`) |
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
 | M8 PPO | complete with qualifications (D42, owner approved 2026-10-28): six D41 runs and report; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; historical zero-p gate failure retained. See `docs/ppo-acceptance.md`; revisit later using B only |
-| M9 Main experiments | existing-cache phase complete and accepted (D44/D45): 25,920 episodes, run `341aadf1366d8f05`; remaining experiments/ablations deferred. See `docs/m9-acceptance.md` |
+| M9 Main experiments | existing-cache phase accepted (D44/D45); D46 training and GPU artifacts complete. D47 freezes extension evaluation after B preflight; full M9 review pending. See `docs/m9-acceptance.md` and `docs/m9-extension-protocol.md` |
 | M10 PX4 / Gazebo / ROS 2 | not started |
 | M11 Write-up & polish | not started |
 
@@ -687,6 +687,9 @@ the comparison; `configs/eval/artifacts_v1.json` pins checkpoints and test seeds
 Other E3 experiments and ablations were not completed by that phase. The owner
 subsequently requested completion (D46); `docs/m9-remaining-protocol.md` defines
 the B-only training, new GPU artifacts and separate B distractor stress test.
+D47 freezes those completed artifacts in `configs/eval/artifacts_v2.json` and
+`protocol_v2.yaml`. See `docs/m9-extension-protocol.md` for comparisons and reuse
+of the original nominal results without rerunning completed episodes.
 
 **Hygiene**
 - Freeze the protocol in `configs/eval/protocol_vN.yaml` before any test-set run.
@@ -981,8 +984,11 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D45 | Accept the completed M9 existing-cache phase under the owner's direction to accept results unless seriously invalid, 2026-10-29. Preserve negative findings and all historical qualifications. | Every episode passed identity/checksum verification; numerical, budget, family/seed and curve checks found no blocking issue. V3 PPO AUC 0.744 trails B5 0.903; paired gap -0.160, 95% CI [-0.198, -0.121]. Accept valid negative evidence without T tuning. No claim that deferred experiments or ablations were completed. See `docs/m9-acceptance.md`. | Accepted; no rerun required |
 
 | D46 | Complete remaining M9 under a separate protocol, preserving v1. Owner approved B-only distractor stress and reports 7 h 4 min GPU allowance. Train 24 V3 runs across a fresh control, five ablations and appearance holdout/matched control; see `docs/m9-remaining-protocol.md`. | Implements previously listed experiments without T-driven tuning. Common raw-AUC B selection avoids selection-rule confounding. Appearance is a policy-training holdout, not an unseen-perception claim. Paid declaration, count-hidden inputs, distinct-variant coverage, terminal-zero shaping and lossless centred maps have explicit contracts. Detector/camera caches get new IDs; T stays pure. | Implementation and B preflight underway; full M9 not complete |
+| D47 | Freeze M9 extension evaluation after completing all 24 D46 B-selected runs and verifying 320 new GPU caches. Use protocol v2 and its checksummed artifact manifest: 18,720 new episodes, 4,320 original nominal episodes reused, three sampled action repeats and all training seeds. | Extends the predeclared D46 design without T-driven selection. B-only smoke tests exercise new action/observation spaces and replacement sensors. Detector/camera baselines retain M7 parameters; original PPO policies are frozen while sensors are refitted on B. High/low B stress worlds are paired by seed, never treated as T. Uncertainty bootstraps worlds after averaging repeats/seeds. | Frozen before extended held-out evaluation; results pending |
 
 ---
+
+
 
 ## 25. Open decisions (resolve early; log answers in §24)
 
