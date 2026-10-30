@@ -1,5 +1,13 @@
 # AGENTS.md: hand-off for coding agents
 
+> **D50: first flight passed; STOP here per owner (2026-10-30).**
+> `docs/m10-first-flight.md` and `.json` record the clean message rebuild,
+> 5 m takeoff, 10 s offboard hold, landing and automatic disarm. Run
+> `/home/aniket/altiseek-m10/flights/20261030T084811Z` is complete; all owned
+> simulator processes stopped. No M10 job is queued. Do not continue to camera,
+> perception, search or transfer work until the owner requests it. M10 itself
+> remains incomplete. Earlier setup/job notes are historical. Next decision D51.
+
 > **M10 started (D49, 2026-10-30).** Read `docs/deployment.md`. ROS/Gazebo system
 > installation and pinned PX4/DDS/px4_msgs builds run detached in WSL. Check
 > `data/m10/setup/state`, `system.log`, `launcher.pid`, `build-state`, `build.log`

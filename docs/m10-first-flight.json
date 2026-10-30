@@ -1,0 +1,35 @@
+{
+  "run": "/home/aniket/altiseek-m10/flights/20261030T084811Z",
+  "summary": {
+    "passed": true,
+    "reason": "",
+    "elapsed_s": 48.54570827600003,
+    "target_ned_m": [
+      -0.03071909211575985,
+      -0.04154546558856964,
+      -4.9539599269628525
+    ],
+    "hold_s": 10,
+    "hold_max_error_m": 0.4502149284305834,
+    "landed_and_disarmed": true
+  },
+  "audit": {
+    "passed": true,
+    "hold_records": 191,
+    "hold_to_land_command_s": 10.02073679,
+    "max_recorded_hold_error_m": 0.4502149284305834,
+    "max_recorded_hold_speed_mps": 0.2967801990179523,
+    "final_nav_state": 14,
+    "final_arming_state": 1,
+    "final_landed": true
+  },
+  "sha256": {
+    "flight-summary.json": "6124532b46f4e6f57e6a8f697a576c2e175463e63905cb3c840377162a3ca6ff",
+    "status.json": "b6c4694244505bb0057640e034ba9c6055b04f901e7217357f5c00bf42a79406",
+    "telemetry.jsonl": "b8d8680dba4bce8196a501aa94c20bc3720732d066900c2cac9889caacb0265f",
+    "px4.log": "8521eaef775490e0bae33c7e1a68b2d853b25743989276baa3fe6c037ff08ace",
+    "controller.log": "eb5db8e46c90df1e344977a2dbb00ecf1f5f9fb4620de866f9e7d0710da59529",
+    "agent.log": "0c8a15911590416cea5f5ab47dad6caf332b612892172c04f094418420925f87",
+    "gcs.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
