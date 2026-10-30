@@ -98,4 +98,4 @@ wsl -d Ubuntu-24.04 -u aniket --cd "$PWD" --exec env UV_PROJECT_ENVIRONMENT=/hom
 
 Use the same prefix for project scripts. Keep long jobs detached and resumable;
 installing WSL does not restart or resume any completed training run. ROS 2,
-Gazebo and PX4 have not been installed yet.
+Gazebo and PX4 setup began on 2026-10-30 (D49); see [deployment setup](deployment.md) and the live logs in `data/m10/setup/`. Do not infer success until their status files and version checks confirm it.

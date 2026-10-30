@@ -1,5 +1,13 @@
 # AGENTS.md: hand-off for coding agents
 
+> **M10 started (D49, 2026-10-30).** Read `docs/deployment.md`. ROS/Gazebo system
+> installation and pinned PX4/DDS/px4_msgs builds run detached in WSL. Check
+> `data/m10/setup/state`, `system.log`, `launcher.pid`, `build-state`, `build.log`
+> and `build.pid` before acting; do not duplicate them. Native sources/builds
+> live in `/home/aniket/altiseek-m10` on D:, with two build workers. No first
+> flight or transfer result exists yet. ENU/NED conversions are in
+> `geometry/frames.py`. M9 remains accepted and unchanged. Next decision: D50.
+
 > Latest status: **M9 complete, D48 (2026-10-30)**. Read
 > `docs/m9-extension-acceptance.md` for the final disposition; earlier pending
 > notes below are historical. Next free decision ID is **D49**.

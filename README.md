@@ -29,7 +29,7 @@ See the [M9 acceptance review](docs/m9-extension-acceptance.md),
 [main results](docs/m9-results/results.md),
 [extension results](docs/m9-extension-results/results.md) and
 [all-seed training report](docs/m9-training-results.md) for uncertainty,
-limitations and reproduction commands. M10 deployment and M11 write-up remain.
+limitations and reproduction commands. [M10 deployment setup](docs/deployment.md) is underway; M11 write-up remains.
 
 ## Setup
 
