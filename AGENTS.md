@@ -1,5 +1,13 @@
 # AGENTS.md: hand-off for coding agents
 
+> **D53: automatic calibration recovery authorized (2026-11-01).**
+> `scripts/continue_m10_resilient.py` waits for the original continuation lock,
+> then defers recognized flight failures with verified cleanup and retries after
+> other worlds. Three passes maximum; three consecutive failures stop. Integrity
+> and unknown failures still stop. See `docs/m10-recovery.md`; preserve D52 source
+> hashes and all saved views. Check `data/m10/continuation/recovery.pid` and
+> `recovery.log` before launching another recovery scheduler. Next decision D54.
+
 > **D51: full M10 authorized again (2026-10-31).** The owner lifted D50's stop.
 > Read `docs/m10-continuation.md`; proceed through the full deployment/transfer
 > scope without restarting completed work. Internet can be intermittent: record

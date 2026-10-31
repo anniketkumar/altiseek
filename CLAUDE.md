@@ -1066,3 +1066,19 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 **Deployment**
 - PX4 User Guide (current version): ROS 2 integration, offboard mode, Gazebo simulation.
+
+## M10 recovery amendment (D53, 2026-11-01)
+
+The owner authorized logging and deferring isolated failed calibration flights,
+continuing other worlds and retrying unfinished worlds afterward. The separate
+scheduler in `scripts/continue_m10_resilient.py` preserves D52 acquisition source
+hashes, identity, thresholds and saved views. Only recognized position/capture
+timeout failures with confirmed process cleanup are recoverable. Integrity and
+unknown failures stop; three consecutive flight failures or three exhausted
+passes also stop. All 40 worlds and 8,800 verified views remain required before
+refitting; input order remains frozen. See `docs/m10-recovery.md`.
+
+Decision Log addition: **D53** — Owner-approved bounded deferred recovery for
+M10 acquisition. This changes scheduling only, not accepted observations or
+scientific settings. The scheduler records its own source hash separately and
+waits for the existing job lock before taking over. Next free decision is D54.
