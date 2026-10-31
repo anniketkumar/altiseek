@@ -1,0 +1,491 @@
+[
+    {
+        "seed":  17,
+        "report_sha256":  "858b6509ff0e975e4ac716e4643c226037a41c8d615c1a685fb41c2ba4eb9a4f",
+        "flight_run":  "/home/aniket/altiseek-m10/camera-flights/20261030T223252Z",
+        "result":  {
+                       "passed":  true,
+                       "scope":  "B three-view closed-loop pilot; ideal energy only; not transfer scores",
+                       "world_id":  "003b0c54f581c65b",
+                       "method":  "PPO",
+                       "training_seed":  17,
+                       "checkpoint":  {
+                                          "variant":  "V3",
+                                          "seed":  17,
+                                          "run_id":  "985e4600240c36a8",
+                                          "checkpoint":  "runs/ppo/m8-auc/V3-seed17/985e4600240c36a8/step-000065536/model.zip",
+                                          "sha256":  "9f914adcd25ec2a288795845b77ea63047ed76a502404827320d310aca29007a",
+                                          "selected_step":  65536
+                                      },
+                       "error":  "",
+                       "views":  [
+                                     {
+                                         "stamp_s":  32.0,
+                                         "pose_stamp_s":  32.0,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              225.0111154267982,
+                                                              200.1759457544506,
+                                                              29.734835629109824
+                                                          ],
+                                         "detections":  2,
+                                         "swimmer_detections":  2,
+                                         "elapsed_s":  0.7684963709999977,
+                                         "goal_enu_m":  [
+                                                            225.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.18590845908020512,
+                                         "flight_and_inference_wall_s":  27.96016150599999
+                                     },
+                                     {
+                                         "stamp_s":  42.0,
+                                         "pose_stamp_s":  42.0,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              249.82354689810305,
+                                                              199.9743747873846,
+                                                              29.833173585893572
+                                                          ],
+                                         "detections":  2,
+                                         "swimmer_detections":  1,
+                                         "elapsed_s":  0.2536241199999836,
+                                         "goal_enu_m":  [
+                                                            250.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.18259105737887732,
+                                         "flight_and_inference_wall_s":  9.475826040000015
+                                     },
+                                     {
+                                         "stamp_s":  52.0,
+                                         "pose_stamp_s":  52.0,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              249.97198866421485,
+                                                              224.76274718356618,
+                                                              29.811298015899872
+                                                          ],
+                                         "detections":  2,
+                                         "swimmer_detections":  1,
+                                         "elapsed_s":  0.2344106369999963,
+                                         "goal_enu_m":  [
+                                                            250.0,
+                                                            225.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.23953772692827405,
+                                         "flight_and_inference_wall_s":  9.977380817000011
+                                     }
+                                 ],
+                       "search":  [
+                                      {
+                                          "observation":  0,
+                                          "action_mask":  [
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  2.0,
+                                          "energy_s":  2.0,
+                                          "path_m":  0.0,
+                                          "steps":  0,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  361,
+                                                         "variant":  0
+                                                     }
+                                      },
+                                      {
+                                          "action":  1,
+                                          "action_mask":  [
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  6.5,
+                                          "energy_s":  6.5,
+                                          "path_m":  25.0,
+                                          "steps":  1,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  199,
+                                                         "variant":  0
+                                                     }
+                                      },
+                                      {
+                                          "action":  0,
+                                          "action_mask":  [
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  11.0,
+                                          "energy_s":  11.0,
+                                          "path_m":  50.0,
+                                          "steps":  2,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  183,
+                                                         "variant":  0
+                                                     }
+                                      }
+                                  ]
+                   }
+    },
+    {
+        "seed":  29,
+        "report_sha256":  "c0b26df810bcdf835c63df39ef5ca653f7aba7668d8c748522774c6b6622ece3",
+        "flight_run":  "/home/aniket/altiseek-m10/camera-flights/20261030T223426Z",
+        "result":  {
+                       "passed":  true,
+                       "scope":  "B three-view closed-loop pilot; ideal energy only; not transfer scores",
+                       "world_id":  "003b0c54f581c65b",
+                       "method":  "PPO",
+                       "training_seed":  29,
+                       "checkpoint":  {
+                                          "variant":  "V3",
+                                          "seed":  29,
+                                          "run_id":  "24c1acc2a1dafcaf",
+                                          "checkpoint":  "runs/ppo/m8-auc/V3-seed29/24c1acc2a1dafcaf/step-000098304/model.zip",
+                                          "sha256":  "05d86ba76e478dc16e3400aa3152534697409042408868d25939c8615a52d0df",
+                                          "selected_step":  98304
+                                      },
+                       "error":  "",
+                       "views":  [
+                                     {
+                                         "stamp_s":  29.5,
+                                         "pose_stamp_s":  29.5,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              225.11785792888148,
+                                                              200.22007715408282,
+                                                              29.765982474178053
+                                                          ],
+                                         "detections":  2,
+                                         "swimmer_detections":  2,
+                                         "elapsed_s":  0.9666920489999598,
+                                         "goal_enu_m":  [
+                                                            225.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.2511980823553962,
+                                         "flight_and_inference_wall_s":  29.013355404000038
+                                     },
+                                     {
+                                         "stamp_s":  40.5,
+                                         "pose_stamp_s":  40.5,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              249.77076358717375,
+                                                              200.0360358464388,
+                                                              29.802998322777473
+                                                          ],
+                                         "detections":  2,
+                                         "swimmer_detections":  1,
+                                         "elapsed_s":  0.332763817,
+                                         "goal_enu_m":  [
+                                                            250.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.23223219729695346,
+                                         "flight_and_inference_wall_s":  10.352803412000014
+                                     },
+                                     {
+                                         "stamp_s":  51.0,
+                                         "pose_stamp_s":  51.0,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              274.7739680151377,
+                                                              200.003029424517,
+                                                              29.74079453636551
+                                                          ],
+                                         "detections":  7,
+                                         "swimmer_detections":  6,
+                                         "elapsed_s":  0.3859338529999832,
+                                         "goal_enu_m":  [
+                                                            275.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.23219267250226588,
+                                         "flight_and_inference_wall_s":  10.55926025499997
+                                     }
+                                 ],
+                       "search":  [
+                                      {
+                                          "observation":  0,
+                                          "action_mask":  [
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  2.0,
+                                          "energy_s":  2.0,
+                                          "path_m":  0.0,
+                                          "steps":  0,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  342,
+                                                         "variant":  0
+                                                     }
+                                      },
+                                      {
+                                          "action":  1,
+                                          "action_mask":  [
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  6.5,
+                                          "energy_s":  6.5,
+                                          "path_m":  25.0,
+                                          "steps":  1,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  190,
+                                                         "variant":  0
+                                                     }
+                                      },
+                                      {
+                                          "action":  1,
+                                          "action_mask":  [
+                                                              true,
+                                                              false,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  11.0,
+                                          "energy_s":  11.0,
+                                          "path_m":  50.0,
+                                          "steps":  2,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  184,
+                                                         "variant":  0
+                                                     }
+                                      }
+                                  ]
+                   }
+    },
+    {
+        "seed":  43,
+        "report_sha256":  "23e3af0f7946925f9543e00b0ac45c8c82134d505b472f28e58429a88df1e3b0",
+        "flight_run":  "/home/aniket/altiseek-m10/camera-flights/20261030T223555Z",
+        "result":  {
+                       "passed":  true,
+                       "scope":  "B three-view closed-loop pilot; ideal energy only; not transfer scores",
+                       "world_id":  "003b0c54f581c65b",
+                       "method":  "PPO",
+                       "training_seed":  43,
+                       "checkpoint":  {
+                                          "variant":  "V3",
+                                          "seed":  43,
+                                          "run_id":  "218c69d73dd19d38",
+                                          "checkpoint":  "runs/ppo/m8-auc/V3-seed43/218c69d73dd19d38/step-000065536/model.zip",
+                                          "sha256":  "96ae76b2ddee4506875fb7ebdf9f505259d56ae67336218d56a5b39d9de6bb88",
+                                          "selected_step":  65536
+                                      },
+                       "error":  "",
+                       "views":  [
+                                     {
+                                         "stamp_s":  30.0,
+                                         "pose_stamp_s":  30.0,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              225.09151652300437,
+                                                              200.20672844543196,
+                                                              29.7693761509965
+                                                          ],
+                                         "detections":  1,
+                                         "swimmer_detections":  1,
+                                         "elapsed_s":  0.5435070529999848,
+                                         "goal_enu_m":  [
+                                                            225.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.22739919741045744,
+                                         "flight_and_inference_wall_s":  28.52006577200001
+                                     },
+                                     {
+                                         "stamp_s":  40.5,
+                                         "pose_stamp_s":  40.5,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              249.79929035509335,
+                                                              200.03935736570787,
+                                                              29.83292620385416
+                                                          ],
+                                         "detections":  3,
+                                         "swimmer_detections":  2,
+                                         "elapsed_s":  0.40599232300002086,
+                                         "goal_enu_m":  [
+                                                            250.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.20823330569097614,
+                                         "flight_and_inference_wall_s":  10.346900872000049
+                                     },
+                                     {
+                                         "stamp_s":  50.0,
+                                         "pose_stamp_s":  50.0,
+                                         "pose_delta_s":  0.0,
+                                         "camera_enu_m":  [
+                                                              274.85580690145804,
+                                                              199.98931103292543,
+                                                              29.754918206494658
+                                                          ],
+                                         "detections":  7,
+                                         "swimmer_detections":  6,
+                                         "elapsed_s":  0.27493370799999184,
+                                         "goal_enu_m":  [
+                                                            275.0,
+                                                            200.0,
+                                                            29.793839814855254
+                                                        ],
+                                         "level":  0,
+                                         "goal_error_m":  0.14973575151455568,
+                                         "flight_and_inference_wall_s":  9.379949304999968
+                                     }
+                                 ],
+                       "search":  [
+                                      {
+                                          "observation":  0,
+                                          "action_mask":  [
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  2.0,
+                                          "energy_s":  2.0,
+                                          "path_m":  0.0,
+                                          "steps":  0,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  352,
+                                                         "variant":  0
+                                                     }
+                                      },
+                                      {
+                                          "action":  1,
+                                          "action_mask":  [
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  6.5,
+                                          "energy_s":  6.5,
+                                          "path_m":  25.0,
+                                          "steps":  1,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  182,
+                                                         "variant":  0
+                                                     }
+                                      },
+                                      {
+                                          "action":  1,
+                                          "action_mask":  [
+                                                              true,
+                                                              false,
+                                                              true,
+                                                              true,
+                                                              true,
+                                                              false
+                                                          ],
+                                          "found":  0,
+                                          "false_declarations":  0,
+                                          "time_s":  11.0,
+                                          "energy_s":  11.0,
+                                          "path_m":  50.0,
+                                          "steps":  2,
+                                          "terminated":  false,
+                                          "ended":  false,
+                                          "events":  {
+                                                         "found":  0,
+                                                         "false":  0,
+                                                         "informative_cells":  199,
+                                                         "variant":  0
+                                                     }
+                                      }
+                                  ]
+                   }
+    }
+]

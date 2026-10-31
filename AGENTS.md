@@ -7,12 +7,19 @@
 > Static and flight-camera checks passed, including measured world-north alignment.
 > B hover perception passed (20 frames, 376 belief cells updated), landing/disarm
 > verified. First B5 closed-loop pilot passed (L1 to L2, verified target, landed).
-> Full suite: 347 passed. All-seed PPO pilots are next; check
-> `data/m10/ppo-pilots-path.txt` before launching. Measured energy, normal launch,
-> calibration and transfer remain incomplete. Never call these pilots M10 completion.
+> All three frozen PPO pilots passed; do not rerun them. D52 adds continuous
+> simulator-time energy accounting and normal seeded edge launch; the 25 s B
+> check passed, using 21.61 s before an unaffordable next move. Full suite: 353 passed.
+> `scripts/continue_m10.py` runs full-budget B5, a ten-view calibration gate,
+> all 40 sensor-fit B sweeps (8,800 views), then B refitting. Check
+> `data/m10/continuation-path.txt` and its `status.json` before any launch.
+> It is detached/resumable and stops on failure or at calibration review.
+> Do not change its frozen acquisition sources while it is active. Held-out
+> transfer and final review remain; never call these stages M10 completion.
 > WSL uses software llvmpipe rendering. Check `data/m10/camera-flight-path.txt`
 > and continuation logs before launching; never duplicate an active pilot.
-> No T transfer evaluation or refit has started. Next decision D52.
+> Read `docs/m10-live-protocol.md` (D52). No T transfer evaluation has started.
+> Next decision D53. No fresh permission is needed to continue the authorized M10 scope.
 
 > **D50: first flight passed; STOP here per owner (2026-10-30).**
 > `docs/m10-first-flight.md` and `.json` record the clean message rebuild,

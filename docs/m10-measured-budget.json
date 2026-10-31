@@ -1,0 +1,178 @@
+{
+  "passed": true,
+  "scope": "B integration; measured energy",
+  "measured_energy": true,
+  "normal_edge_launch": true,
+  "view_cap": 0,
+  "battery_s": 25.0,
+  "meter": {
+    "elapsed_s": 21.019999999999996,
+    "energy_s": 21.609999999999992,
+    "path_m": 78.83317845097238,
+    "climbing_s": 1.1799999999999926,
+    "time_per_level": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      21.019999999999996
+    ],
+    "started": true,
+    "exhausted": false
+  },
+  "world_id": "003b0c54f581c65b",
+  "method": "B5",
+  "training_seed": null,
+  "checkpoint": null,
+  "error": "",
+  "views": [
+    {
+      "stamp_s": 49.0,
+      "pose_stamp_s": 49.0,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        74.81134124740804,
+        224.97426592858147,
+        89.30828057975408
+      ],
+      "detections": 5,
+      "swimmer_detections": 5,
+      "elapsed_s": 3.989186801999992,
+      "goal_enu_m": [
+        75.0,
+        225.0,
+        89.38151944456575
+      ],
+      "level": 4,
+      "goal_error_m": 0.2040056339423774,
+      "flight_and_inference_wall_s": 51.89392286499999,
+      "measured": {
+        "elapsed_s": 6.119999999999997,
+        "energy_s": 6.459999999999997,
+        "path_m": 0.18026299632498946,
+        "climbing_s": 0.6799999999999997,
+        "time_per_level": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          6.119999999999997
+        ],
+        "started": true,
+        "exhausted": false
+      }
+    },
+    {
+      "stamp_s": 67.5,
+      "pose_stamp_s": 67.5,
+      "pose_delta_s": 0.0,
+      "camera_enu_m": [
+        149.97606144606493,
+        225.1248279994879,
+        89.30550078808042
+      ],
+      "detections": 2,
+      "swimmer_detections": 2,
+      "elapsed_s": 0.2699683129999926,
+      "goal_enu_m": [
+        150.0,
+        225.0,
+        89.38151944456575
+      ],
+      "level": 4,
+      "goal_error_m": 0.14810104643279706,
+      "flight_and_inference_wall_s": 15.092801706000003,
+      "measured": {
+        "elapsed_s": 20.980000000000004,
+        "energy_s": 21.57,
+        "path_m": 78.83251766127403,
+        "climbing_s": 1.1799999999999926,
+        "time_per_level": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          20.980000000000004
+        ],
+        "started": true,
+        "exhausted": false
+      }
+    }
+  ],
+  "search": [
+    {
+      "observation": 0,
+      "action_mask": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+      ],
+      "found": 0,
+      "false_declarations": 0,
+      "time_s": 6.119999999999997,
+      "energy_s": 6.459999999999997,
+      "path_m": 0.18026299632498946,
+      "steps": 0,
+      "terminated": false,
+      "ended": false,
+      "events": {
+        "found": 0,
+        "false": 0,
+        "informative_cells": 3492,
+        "variant": 0
+      }
+    },
+    {
+      "action": 1,
+      "action_mask": [
+        false,
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "found": 0,
+      "false_declarations": 0,
+      "time_s": 21.0,
+      "energy_s": 21.589999999999996,
+      "path_m": 78.83284788746074,
+      "steps": 1,
+      "terminated": false,
+      "ended": false,
+      "events": {
+        "found": 0,
+        "false": 0,
+        "informative_cells": 1763,
+        "variant": 0
+      }
+    },
+    {
+      "action": 1,
+      "action_mask": [
+        false,
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "found": 0,
+      "false_declarations": 0,
+      "time_s": 21.019999999999996,
+      "energy_s": 21.609999999999992,
+      "path_m": 78.83317845097238,
+      "steps": 2,
+      "terminated": false,
+      "ended": true,
+      "events": {
+        "found": 0,
+        "false": 0,
+        "informative_cells": 0
+      }
+    }
+  ]
+}

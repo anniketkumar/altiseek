@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from altiseek.cache.storage import DETECTION_DTYPE
+from altiseek.deploy.meter import FlightMeter
 from altiseek.deploy.projection import GroundCamera
 from altiseek.deploy.search import LiveSearchPilot, LiveView
 from tests.env.test_search import built, cfg, env, library, sensor
@@ -57,3 +58,35 @@ def test_live_pilot_rejects_test_worlds(env, built, sensor):
             env.config,
             lambda *_: None,
         )
+
+
+def test_expired_live_view_cannot_update_belief(env, built, sensor):
+    world, _ = built
+    meter = FlightMeter(env.config.energy, env.nav.altitudes)
+    calls = []
+
+    def source(goal, level):
+        camera = GroundCamera(
+            goal,
+            np.array([[0, -1, 0], [0, 0, 1], [-1, 0, 0]]),
+            env.cache_config.render.camera.resolution_px,
+            env.cache_config.render.camera.hfov_deg,
+        )
+        if not calls:
+            meter.start(0, goal)
+            meter.update(2, goal)
+        else:
+            meter.update(1000, goal)
+        calls.append(level)
+        return LiveView(camera, np.zeros(0, dtype=DETECTION_DTYPE))
+
+    live = LiveSearchPilot(world, env.cache_config, sensor, env.config, source, meter=meter)
+    live.reset(seed=71, options={"start_node": 0})
+    before = live.belief.log_odds.copy()
+    _, _, terminated, truncated, info = live.step(int(np.flatnonzero(live.action_masks())[0]))
+    assert not terminated
+    assert truncated
+    assert info["events"]["battery_expired_in_flight"]
+    assert live.energy_used_s == env.config.energy.battery_s
+    assert live.observations == 1
+    np.testing.assert_array_equal(before, live.belief.log_odds)

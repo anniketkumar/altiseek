@@ -80,6 +80,7 @@ class FirstFlight(Node):
         self.reason = ""
         self.land_started = 0.0
         self.completed_hold_s = 0.0
+        self.landing_timeout_s = 45.0
         self.create_timer(0.05, self.tick)
 
     def on_position(self, message: VehicleLocalPosition) -> None:
@@ -149,7 +150,7 @@ class FirstFlight(Node):
             ):
                 self.passed = self.airborne and not self.reason
                 self.done = True
-            elif now - self.land_started > 45:
+            elif now - self.land_started > self.landing_timeout_s:
                 self.reason = self.reason or "Landing/disarm confirmation timed out"
                 self.done = True
         elif p is not None and status is not None and fresh and p.xy_valid and p.z_valid:

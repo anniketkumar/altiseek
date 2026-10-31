@@ -129,3 +129,22 @@ all seeds, resumes only verified completions and stops on any failure. Its ident
 includes source hashes and the frozen policy manifest. Check
 `data/m10/ppo-pilots-path.txt` and that directory's `status.json` before launching.
 This suite does not start transfer evaluation or retrain a policy.
+
+## D52 continuation
+
+All three frozen PPO seed pilots (17/29/43) completed successfully in suite
+`387e5e2a331307e3`; numeric records are in `m10-ppo-pilots.json`. Do not rerun them.
+The normal seeded L5 edge-launch check with a 25 s measured budget also passed,
+including landing/disarm (`20261031T041908Z`, `m10-measured-budget.json`). It used
+21.61 hover-equivalent seconds over 21.02 simulator seconds and stopped before
+an unaffordable nominal move. It did not physically exhaust the battery; exact
+cutoff/no-late-evidence behavior is separately covered by regression tests.
+
+The full suite passed **353 tests in 37.56 s**. D52 freezes live accounting,
+settling, velocity limits and complete B acquisition in `m10-live-protocol.md`.
+`scripts/continue_m10.py` automatically proceeds from a full 500 s B5 check to
+the ten-view calibration pilot, all 8,800 B calibration views and the shared
+sensor-model fit. It verifies existing stages/views, stops on failure, and ends
+at calibration review. Native continuation state is pointed to by
+`data/m10/continuation-path.txt`; consult that status instead of assuming a job
+is still running. No held-out transfer run is launched by this wrapper.

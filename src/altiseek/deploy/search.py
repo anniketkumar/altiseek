@@ -14,6 +14,7 @@ import numpy as np
 from altiseek.cache.config import CacheConfig
 from altiseek.cache.storage import CacheHeader
 from altiseek.calibration.model import SensorModel
+from altiseek.deploy.meter import BudgetExhausted, FlightMeter
 from altiseek.deploy.projection import GroundCamera
 from altiseek.env.config import SearchConfig
 from altiseek.env.search import SearchEnv
@@ -34,6 +35,8 @@ class LiveSearchPilot(SearchEnv):
         sensor: SensorModel,
         config: SearchConfig,
         source: Callable[[np.ndarray, int], LiveView],
+        *,
+        meter: FlightMeter | None = None,
     ) -> None:
         if world.split != "B":
             raise ValueError("Live integration pilot accepts B only")
@@ -42,6 +45,7 @@ class LiveSearchPilot(SearchEnv):
         if config.observation_frame != "north_up":
             raise ValueError("Live pilot requires the frozen north-up observation")
         self.source = source
+        self.meter = meter
         self.live_visible: np.ndarray | None = None
         super().__init__([world], cache, sensor, config)
 
@@ -53,6 +57,10 @@ class LiveSearchPilot(SearchEnv):
         node = self.nav.nodes[self.node]
         goal = np.r_[self.nav.positions[self.node], self.nav.altitudes[node.level]]
         view = self.source(goal, node.level)
+        if self.meter is not None:
+            self._account()
+            if self.meter.snapshot()["exhausted"]:
+                raise BudgetExhausted("Battery expired before evidence update")
         measured_level = int(np.argmin(abs(self.nav.altitudes - view.camera.position_enu_m[2])))
         if measured_level != node.level:
             raise ValueError(
@@ -73,6 +81,38 @@ class LiveSearchPilot(SearchEnv):
             )
         )
         return self._apply_evidence(view.detections, bounds, measured_level, 0, visible)
+
+    def _account(self) -> None:
+        state = self.meter.snapshot()
+        self.energy_used_s, self.elapsed_s = state["energy_s"], state["elapsed_s"]
+        self.path_m = state["path_m"]
+        self.time_per_level = state["time_per_level"]
+
+    def step(self, action: int) -> tuple:
+        if self.meter is None:
+            return super().step(action)
+        self._account()
+        before = self.energy_used_s
+        try:
+            result = super().step(action)
+            # Parent's unaffordable-move branch fills the ideal budget. Live
+            # reporting instead retains the energy actually consumed.
+            self._account()
+            if result[2] or result[3]:
+                self.meter.stop()
+            reward = self._reward(self.last_events, self.energy_used_s - before)
+            return self._observation(), reward, result[2], result[3], self._info()
+        except BudgetExhausted:
+            self._account()
+            self._ended = True
+            self.last_events = {
+                "found": 0,
+                "false": 0,
+                "informative_cells": 0,
+                "battery_expired_in_flight": True,
+            }
+            reward = -(self.energy_used_s - before) / self.config.energy.battery_s
+            return self._observation(), reward, False, True, self._info()
 
     def _observation(self) -> dict[str, np.ndarray]:
         result = super()._observation()

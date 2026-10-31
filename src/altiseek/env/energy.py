@@ -33,6 +33,16 @@ class EnergyModel(Config):
         """Time and energy of one observation (hovering for the dwell time)."""
         return self.dwell_s, self.dwell_s
 
+    def measured_interval(self, elapsed_s: float, climbing: bool) -> float:
+        """Live hover-equivalent energy from simulator time and measured climb state.
+
+        Sequential constant-speed motion reproduces ``move``. Concurrent flight
+        is charged for actual elapsed time; climbing retains the same multiplier.
+        """
+        if not math.isfinite(elapsed_s) or elapsed_s < 0:
+            raise ValueError("Measured elapsed time must be finite and nonnegative")
+        return elapsed_s * (self.climb_multiplier if climbing else 1.0)
+
     def tour(
         self, points_m: Sequence[tuple[float, float]], altitude_m: float, start_altitude_m: float
     ) -> tuple[float, float]:

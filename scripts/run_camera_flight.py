@@ -27,9 +27,20 @@ def main() -> None:
     parser.add_argument("--search-pilot", action="store_true")
     parser.add_argument("--method", choices=("B5", "PPO"), default="B5")
     parser.add_argument("--training-seed", type=int, choices=(17, 29, 43), default=17)
+    parser.add_argument("--measured", action="store_true")
+    parser.add_argument("--normal-launch", action="store_true")
+    parser.add_argument("--max-views", type=int, default=3)
+    parser.add_argument("--battery-s", type=float, default=500)
+    parser.add_argument("--calibration-dir", type=Path)
+    parser.add_argument("--calibration-contract")
+    parser.add_argument("--calibration-pilot", action="store_true")
     args = parser.parse_args()
     if args.search_pilot and args.world_export is None:
         parser.error("--search-pilot requires a B world export")
+    if args.calibration_dir is not None and (
+        args.world_export is None or not args.calibration_contract or args.search_pilot
+    ):
+        parser.error("Calibration requires a B export and contract, without --search-pilot")
     repo = Path(__file__).resolve().parents[1]
     root = Path.home() / "altiseek-m10"
     source = root / "PX4-Autopilot/Tools/simulation/gz"
@@ -57,9 +68,10 @@ def main() -> None:
             ):
                 raise ValueError("B world export identity/checksum failure")
             ground = (args.world_export / "ground.sdf").read_text()
-            first = spec.targets[0]
-            spawn_x = min(max(first.x_m, 25), spec.area_m - 25)
-            spawn_y = min(max(first.y_m, 25), spec.area_m - 25)
+            if not args.normal_launch:
+                first = spec.targets[0]
+                spawn_x = min(max(first.x_m, 25), spec.area_m - 25)
+                spawn_y = min(max(first.y_m, 25), spec.area_m - 25)
         world = ET.parse(source / "worlds/default.sdf")
         element = world.getroot().find("world")
         element.set("name", "camera_flight")
@@ -124,6 +136,9 @@ def main() -> None:
             PX4_UXRCE_DDS_PORT="8899",
             PX4_PARAM_COM_RC_IN_MODE="4",
             PX4_PARAM_COM_RCL_EXCEPT="4",
+            PX4_PARAM_MPC_XY_VEL_MAX="10",
+            PX4_PARAM_MPC_Z_VEL_MAX_UP="3",
+            PX4_PARAM_MPC_Z_VEL_MAX_DN="3",
             GZ_SIM_RESOURCE_PATH=str(source / "models"),
             LD_LIBRARY_PATH=str(root / "install/lib") + os.pathsep + env.get("LD_LIBRARY_PATH", ""),
         )
@@ -182,7 +197,18 @@ def main() -> None:
                     str(repo / "scripts/first_flight_gcs.py"),
                 ],
             )
-            if args.world_export is None:
+            if args.calibration_dir is not None:
+                command = [
+                    sys.executable,
+                    str(repo / "scripts/calibration_flight.py"),
+                    str(run),
+                    str(args.world_export / "world.json"),
+                    str(args.calibration_dir),
+                    args.calibration_contract,
+                ]
+                if args.calibration_pilot:
+                    command.append("--pilot")
+            elif args.world_export is None:
                 command = [sys.executable, str(repo / "scripts/camera_flight.py"), str(run)]
             else:
                 command = [
@@ -200,10 +226,20 @@ def main() -> None:
                 ]
             if args.search_pilot:
                 command += ["--method", args.method, "--training-seed", str(args.training_seed)]
+                command += ["--max-views", str(args.max_views), "--battery-s", str(args.battery_s)]
+                if args.measured:
+                    command.append("--measured")
+                if args.normal_launch:
+                    command.append("--normal-launch")
             controller = start("controller", command)
             result["state"] = "flight"
             (run / "status.json").write_text(json.dumps(result, indent=2))
-            controller.wait(timeout=480 if args.search_pilot else 360)
+            deadline = (
+                6000
+                if args.calibration_dir is not None
+                else (2050 if args.measured else (630 if args.search_pilot else 360))
+            )
+            controller.wait(timeout=deadline)
             result.update(
                 state="passed" if controller.returncode == 0 else "failed",
                 controller_exit=controller.returncode,

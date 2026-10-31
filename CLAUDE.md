@@ -570,6 +570,12 @@ in policy observations. D46 also permits AUC potential shaping, with terminal
 potential zero and gamma 1.
 
 **Engineering requirements**
+For live M10 deployment, D52 adds continuous simulator-time accounting through
+the shared energy model: elapsed time costs hover energy, with the existing
+climb multiplier when measured upward speed exceeds 0.2 m/s. Initial positioning
+and final recovery are separate. Expired views cannot update belief. Historical
+M7–M9 accounting is unchanged; see `docs/m10-live-protocol.md`.
+
 - Passes Gymnasium's environment checker.
 - Fully deterministic given a seed.
 - Vectorised NumPy belief updates. Profile so the environment is never the training bottleneck; aim for sub-millisecond steps.
@@ -733,6 +739,12 @@ scope limits.
 | supervisor | All of the above | Episode events, logs | Scenario loading, shared energy model, ground-truth resolution of declarations, metrics, rosbag recording |
 
 **Execution: stop-and-shoot**
+D52 co-locates detector, belief, policy and supervisor components in one process
+on the CPU-only WSL host, instead of the separate ROS transport nodes in the
+original table. The image/pose bridges and PX4/DDS stay separate. ROS callbacks
+maintain control and continuous battery accounting while a worker performs
+inference and policy decisions. Component responsibilities and shared code remain.
+
 1. Fly to the goal.
 2. Wait until position error and velocity stay below thresholds for a settle time.
 3. Capture, detect, update the belief, decide the next move.
@@ -992,6 +1004,7 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 | D50 | Accept only the completed first-flight check and stop further M10 work, as explicitly requested by the owner. Clear the px4_msgs clock-skew warning by a clean-object rebuild; verify live takeoff, 10 s offboard hold at 5 m, landing and automatic disarm. | Warning-free rebuild and ROS type-support checks passed. Run `20261030T084811Z` passed in 48.546 s; independent telemetry audit confirms the hold limits and landing/disarm. All owned processes stopped. Earlier unarmed startup attempts are retained. No search or transfer result is claimed. See `docs/m10-first-flight.md`. | First-flight increment complete; full M10 remains incomplete and further work awaits owner instruction |
 | D51 | Owner authorizes completing full M10 on 2026-10-31, lifting D50's stop. Log failed online operations, continue independent offline work and retry when access returns. | Preserve completed flights/training/evaluations. Installed software rendering and CPU inference must be profiled on B before fixing deployment timing or transfer scope. Camera scale/orientation, pose synchronization, shared search logic, B sensor refit and the demo remain required; no pending check is waived for connectivity. See `docs/m10-continuation.md`. | Full M10 implementation underway; transfer protocol not yet frozen |
+| D52 | Freeze live accounting and B calibration acquisition in `docs/m10-live-protocol.md`: actual simulator time, measured climb multiplier, normal seeded L5 edge launch, whole-cell visibility, 40 sensor-fit B worlds and all 8,800 lattice views. Co-locate detector/belief/policy/supervisor components while keeping control callbacks independent. | Eliminates free inference/settling time and partial-cell updates while retaining shared logic and historical M7–M9 results. Co-location reduces transport complexity on CPU-only WSL. A ten-view pilot gates resumable full calibration. No T tuning or transfer acceptance is implied. | Implementation and B validation underway; next decision D53 |
 ---
 
 
