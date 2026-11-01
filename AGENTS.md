@@ -1,5 +1,11 @@
 # AGENTS.md: hand-off for coding agents
 
+> **Consolidated handoff (2026-11-02):** Read
+> [`docs/project-handoff-2026-11-02.md`](docs/project-handoff-2026-11-02.md)
+> for the inherited state, M10 continuation history, live run pointers, D53/D54
+> recovery behavior, unfinished transfer worktree, commands and remaining work.
+> The calibration job was left running; recheck its live state before acting.
+
 > **D54: bounded capture correction (2026-11-02).** See
 > `docs/m10-position-diagnosis.md`. Calibration now retries a rejected capture
 > at the same waypoint up to three times, recomputing the local setpoint and
