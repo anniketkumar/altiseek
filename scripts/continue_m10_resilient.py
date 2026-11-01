@@ -26,18 +26,27 @@ class FlightFailure(RuntimeError):
     """A failed flight with verified cleanup and a recoverable controller error."""
 
 
-def recoverable_failure(stage: str, cleanup: dict, summary: dict) -> bool:
+def recoverable_failure(
+    stage: str, cleanup: dict, summary: dict, flight_summary: dict | None = None
+) -> bool:
     """Only isolated flight/capture failures with confirmed cleanup may be deferred."""
     reason = summary.get("error") or ""
+    telemetry_failure = (
+        reason == "RuntimeError('Flight ended before policy observation')"
+        and (flight_summary or {}).get("reason") == "Telemetry became stale or invalid"
+    )
     return bool(
         stage.startswith("calibration-")
         and cleanup.get("owned_processes_stopped") is True
         and summary.get("passed") is False
-        and reason.startswith(
-            (
-                "ValueError('Actual camera missed policy goal by ",
-                "ValueError('Image/pose mismatch ",
-                "TimeoutError(",
+        and (
+            telemetry_failure
+            or reason.startswith(
+                (
+                    "ValueError('Actual camera missed policy goal by ",
+                    "ValueError('Image/pose mismatch ",
+                    "TimeoutError(",
+                )
             )
         )
     )
@@ -79,9 +88,11 @@ def main() -> None:
             flight = Path((repo / "data/m10/camera-flight-path.txt").read_text().strip())
             cleanup = json.loads((flight / "status.json").read_text())
             summary = json.loads((flight / "calibration-summary.json").read_text())
-            if not recoverable_failure(prior.get("stage", ""), cleanup, summary) or summary.get(
-                "world_id"
-            ) != prior.get("active_world"):
+            flight_report = flight / "flight-summary.json"
+            flight_summary = json.loads(flight_report.read_text()) if flight_report.exists() else {}
+            if not recoverable_failure(
+                prior.get("stage", ""), cleanup, summary, flight_summary
+            ) or summary.get("world_id") != prior.get("active_world"):
                 raise ValueError("Previous failure requires review; refusing automatic recovery")
             deferred_first = prior["active_world"]
             with (root / "failures.jsonl").open("a") as log:
@@ -165,7 +176,13 @@ def main() -> None:
                 reason = summary.get("error") or ""
                 # Only known capture/flight errors are recoverable. Unknown errors,
                 # checksum failures, export failures and incomplete cleanup stop.
-                if after == before or not recoverable_failure(name, cleanup, summary):
+                flight_report = flight / "flight-summary.json"
+                flight_summary = (
+                    json.loads(flight_report.read_text()) if flight_report.exists() else {}
+                )
+                if after == before or not recoverable_failure(
+                    name, cleanup, summary, flight_summary
+                ):
                     raise
                 with (root / "failures.jsonl").open("a") as log:
                     log.write(

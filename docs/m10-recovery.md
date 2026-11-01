@@ -14,6 +14,9 @@ Unknown failures and integrity failures require review.
 The recoverable capture errors also include an image/pose timestamp mismatch:
 the rejected frame is not saved, the synchronization tolerance is unchanged,
 and confirmed process cleanup remains mandatory before another flight starts.
+An ended observation is also recoverable when the separate flight report
+specifically confirms stale/invalid telemetry. Other unexpected flight endings
+remain blocking; no telemetry validity check is relaxed.
 
 Within the recovery scheduler, isolated flight failures are appended to
 `failures.jsonl` and deferred. Each invocation allows three passes, stopping

@@ -15,6 +15,18 @@ MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
 
+def test_telemetry_recovery_requires_specific_flight_reason():
+    summary = {"passed": False, "error": "RuntimeError('Flight ended before policy observation')"}
+    cleanup = {"owned_processes_stopped": True}
+    assert not MODULE.recoverable_failure("calibration-world", cleanup, summary)
+    assert MODULE.recoverable_failure(
+        "calibration-world", cleanup, summary, {"reason": "Telemetry became stale or invalid"}
+    )
+    assert not MODULE.recoverable_failure(
+        "calibration-world", {}, summary, {"reason": "Telemetry became stale or invalid"}
+    )
+
+
 @pytest.mark.parametrize(
     "reason",
     [
