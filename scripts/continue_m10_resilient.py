@@ -143,6 +143,8 @@ def main() -> None:
 
         def command(name: str, arguments: list[str]) -> None:
             verify_sources()
+            if name.startswith("calibration-") and arguments[0] == "scripts/run_camera_flight.py":
+                arguments = ["scripts/run_m10_capture.py", *arguments[1:]]
             with (root / f"{name}.log").open("a") as log:
                 process = subprocess.run(
                     [sys.executable, *arguments], cwd=repo, stdout=log, stderr=log, check=False

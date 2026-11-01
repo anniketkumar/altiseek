@@ -1082,3 +1082,18 @@ Decision Log addition: **D53** — Owner-approved bounded deferred recovery for
 M10 acquisition. This changes scheduling only, not accepted observations or
 scientific settings. The scheduler records its own source hash separately and
 waits for the existing job lock before taking over. Next free decision is D54.
+
+## M10 position correction amendment (D54, 2026-11-02)
+
+Decision Log addition: **D54** — Owner requested diagnosis and continuation after
+three consecutive position-rejected flights. PX4 estimated-position settling
+was satisfied while actual camera-world error exceeded 1 m. A one-shot world-to-
+local setpoint conversion permits estimator/stream offset changes during motion;
+the available logs do not uniquely separate those causes. Calibration now uses
+a separate adapter with at most three same-goal capture attempts, recomputing
+the setpoint and resetting settling on each. Position and image/pose acceptance
+thresholds, detector, renderer, visibility and saved valid views are unchanged.
+Per-flight adapter source hashes and rejected-attempt logs expose the controller
+revision; do not describe all views as using one controller version. Exhausted
+attempts still defer, and repeated-flight/integrity safeguards remain. See
+`docs/m10-position-diagnosis.md`. Next decision D55.

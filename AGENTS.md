@@ -1,5 +1,13 @@
 # AGENTS.md: hand-off for coding agents
 
+> **D54: bounded capture correction (2026-11-02).** See
+> `docs/m10-position-diagnosis.md`. Calibration now retries a rejected capture
+> at the same waypoint up to three times, recomputing the local setpoint and
+> settling again. All D52 acceptance checks remain unchanged. Adapter hashes
+> and retries are recorded per flight; valid existing views are preserved.
+> The resilient scheduler uses `run_m10_capture.py`; original acquisition
+> sources remain frozen. Next decision D55.
+
 > **D53: automatic calibration recovery authorized (2026-11-01).**
 > `scripts/continue_m10_resilient.py` waits for the original continuation lock,
 > then defers recognized flight failures with verified cleanup and retries after

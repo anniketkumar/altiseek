@@ -120,7 +120,7 @@ def test_failed_world_is_deferred_and_fit_order_preserved(tmp_path, monkeypatch,
     attempts = []
 
     def run(command, **kwargs):
-        if command[1] != "scripts/run_camera_flight.py":
+        if command[1] not in ("scripts/run_camera_flight.py", "scripts/run_m10_capture.py"):
             return SimpleNamespace(returncode=0)
         flight = tmp_path / f"flight-{len(list(tmp_path.glob('flight-*')))}"
         flight.mkdir()
