@@ -11,6 +11,10 @@ If D52 stops on a recognized capture-position or timeout error with confirmed
 simulator cleanup, it moves that world to the back of the queue and continues.
 Unknown failures and integrity failures require review.
 
+The recoverable capture errors also include an image/pose timestamp mismatch:
+the rejected frame is not saved, the synchronization tolerance is unchanged,
+and confirmed process cleanup remains mandatory before another flight starts.
+
 Within the recovery scheduler, isolated flight failures are appended to
 `failures.jsonl` and deferred. Each invocation allows three passes, stopping
 early after three consecutive flight failures. Saved views are checked and

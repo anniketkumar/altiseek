@@ -33,7 +33,13 @@ def recoverable_failure(stage: str, cleanup: dict, summary: dict) -> bool:
         stage.startswith("calibration-")
         and cleanup.get("owned_processes_stopped") is True
         and summary.get("passed") is False
-        and reason.startswith(("ValueError('Actual camera missed policy goal by ", "TimeoutError("))
+        and reason.startswith(
+            (
+                "ValueError('Actual camera missed policy goal by ",
+                "ValueError('Image/pose mismatch ",
+                "TimeoutError(",
+            )
+        )
     )
 
 

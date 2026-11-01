@@ -19,6 +19,7 @@ SPEC.loader.exec_module(MODULE)
     "reason",
     [
         "ValueError('Actual camera missed policy goal by 2.011 m')",
+        "ValueError('Image/pose mismatch 0.060 s')",
         "TimeoutError('No settled camera frame')",
     ],
 )
