@@ -1,4 +1,4 @@
-"""Three-view B5 stop-and-shoot B integration; not a transfer-scoring run."""
+"""Stop-and-shoot live search: B integration pilots, or frozen M10 transfer cases (D56)."""
 
 import argparse
 import json
@@ -323,9 +323,13 @@ def main() -> None:
         )
         report = {
             "passed": bool(node.passed and completed and not node.search_error),
-            "scope": "B integration; measured energy"
-            if args.measured
-            else "B integration; ideal energy only",
+            "scope": (
+                "frozen M10 transfer"
+                if node.protocol
+                else "B integration; measured energy"
+                if args.measured
+                else "B integration; ideal energy only"
+            ),
             "measured_energy": args.measured,
             "normal_edge_launch": args.normal_launch,
             "view_cap": args.max_views,

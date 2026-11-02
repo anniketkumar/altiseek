@@ -1,4 +1,4 @@
-"""Audit complete B calibration and freeze M10 artifacts before any new T run."""
+"""Audit complete B calibration and freeze M10 transfer artifacts before any T run (D56)."""
 
 import argparse
 import json
@@ -16,6 +16,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("calibration", type=Path)
     parser.add_argument("--out", type=Path, default=Path("data/m10/transfer"))
+    parser.add_argument(
+        "--protocol-file", type=Path, default=Path("configs/eval/m10_transfer_v1.json")
+    )
     args = parser.parse_args()
     root = args.calibration
     status = json.loads((root / "status.json").read_text())
@@ -25,6 +28,16 @@ def main() -> None:
         or status["completed_views"] != 8800
     ):
         raise ValueError("Complete D52 B calibration/refit is required")
+    review_path = Path("docs/m10-calibration-review.json")
+    review = json.loads(review_path.read_text())
+    if (
+        review["run_id"] != status["run_id"]
+        or review["sensor_model_id"] != status["sensor_model_id"]
+        or review["sensor_model_sha256"] != status["model_sha256"]
+        or not review["refit_reproduced"]
+        or review["views"] != 8800
+    ):
+        raise ValueError("D55 calibration review does not cover this refit")
     cache = load_config("configs/cache/default.yaml", CacheConfig)
     load_libraries(cache)  # Verify original imagery hashes once before frozen export.
     b_worlds = load_worlds(cache, "sensor-fit")
@@ -96,11 +109,21 @@ def main() -> None:
     if sorted(p["seed"] for p in checkpoints) != [17, 29, 43]:
         raise ValueError("All three frozen V3 checkpoints are required")
     inputs = {str(p): sha256_file(p) for p in Path("src/altiseek").rglob("*.py")}
-    for pattern in ("*flight*.py", "freeze_m10_transfer.py", "run_m10_transfer.py", "export_deploy_world.py"):
-        inputs.update({str(p): sha256_file(p) for p in Path("scripts").glob(pattern)})
+    for name in (
+        "*flight*.py",
+        "run_m10_transfer*.py",
+        "freeze_m10_transfer.py",
+        "search_recovery.py",
+        "retry_m10_capture.py",
+        "export_deploy_world.py",
+        "review_m10_calibration.py",
+    ):
+        inputs.update({str(p): sha256_file(p) for p in Path("scripts").glob(name)})
     inputs.update({str(p): sha256_file(p) for p in Path("configs").rglob("*.yaml")})
     for p in [
-        Path("docs/m10-transfer-design.md"),
+        Path("docs/m10-transfer-protocol.md"),
+        review_path,
+        Path("data/worlds/rl-val/003b0c54f581c65b.json"),
         Path("configs/cache/default.yaml"),
         Path("configs/env/search.yaml"),
         Path("configs/env/energy.yaml"),
@@ -142,6 +165,7 @@ def main() -> None:
         "status": "frozen",
         "schema_version": 1,
         "design": "m10-transfer-v1",
+        "decision": "D56",
         "world_ids": [w.world_id for w in selected],
         "worlds": [{"world_id": w.world_id, "seed": w.seed, "family": w.family} for w in selected],
         "checkpoints": checkpoints,
@@ -150,20 +174,31 @@ def main() -> None:
         "b_preflight_world_id": "003b0c54f581c65b",
         "live_episodes": 192,
         "cached_episodes": 96,
+        "capture_attempts_per_waypoint": 3,
+        "deferral": {"attempts_per_case": 3, "consecutive_failure_limit": 3},
+        "bootstrap": {"seed": 20261102, "samples": 2000},
+        "demo_case": {
+            "world_id": selected[0].world_id,
+            "method": "B5",
+            "training_seed": 0,
+            "sensor": "original",
+            "smoke": False,
+        },
+        "calibration_review": str(review_path),
         "calibration_run": str(root),
         "calibration_quality_note": (
-            "Integrity verified; quality limitations remain in the full B fit report. "
-            "No T outcomes used."
+            "Integrity verified (D55); coarse-level Gazebo recall loss and poor "
+            "calibration are documented in the review. No T outcomes used."
         ),
     }
     protocol["protocol_id"] = digest(protocol)
-    destination = args.out / f"{protocol['protocol_id']}.json"
+    destination = args.protocol_file
     encoded = json.dumps(protocol, indent=2) + "\n"
     if destination.exists() and destination.read_text() != encoded:
-        raise ValueError("Refuse to replace a different frozen transfer manifest")
+        raise ValueError("Refuse to replace a different frozen transfer protocol")
     destination.write_text(encoded)
     (args.out / "protocol-path.txt").write_text(str(destination) + "\n")
-    print(destination, flush=True)
+    print(destination, protocol["protocol_id"], flush=True)
 
 
 if __name__ == "__main__":
