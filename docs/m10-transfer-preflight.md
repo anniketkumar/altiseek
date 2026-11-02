@@ -21,7 +21,7 @@ before any T run. They are not held-out results. The run root is
   episode ended on the first view and no policy acted. It was superseded
   before any T run; see `docs/m10-transfer-protocol.md`.
 
-## v3 `750d20fa9df98142` preflight (the one that governs the study)
+## v3 `750d20fa9df98142` preflight (superseded, D58)
 
 v2 was superseded after 13 live episodes (D57). The v3 preflight was re-flown on
 the same B world under the same rules; all four cases passed.
@@ -35,4 +35,17 @@ the same B world under the same rules; all four cases passed.
 
 The checkpoints, refit sensor, cleanup and identity checks all verified, with
 no recaptures. The differences from v2 come from live timing: Gazebo is not
-bit-deterministic. The full study launched at 14:02 Singapore time.
+bit-deterministic. That full study launched at 14:02 and was superseded after 30
+live episodes (D58).
+
+## v4 `5560516d08907341` preflight (the one that governs the study)
+
+| Policy | Views | Actions | Sim time (s) | Wall (s) | Found | False decl. |
+|---|---|---|---|---|---|---|
+| B5 | 2 | 1 | 21.3 | 157 | 1/1 | 0 |
+| PPO 17 | 3 | 2 | 28.3 | 141 | 1/1 | 0 |
+| PPO 29 | 3 | 2 | 27.8 | 142 | 1/1 | 0 |
+| PPO 43 | 16 | 15 | 223.3 | 338 | 1/1 | 0 |
+
+All four cases passed, with confirmed cleanup and no recaptures. The full v4
+study launched at 17:20 Singapore time on 2 November 2026.
