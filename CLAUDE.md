@@ -1116,8 +1116,9 @@ T data read.
 ## M10 transfer protocol amendment (D56, 2026-11-02)
 
 Decision Log addition: **D56** — Held-out transfer follows
-`docs/m10-transfer-protocol.md`, frozen as protocol `32c7970163d73479`
-(`configs/eval/m10_transfer_v1.json`, 187 hashed inputs) before any M10 T flight or cached reference.
+`docs/m10-transfer-protocol.md`, frozen as protocol `31b45c0d400dbc06`
+(`configs/eval/m10_transfer_v2.json`; v1 `32c7970163d73479` superseded before any T
+run because its B preflight ended on the first view) before any M10 T flight or cached reference.
 24 T worlds are selected by metadata hash (three per original family). V3 B5 and
 all three frozen PPO seeds (17/29/43) run with the original (`fcf8cdae58ca3947`)
 and refit (`caba50dfc568562d`) sensors: 192 live episodes plus 96 paired cached
@@ -1128,7 +1129,7 @@ recognised operational causes with confirmed cleanup are logged, deferred and
 re-flown from the start: three attempts per case, persisted across relaunches;
 three consecutive failures, integrity or unknown errors stop for review. The
 first complete valid attempt is reported and every failed attempt listed. One
-full refit-sensor B episode per policy (rl-val `003b0c54f581c65b`) precedes T
+full refit-sensor B episode per policy (rl-val `48a9325328a6d2c4`) precedes T
 and stops for review. Report and demo scripts are outside the execution hash;
 post-T changes to them need a Decision Log entry. The demo case is fixed:
 first selected world, B5, original sensor. Next decision D57.

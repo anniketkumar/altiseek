@@ -7,7 +7,7 @@
 > The calibration job was left running; recheck its live state before acting.
 
 > **D56: M10 transfer protocol frozen (2026-11-02).** Protocol
-> `32c7970163d73479` (`configs/eval/m10_transfer_v1.json`,
+> `31b45c0d400dbc06` (`configs/eval/m10_transfer_v2.json`; v1 superseded pre-T,
 > `docs/m10-transfer-protocol.md`): 24 T worlds, B5 + PPO 17/29/43, original vs
 > refit sensor, 192 live + 96 cached. Launch only with
 > `scripts/launch_m10_transfer.py` from WSL; it refuses duplicates. Status:

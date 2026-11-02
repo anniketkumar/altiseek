@@ -17,7 +17,7 @@ def main() -> None:
     parser.add_argument("calibration", type=Path)
     parser.add_argument("--out", type=Path, default=Path("data/m10/transfer"))
     parser.add_argument(
-        "--protocol-file", type=Path, default=Path("configs/eval/m10_transfer_v1.json")
+        "--protocol-file", type=Path, default=Path("configs/eval/m10_transfer_v2.json")
     )
     args = parser.parse_args()
     root = args.calibration
@@ -90,6 +90,11 @@ def main() -> None:
         detector_id=cache.detector_id,
         fit_world_set_id=cache.world_set_ids["sensor-fit"],
     )
+    # B preflight: a single-target diffuse-prior world forces a genuine search (v2).
+    preflight = sorted(
+        (w for w in load_worlds(cache, "rl-val") if w.family == "diffuse-single-low"),
+        key=lambda w: digest(["m10-preflight-v2", w.world_id]),
+    )[0]
     worlds = load_worlds(cache, "test")
     families = sorted({w.family for w in worlds})
     if len(families) != 8:
@@ -123,7 +128,7 @@ def main() -> None:
     for p in [
         Path("docs/m10-transfer-protocol.md"),
         review_path,
-        Path("data/worlds/rl-val/003b0c54f581c65b.json"),
+        cache.worlds_dir / "rl-val" / f"{preflight.world_id}.json",
         Path("configs/cache/default.yaml"),
         Path("configs/env/search.yaml"),
         Path("configs/env/energy.yaml"),
@@ -164,14 +169,15 @@ def main() -> None:
     protocol = {
         "status": "frozen",
         "schema_version": 1,
-        "design": "m10-transfer-v1",
+        "design": "m10-transfer-v2",
+        "supersedes": "32c7970163d73479",
         "decision": "D56",
         "world_ids": [w.world_id for w in selected],
         "worlds": [{"world_id": w.world_id, "seed": w.seed, "family": w.family} for w in selected],
         "checkpoints": checkpoints,
         "sensors": sensors,
         "inputs": inputs,
-        "b_preflight_world_id": "003b0c54f581c65b",
+        "b_preflight_world_id": preflight.world_id,
         "live_episodes": 192,
         "cached_episodes": 96,
         "capture_attempts_per_waypoint": 3,

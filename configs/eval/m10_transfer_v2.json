@@ -1,0 +1,539 @@
+{
+  "status": "frozen",
+  "schema_version": 1,
+  "design": "m10-transfer-v2",
+  "supersedes": "32c7970163d73479",
+  "decision": "D56",
+  "world_ids": [
+    "9da4366347431954",
+    "b5d9a84b32996e9c",
+    "4614b9924e13066b",
+    "fea55d4ed0cb6d19",
+    "21a55c96cf71cfe9",
+    "42d4f76e55f2d9bd",
+    "7fd8514ab3df2b64",
+    "f29c5ba2616ac0f2",
+    "1ffb0ce6ecc8b4c0",
+    "6336fea17e10ffaa",
+    "00d0ac66a28ea370",
+    "dcab44159215e6d8",
+    "83f383c8dd0b275f",
+    "09268676b6d31b04",
+    "1cf39aba6730ccbb",
+    "f47b77a0449bf76f",
+    "09ff34b19b6a9bea",
+    "187701dbdd0d1418",
+    "e7d789376f1b1e87",
+    "68df93a215c60acd",
+    "8fba54ac6094eea6",
+    "0f84edbbc5278b2b",
+    "ecf1fa376240deaa",
+    "ac139e8cd91b4692"
+  ],
+  "worlds": [
+    {
+      "world_id": "9da4366347431954",
+      "seed": 4070008,
+      "family": "diffuse-group-high"
+    },
+    {
+      "world_id": "b5d9a84b32996e9c",
+      "seed": 4070001,
+      "family": "diffuse-group-high"
+    },
+    {
+      "world_id": "4614b9924e13066b",
+      "seed": 4070003,
+      "family": "diffuse-group-high"
+    },
+    {
+      "world_id": "fea55d4ed0cb6d19",
+      "seed": 4060004,
+      "family": "diffuse-group-low"
+    },
+    {
+      "world_id": "21a55c96cf71cfe9",
+      "seed": 4060006,
+      "family": "diffuse-group-low"
+    },
+    {
+      "world_id": "42d4f76e55f2d9bd",
+      "seed": 4060001,
+      "family": "diffuse-group-low"
+    },
+    {
+      "world_id": "7fd8514ab3df2b64",
+      "seed": 4050002,
+      "family": "diffuse-single-high"
+    },
+    {
+      "world_id": "f29c5ba2616ac0f2",
+      "seed": 4050000,
+      "family": "diffuse-single-high"
+    },
+    {
+      "world_id": "1ffb0ce6ecc8b4c0",
+      "seed": 4050006,
+      "family": "diffuse-single-high"
+    },
+    {
+      "world_id": "6336fea17e10ffaa",
+      "seed": 4040007,
+      "family": "diffuse-single-low"
+    },
+    {
+      "world_id": "00d0ac66a28ea370",
+      "seed": 4040002,
+      "family": "diffuse-single-low"
+    },
+    {
+      "world_id": "dcab44159215e6d8",
+      "seed": 4040005,
+      "family": "diffuse-single-low"
+    },
+    {
+      "world_id": "83f383c8dd0b275f",
+      "seed": 4030001,
+      "family": "sharp-group-high"
+    },
+    {
+      "world_id": "09268676b6d31b04",
+      "seed": 4030008,
+      "family": "sharp-group-high"
+    },
+    {
+      "world_id": "1cf39aba6730ccbb",
+      "seed": 4030009,
+      "family": "sharp-group-high"
+    },
+    {
+      "world_id": "f47b77a0449bf76f",
+      "seed": 4020009,
+      "family": "sharp-group-low"
+    },
+    {
+      "world_id": "09ff34b19b6a9bea",
+      "seed": 4020005,
+      "family": "sharp-group-low"
+    },
+    {
+      "world_id": "187701dbdd0d1418",
+      "seed": 4020004,
+      "family": "sharp-group-low"
+    },
+    {
+      "world_id": "e7d789376f1b1e87",
+      "seed": 4010007,
+      "family": "sharp-single-high"
+    },
+    {
+      "world_id": "68df93a215c60acd",
+      "seed": 4010008,
+      "family": "sharp-single-high"
+    },
+    {
+      "world_id": "8fba54ac6094eea6",
+      "seed": 4010003,
+      "family": "sharp-single-high"
+    },
+    {
+      "world_id": "0f84edbbc5278b2b",
+      "seed": 4000004,
+      "family": "sharp-single-low"
+    },
+    {
+      "world_id": "ecf1fa376240deaa",
+      "seed": 4000006,
+      "family": "sharp-single-low"
+    },
+    {
+      "world_id": "ac139e8cd91b4692",
+      "seed": 4000008,
+      "family": "sharp-single-low"
+    }
+  ],
+  "checkpoints": [
+    {
+      "variant": "V3",
+      "seed": 17,
+      "run_id": "985e4600240c36a8",
+      "checkpoint": "runs/ppo/m8-auc/V3-seed17/985e4600240c36a8/step-000065536/model.zip",
+      "sha256": "9f914adcd25ec2a288795845b77ea63047ed76a502404827320d310aca29007a",
+      "selected_step": 65536
+    },
+    {
+      "variant": "V3",
+      "seed": 29,
+      "run_id": "24c1acc2a1dafcaf",
+      "checkpoint": "runs/ppo/m8-auc/V3-seed29/24c1acc2a1dafcaf/step-000098304/model.zip",
+      "sha256": "05d86ba76e478dc16e3400aa3152534697409042408868d25939c8615a52d0df",
+      "selected_step": 98304
+    },
+    {
+      "variant": "V3",
+      "seed": 43,
+      "run_id": "218c69d73dd19d38",
+      "checkpoint": "runs/ppo/m8-auc/V3-seed43/218c69d73dd19d38/step-000065536/model.zip",
+      "sha256": "96ae76b2ddee4506875fb7ebdf9f505259d56ae67336218d56a5b39d9de6bb88",
+      "selected_step": 65536
+    }
+  ],
+  "sensors": {
+    "original": {
+      "path": "data/sensor_models/fcf8cdae58ca3947.json",
+      "sha256": "274a79f9cbdb523322b4bd792aa2b86809e187a2b1f5ef166a7a6bafa03aac91",
+      "sensor_model_id": "fcf8cdae58ca3947",
+      "cache_contract": {
+        "schema_version": 1,
+        "renderer_version": "D28-v1",
+        "detector_id": "700e0ff3455259e8",
+        "render": {
+          "camera": {
+            "resolution_px": 640,
+            "hfov_deg": 80.0,
+            "pipeline": {
+              "blur_sigma_px": 0.3,
+              "jpeg_quality": 90
+            }
+          },
+          "levels": {
+            "cell_m": 2.5,
+            "grid_cells": 120,
+            "levels": [
+              {
+                "name": "L1",
+                "footprint_cells": 20,
+                "stride_cells": 10
+              },
+              {
+                "name": "L2",
+                "footprint_cells": 30,
+                "stride_cells": 15
+              },
+              {
+                "name": "L3",
+                "footprint_cells": 40,
+                "stride_cells": 20
+              },
+              {
+                "name": "L4",
+                "footprint_cells": 48,
+                "stride_cells": 24
+              },
+              {
+                "name": "L5",
+                "footprint_cells": 60,
+                "stride_cells": 30
+              }
+            ]
+          },
+          "variants": {
+            "count": 4,
+            "shift_view_px": 0.75,
+            "exposure": 0.05,
+            "white_balance": 0.03,
+            "glint": 0.2,
+            "glint_threshold": 200.0
+          }
+        },
+        "tau_min": 0.05,
+        "inference": {
+          "iou": 0.7,
+          "max_det": 300
+        }
+      }
+    },
+    "refit": {
+      "path": "/mnt/c/Users/Aniket Kumar/Downloads/AltiSeek/data/sensor_models/caba50dfc568562d.json",
+      "sha256": "71c0046cd984ece448946420bc84145a0263f7d0d2bee657ed3adb18e4ec21f6",
+      "sensor_model_id": "caba50dfc568562d",
+      "cache_contract": {
+        "schema_version": 1,
+        "renderer_version": "D28-v1",
+        "detector_id": "700e0ff3455259e8",
+        "render": {
+          "camera": {
+            "resolution_px": 640,
+            "hfov_deg": 80.0,
+            "pipeline": {
+              "blur_sigma_px": 0.3,
+              "jpeg_quality": 90
+            }
+          },
+          "levels": {
+            "cell_m": 2.5,
+            "grid_cells": 120,
+            "levels": [
+              {
+                "name": "L1",
+                "footprint_cells": 20,
+                "stride_cells": 10
+              },
+              {
+                "name": "L2",
+                "footprint_cells": 30,
+                "stride_cells": 15
+              },
+              {
+                "name": "L3",
+                "footprint_cells": 40,
+                "stride_cells": 20
+              },
+              {
+                "name": "L4",
+                "footprint_cells": 48,
+                "stride_cells": 24
+              },
+              {
+                "name": "L5",
+                "footprint_cells": 60,
+                "stride_cells": 30
+              }
+            ]
+          },
+          "variants": {
+            "count": 4,
+            "shift_view_px": 0.75,
+            "exposure": 0.05,
+            "white_balance": 0.03,
+            "glint": 0.2,
+            "glint_threshold": 200.0
+          }
+        },
+        "tau_min": 0.05,
+        "inference": {
+          "iou": 0.7,
+          "max_det": 300
+        },
+        "deployment": {
+          "renderer": "Gazebo-Harmonic-ogre-D52-v1",
+          "acquisition_id": "cf148ad98784906d",
+          "whole_cell_visibility": true,
+          "pose_source": "Gazebo ground truth",
+          "camera": {
+            "resolution_px": 640,
+            "hfov_deg": 80.0,
+            "pipeline": {
+              "blur_sigma_px": 0.3,
+              "jpeg_quality": 90
+            }
+          },
+          "detector_id": "700e0ff3455259e8",
+          "variants_per_lattice_view": 1
+        }
+      }
+    }
+  },
+  "inputs": {
+    "src/altiseek/config.py": "97791e78e70e3008b2195ec4218d99a4465d0091ad62d54347f74d2426fdf132",
+    "src/altiseek/__init__.py": "ef9d4a551670cc2e62356d219b30b2d49bd743e25a53dbfd513e4dfcbeb03759",
+    "src/altiseek/belief/information.py": "e01b0229c717e3183c541ededb79334df7276d2445bbcafb39bb4024d72c46a2",
+    "src/altiseek/belief/state.py": "a04ce051a885cacd216dd72c3b65b8c2aba8fd5979a85c28b5109d94f488dbc3",
+    "src/altiseek/belief/__init__.py": "92ad8f64a600623c8eeacacd317465fc860d2a5a703faa1ae674bd30c55389c0",
+    "src/altiseek/cache/build.py": "be4bf3c8df55f75be630438a36c01d8af8c71d1bdef304d4dc61a12f5d16ae9f",
+    "src/altiseek/cache/collect.py": "825a144a2c3e85f55e015261e6d2e5688ec6545135b6408fb659664bf4eadb6d",
+    "src/altiseek/cache/config.py": "66c0ec13c32ac2039c56cfe8099efe8a806adf99a3cc0706dc029d7f8cbba895",
+    "src/altiseek/cache/jobs.py": "716f2fde380d169344223a5d67b73d71cecc4554aaa74ea3f80b8048e7a9ad77",
+    "src/altiseek/cache/robustness.py": "8a647c3cebd5040400b11a3001f0fdbeaab8e6416e4cac7bb6a648842c9723ee",
+    "src/altiseek/cache/storage.py": "b2ea408f2caf10035a0c16c5491ea406f29f324d7ee617f2cf7d5159560f02d6",
+    "src/altiseek/cache/validate.py": "baef3bdd0a25a2dd9e514c979fa0fc10628dfbccc3b56d3877628003e638f34a",
+    "src/altiseek/cache/__init__.py": "87302eeae74ac3b93bbf68bab1f32fc9304397bfb7b7465cfca8620f5809be6e",
+    "src/altiseek/calibration/config.py": "925c567d9a8f1b8da44737ad8e1c344cac71991f56a60dd1ff350d68f4e5b833",
+    "src/altiseek/calibration/fit.py": "26f4428227bf0a7445741d2e979b775f862a9bff8ca84f4cb8b9142cac7d5c12",
+    "src/altiseek/calibration/model.py": "cba2a6fa1ca22c65d3053d2145efa6022155c99e61f86afeec4be9242be9d23f",
+    "src/altiseek/calibration/outcomes.py": "eeed3051d2079624e74abcfe9e5d4246120b008a26d5959adfcb690b06e13d84",
+    "src/altiseek/calibration/real.py": "c8390f00b3c95c90333c9e454f0058788f2dc6f9d64e225cc90c0c618aa12c1c",
+    "src/altiseek/calibration/temperature.py": "a40b4625952c778c0494e67f54ce36f9db9032c4a8fd872c81343b9361bee416",
+    "src/altiseek/calibration/__init__.py": "151d9a0afe133d6fd0eacb89d17453bd47af5dc98db23c585843629aa6402491",
+    "src/altiseek/data/camera_fit.py": "78445df8cda69a7a051afe91288ffc02af9345cb145d157838f968c6f057f0f7",
+    "src/altiseek/data/config.py": "edbf8d4b66036bf8664b2fd30433531265f6c65829ac866516e214e32d94ac1e",
+    "src/altiseek/data/frames.py": "c8d94abee8423fd4cf58be3a761a20cc0399ff14bc75ae4dfa908a51e741d4ef",
+    "src/altiseek/data/horizon.py": "a280ad49c5cfa93266ead492d7ee6d27a2d51717a296eb6cfbab35c9a7074e7b",
+    "src/altiseek/data/images.py": "4f2b0e56d2869789cd994866a0ecf9635f4ff4c80a62511af2f461dbb0dfa5fe",
+    "src/altiseek/data/image_stats.py": "9e7559495563599e7d3cf92343c6fb0e634fba9365d20d4688c0c5e67cdde27e",
+    "src/altiseek/data/leakage.py": "05575edd188c5f5db9d53137b5d92d8731f01cc0e62db42d43faa625d5ac0dee",
+    "src/altiseek/data/sessions.py": "d2d3bfb7ed03f70d56dbd43d2ca68ab21e265adb8683379446e89fd5363aa88f",
+    "src/altiseek/data/splits.py": "9d1dbfe72ee7582c2360771d60841e4c616475ce92c5307969b52cbffbb2c120",
+    "src/altiseek/data/tables.py": "71b41f89c869022f0ce882f674fbedc3c767aa3e1cb6f1766c9e1a1a94660d5e",
+    "src/altiseek/data/__init__.py": "85cc8b631f490a940f3f8644ee0d35808da8275deb30bfec66320000326fb7db",
+    "src/altiseek/deploy/assets.py": "9e5984fb29cea32ec92b9544d8ec13c888ec8d36135e7ab2bded8f168f1089a5",
+    "src/altiseek/deploy/calibration.py": "03726e3a305bfe97b3bb31f83997d93d39ad3e961dbbe8ead2651fd9d67ea194",
+    "src/altiseek/deploy/meter.py": "bbf5f5792356ca98d820854414c2d024142e4fa2c03f9a310700243764eaaecb",
+    "src/altiseek/deploy/perception.py": "9225f18ae83b2824245f30b5075b29225eeb6aa5a74457edced56d4c1f38458a",
+    "src/altiseek/deploy/projection.py": "d0848ecfbc7c71be6fe4bfb57452a0b9bf6badbe24474dd4c694b03fce9c54f7",
+    "src/altiseek/deploy/search.py": "a4bf60aaf5639f4e93420e2f5f0ae05e7c00842c5eeefd2a3ba453ef6eddb383",
+    "src/altiseek/deploy/transfer.py": "d38cb365cd331d23707197f3e613393a0d80da8bd623afff9a059731bc02c65b",
+    "src/altiseek/deploy/transfer_report.py": "61821342dc02b47555cdc7ba9aae003cd4cdda00cfdb0b438e7a8fef203e26f5",
+    "src/altiseek/deploy/__init__.py": "4b359705853e548bf9a0ab0458977ad59ccb291de1bc628c98759143f6554704",
+    "src/altiseek/detector/config.py": "546d6d6b0171cf4209e10cfb8182bac1d50475d5784b15f3dc14ab8abd66dc2c",
+    "src/altiseek/detector/evaluate.py": "92e918fdfab1e9041434bb246f38aa768a4ccd1cf75a3411a4a4b3586be984b3",
+    "src/altiseek/detector/infer.py": "65f8f25587eed8112d9690e683af7a1c2e0772e5f2414060715770caf7a92c03",
+    "src/altiseek/detector/views.py": "206cc8a7a47ea48f642848de4a863ffde8d980662d35df8612695584bde3c398",
+    "src/altiseek/detector/__init__.py": "d1e27b7775a40564fcfdc294c7f4f908c3b6285956e1343d3e6a8b06674fdb49",
+    "src/altiseek/env/config.py": "aa79d327e2012860c8604f072a2c0986fa2e161b15eb415c99cb2ff717f0ee5b",
+    "src/altiseek/env/energy.py": "ee695c36108ec297f17d3447fc4f9a03c13456a88ac07ac5cce248cb77559923",
+    "src/altiseek/env/logging.py": "1d5efec1207848837d3c50b1f4d2c57c9863edea70c95ebfe6ddd057af57bd8a",
+    "src/altiseek/env/navigation.py": "5ab26db7fa42ab3e84346c6c12620d520b7336f5178b239e303beceb61240a14",
+    "src/altiseek/env/search.py": "22bbeb9353742b1c60ed1a3f9b84986933fa96bb39d3c574ac976a709efb9a2c",
+    "src/altiseek/env/__init__.py": "51b4f040254c048c0ede0209befea1a8bedf20be4c94d0611b82bef1d5b529df",
+    "src/altiseek/eval/config.py": "cfcf89f78d72a7d7a30c8de6c4122bc2af1505d38271fcaee85cfbb28856330f",
+    "src/altiseek/eval/extension.py": "e0571023f5e340ff2c9d025ab234720a9dbe53bf2fbd1a50cf46e2c2eae56811",
+    "src/altiseek/eval/extension_report.py": "52ac661e0c0f89d61f482249055e072cd7e0bb7c5be181687a56b0cd49155b98",
+    "src/altiseek/eval/reporting.py": "4f6ff1f52af93222fa2c11a5d2b8a7100e5290329a03d7d6fc93426ca31d8b27",
+    "src/altiseek/eval/runner.py": "042c1c484bd3ee3650597f15ebb8dff09f5434d5d13c7b39ffbba0a09285dd82",
+    "src/altiseek/eval/__init__.py": "02df37406dc22cdf1a8d06dc8038e961d91f29dbbd1670979d90af51c90f8b18",
+    "src/altiseek/geometry/camera.py": "d087745bbd0c52b63f414083b9d880cc0810002d4c55a8e4b83f898e6211baeb",
+    "src/altiseek/geometry/design_config.py": "9764b9c2a312822fcb789c63c1617e7d8daf12c4951c8c7c6a6d0f4e633a52b9",
+    "src/altiseek/geometry/frames.py": "e778cf6458b92e6ba2a379d306bb1dc7efddcf98a045d1257294cd7c78f59955",
+    "src/altiseek/geometry/levels.py": "c518383565a15f1b896d5a0f809af1e2974454e48569b29795b16e25e247fc02",
+    "src/altiseek/geometry/level_design.py": "c8bb1afbf018472bc6b341147ee6ee2ae20dc441d471d7817edd2efb8aaa2785",
+    "src/altiseek/geometry/raster.py": "ebea041fcd65c5a78b5ee88be9943f5d54f07da343490ca1e96529d9a358412e",
+    "src/altiseek/geometry/rectify.py": "03310c230ef333deaa1fd46f9691df3c0017a69138e41c32a840bee727505fa7",
+    "src/altiseek/geometry/__init__.py": "3ba2c6c1d147ab02b8df8b50b63c15f6a23d184f82bacaef5146728c90716621",
+    "src/altiseek/imaging/config.py": "d37fa78043e88068c20064d62cc6d6197e9841730b6479f25a9dbc3263343ffc",
+    "src/altiseek/imaging/pipeline.py": "a08ce303343334c3fe53b8c7efdd9faa3f6afada248dcc2ba9224eda4f88f5a0",
+    "src/altiseek/imaging/__init__.py": "37e91240e7bea6986fdd69514f283e873d002d0f58288cc1e63f42f65cef4dae",
+    "src/altiseek/policies/baselines.py": "3aa14b2567299fb770f1e65ded0265257c7b3b9372b2a36f134b9806255b35e8",
+    "src/altiseek/policies/config.py": "fedb8fa26cec422b1e04698ffbba36fad111a3b9fa438e9e842f7af3067048ba",
+    "src/altiseek/policies/ppo.py": "d36467940d7b602381aea865e35fd42d9b6017c173eaf89dc58467c7c47daa24",
+    "src/altiseek/policies/training.py": "3a371b1f4ec2881d18d43abee44c4dd0e5a71803ce798c141714ac5d818a5a28",
+    "src/altiseek/policies/__init__.py": "5f551dd8d92e4bd2855ea6491ca93cebe8e38d395c83da0b5250224ca0c67d75",
+    "src/altiseek/registry/manifest.py": "72773981e9c23bfe44ab090548153d73787fef8bec7eca16a4a014d740e98013",
+    "src/altiseek/registry/run.py": "67338d11dca6a4e8848451b092f5b7c0b01e466cf37401044632c109c7f1c202",
+    "src/altiseek/registry/__init__.py": "75d3b6ed7e4abe70ae5d7e371ec1d0edafe28f2a2b100bcc59a39d8708ec992e",
+    "src/altiseek/world/appearance.py": "9bd0cdd500a7a05e85756d847254682a6081931ace52c9d609ea8faff040c51a",
+    "src/altiseek/world/config.py": "f24c3f9a448e7a5d7c146b3d4f9463a5a72904dd948e95a2663b6a9e1639eaab",
+    "src/altiseek/world/library.py": "deefe2ed045fac7577c07f00de5060206d26c0c19601e93ff88c783be006181c",
+    "src/altiseek/world/render.py": "dce544c438e1f5aebfdf84e0b68f4dc1b0dd5fc94aa94a4c777e1e53ee8d61ca",
+    "src/altiseek/world/sampler.py": "d8a246f8280532d15893e0ad6b1cb36b0b1b13afa773cdf1083d0c8298c8a101",
+    "src/altiseek/world/spec.py": "2209b9e372ef16834fd725ea90dfd9422b0a6b1c358d872d416e03b8f85401a5",
+    "src/altiseek/world/stress.py": "a5cfa9455467d9ef0ffe036589ad10dbc4799411dac82dbf295db212c5c063c7",
+    "src/altiseek/world/__init__.py": "abec817da9d5de3bcae1be48473191cd0b63570b7c7d2fbf86cf0923a63d9fbe",
+    "scripts/calibration_flight.py": "152fd23870ead2b88b608e2284a1af30cdc32293d9bd69741ba30e79d0e52009",
+    "scripts/camera_flight.py": "03ad9578ad21902457bd1a10f0c86856fd1fc5f1ab081892552306096a98f51e",
+    "scripts/first_flight.py": "78d6b8dd15570103cf49b9218c7309addec358e942e6759e686ed035615c22cc",
+    "scripts/first_flight_gcs.py": "5c5a770a07dee1962c589b3087ba38a70d6d1c0e637e2f8d97d8ba0967458b1b",
+    "scripts/perception_flight.py": "f70c83deaab8a1275788523038f1ac3c8477a3578f72531f7eacf65de529dbcd",
+    "scripts/run_camera_flight.py": "71aa9b4bac3f7df2c762259ec5396612a47243bdcc13c5abf80c730f8414f14a",
+    "scripts/run_first_flight.py": "0e91c8ec87b8ebfa11570c38531e8b005e75b0ac265f2062f69b9f4051d6e727",
+    "scripts/run_m10_transfer_flight.py": "39f4d293ce0bf14852647abd55b259c079c172b14c1122e8164d8ca790a07611",
+    "scripts/search_flight_pilot.py": "802a62fae2e07697172b4275e42e7d646ab3009c94e0ef794ff7ba6ea8f2ae7c",
+    "scripts/run_m10_transfer.py": "ef22e6a966d43caf3ce07291b815d94f0c630e631306afca7dd0aa160c150bb7",
+    "scripts/freeze_m10_transfer.py": "ac57065f4ab6dcca681715dd0cfc5f56e3bb78b2704484e49ae6b3202ea9ac83",
+    "scripts/search_recovery.py": "dfcee6a4127521697ff2025fd405b20c4ecc63638e2c3352d9bf42bfff05aed7",
+    "scripts/retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+    "scripts/export_deploy_world.py": "a0502daf2055e3aa04614cf0fd3a5f0b00d5147d672f426050bd6e9f31cc779d",
+    "scripts/review_m10_calibration.py": "293bdcda2e518b927775b6aa8584eaeaa19892435ed6b4074b744178c976ace9",
+    "configs/cache/default.yaml": "4b9b74ae4302dc709b12e5e7a23cb498ccc4aeb4308b6ed49e18666c79be376e",
+    "configs/camera/default.yaml": "f0d267ce8f34195ba08976498b0e45ea9791cec16c76ad72f6064003eb61de85",
+    "configs/data/default.yaml": "cb753a1411e14aa17fb37b0a04011160ffaf49112a76276637e6f815518fbc26",
+    "configs/detector/default.yaml": "8001d08aad7c7433cf5738e163c5545b39b6d14421a3b606fcdb94c19a42abf5",
+    "configs/env/ablation_declare.yaml": "842676e1327215a6dadc918ffa8ff0ea2fd2713fa76c0cc7e2ec492ca1af3ea0",
+    "configs/env/ablation_egocentric.yaml": "fae695044652864c1dfeaf24edda82708c857f97068d1fcd8bd818044958be53",
+    "configs/env/ablation_relook.yaml": "c46a77e0fe8e4ca50feb4652c9f74bc35455086d1dd1b9be598517d960c8df19",
+    "configs/env/ablation_shaping.yaml": "87e283434738d283201023414af9f3f8539c1c9ccc05cd68f94f1402b95d3e2b",
+    "configs/env/ablation_unknown_k.yaml": "0cd3dd47e176e12564a551f3932e95ccebf926ce0a55325c6bc2a5d6d1066898",
+    "configs/env/energy.yaml": "7c133ca4a7c342d4b356c40bfc5ca4a8e95335b98bc98d64c7c66ab1483a492a",
+    "configs/env/search.yaml": "a1d26e58d2aceb5e386b97872c5fccf134bcd4a945b7e0d7cc29885cfbbc041a",
+    "configs/eval/protocol_v1.yaml": "7e5f37cf1dbb9c390811b013825a8126ec3df5024e915d5e252ec5f3f3fb7fee",
+    "configs/eval/protocol_v2.yaml": "3cae853a931443d06bced1972d2144006c5eea2d70c5b0a96b823399627ae978",
+    "configs/levels/default.yaml": "6010ac542d8666aed4c8f59f6da2d0326ceb7cdc349799f6b7dcd12ab96530fc",
+    "configs/levels/design.yaml": "68a34d4782b32715bad9027060cae9aa27163d87205436fb6f58c615949bc7bf",
+    "configs/policy/baselines.yaml": "cd7c476ce0169727370327a8db91a17f6ff82f0cdd8187f710728d7be8214a59",
+    "configs/policy/m9_ablations.yaml": "cf439e503bf9069bbf53392ee12d9107011a326ef7fee8687b7ca09edd07c1e4",
+    "configs/policy/m9_appearance.yaml": "6219b6acc1afe388d516525d687f45fff42e097ad4608e234cb1a80a00d10047",
+    "configs/policy/m9_appearance_control.yaml": "a9d47b51298ff57cead55ae97202bcd1660ac4d951f8c542e5c6e31c55dbfc52",
+    "configs/policy/ppo.yaml": "b5c05ad047ac30e512d9a860a25314c093c90422228568846bc2a388a7165d0b",
+    "configs/policy/ppo_auc.yaml": "56213686b391f9fb9db6174a0faf0521004967b2e3819a7e56730109fbff26fc",
+    "configs/policy/selected.yaml": "319a93f72667d5372fc81221a8f1806ddd29a5a782e92fbf4265d3ba291d564b",
+    "configs/sensor/default.yaml": "e686ae1455704361d6b4c936c416ea2ac2a5452a0142b3e3611c28fa10958714",
+    "configs/world/default.yaml": "92637f75bc01b321aeb1b7906523e06c635c2e6d9971dc0f12743cbd868c215e",
+    "configs/world/library.yaml": "b67a7a8fa499f4b98a9c96baf7b944eec282153c1e69ec563d2c196fb69202f4",
+    "configs/world/render.yaml": "3215abf93b6cda1bd10c34818f254b8cbad1f8bbedf57ce733154f14f7648599",
+    "docs/m10-transfer-protocol.md": "4106d6df62e4d043470a7d1542cdaba207e5106e846bc575824c1f0c657a2e95",
+    "docs/m10-calibration-review.json": "d0dc61840aae1c89553e41635e78318f798430aa67d2b7787ea68303d5175f8e",
+    "data/worlds/rl-val/48a9325328a6d2c4.json": "312f9c9368177cec5f03cf0e589c85fe8a1eb30dc099f2e5f8199a2f434d7e66",
+    "configs/eval/artifacts_v1.json": "7276b9a0858948d33b4999c9194a461dbd1eb289b06b8f11222d5ab4338ada43",
+    "/home/aniket/altiseek-m10/continuations/cf148ad98784906d/definition.json": "5e1c63ec3b309d6e273c2dec1a3975bb006203ba87a9fb475e914632865714bc",
+    "/home/aniket/altiseek-m10/continuations/cf148ad98784906d/contract.json": "bcaae27fdcb4ada4041660762b32942ea1481c0c0234551c2e1a69a06f781e94",
+    "/home/aniket/altiseek-m10/continuations/cf148ad98784906d/fit.json": "e25d8c75bdf39890aa6be7f7ce391a1ad01ed68b3d7fbb5edb4665ac037f868c",
+    "data/m10/transfer/calibration-index-cf148ad98784906d.json": "16f7ab7015a335d8df253129e595e27fc084631a0785972e3a7cc9958c74df52",
+    "data/sensor_models/fcf8cdae58ca3947.json": "274a79f9cbdb523322b4bd792aa2b86809e187a2b1f5ef166a7a6bafa03aac91",
+    "/mnt/c/Users/Aniket Kumar/Downloads/AltiSeek/data/sensor_models/caba50dfc568562d.json": "71c0046cd984ece448946420bc84145a0263f7d0d2bee657ed3adb18e4ec21f6",
+    "data/kaggle/altiseek-detector-v3/detector/train/weights/best.pt": "700e0ff3455259e8c54f5616c197ca5ae0cf3d03cb3e9f6cb93a5fbfaa9bc9c5",
+    "runs/ppo/m8-auc/V3-seed17/985e4600240c36a8/step-000065536/model.zip": "9f914adcd25ec2a288795845b77ea63047ed76a502404827320d310aca29007a",
+    "runs/ppo/m8-auc/V3-seed29/24c1acc2a1dafcaf/step-000098304/model.zip": "05d86ba76e478dc16e3400aa3152534697409042408868d25939c8615a52d0df",
+    "runs/ppo/m8-auc/V3-seed43/218c69d73dd19d38/step-000065536/model.zip": "96ae76b2ddee4506875fb7ebdf9f505259d56ae67336218d56a5b39d9de6bb88",
+    "data/caches/test/9da4366347431954.npz": "e1e2c4b1b3ba88cfdb1ffd5d6e8cc1e98d84fa685ecced03a9488e13db1dbbff",
+    "data/worlds/test/9da4366347431954.json": "d247cdc90111eea9fd23a5d69dd704ccca88b5119ef4ade8c636832e14880131",
+    "data/caches/test/b5d9a84b32996e9c.npz": "3dcdffbb81d34c766f737e317ae10c9fe6f314ffa8a9ca0d675dc56af4c4942a",
+    "data/worlds/test/b5d9a84b32996e9c.json": "17e57d50df2bd1c5a1338015963a0499d34f62963c73085812d69da8fedbc595",
+    "data/caches/test/4614b9924e13066b.npz": "331204e09e1a1ef26b59e4e14c739e6c3e8d2233d770d7423b2d097bd187e970",
+    "data/worlds/test/4614b9924e13066b.json": "a4cd353c088a88192efa1be519678ce538a7e6d1d2ccc1217274b87d6cb867b9",
+    "data/caches/test/fea55d4ed0cb6d19.npz": "6a31ebc8b3bbb49dbc7c0f5e11681f65708bfa96d00cb8ccd7f9153c7e853c66",
+    "data/worlds/test/fea55d4ed0cb6d19.json": "174d64bb8f6d363bbf7f553de7aa02a2be322e4e57eb818539424c2c2d42207e",
+    "data/caches/test/21a55c96cf71cfe9.npz": "cd99d4562b6344c4f90fe060f3b0cb7eec831a255ae3480c44e9dc2f52e6ea14",
+    "data/worlds/test/21a55c96cf71cfe9.json": "2cccb8fa840a5485f3aa7bc4cef234d62f8f0ee140a498594b991bbecfcc03de",
+    "data/caches/test/42d4f76e55f2d9bd.npz": "6d7cf7d7c85ca0d6f9c5f1f33186ff8e9e62df02f27a1a75d0191c5766b13c7f",
+    "data/worlds/test/42d4f76e55f2d9bd.json": "3dbe5a8373cdcbde5251868da9ffb16fcd7ed523ea899c48912498fdcf32ca9f",
+    "data/caches/test/7fd8514ab3df2b64.npz": "fe2ebe85902eb8fc7fdc877730909020b7e7d3b0ed12290563ede6a645bae92a",
+    "data/worlds/test/7fd8514ab3df2b64.json": "54c12dbaef234d289f9c7b780ced0e5a7efdf4182052f3bf6969d256fadece62",
+    "data/caches/test/f29c5ba2616ac0f2.npz": "5dbe3ac0e207111477728f0387341d7036a2d8fc198de1847d80492a596b2ab7",
+    "data/worlds/test/f29c5ba2616ac0f2.json": "df00113441ec62cc2d097fc422dc53298457e3aaba30827b1b60b21545c73dd6",
+    "data/caches/test/1ffb0ce6ecc8b4c0.npz": "b378c5663837df7a710e6aed6a1b2963fbe832645c1e4711bcd5d522f750d61f",
+    "data/worlds/test/1ffb0ce6ecc8b4c0.json": "28e934109ba9533bb06e22c82d391be677ccb8ed3728834b3d44f4d8ca82449e",
+    "data/caches/test/6336fea17e10ffaa.npz": "bd4ec90259cef3b3dd4018ce27b2765acacc27807f29fb0409897301ed93f600",
+    "data/worlds/test/6336fea17e10ffaa.json": "ebd1df299a2897e860f4aca9fc327dcace730a853ffba65d9c58b5d5e21343f9",
+    "data/caches/test/00d0ac66a28ea370.npz": "3600151e0417d04aa3d10bd37fbb468ce66ccc17d2523ad780e5b030608b867e",
+    "data/worlds/test/00d0ac66a28ea370.json": "1eb882a0c5dfdc3f91d52e5c99ec800225054c1ccb228216aebcaea28d3accfb",
+    "data/caches/test/dcab44159215e6d8.npz": "d5528c3f8248cf595a6e6ff2720f14a114c1d2e6486c003236182ec7ac89014b",
+    "data/worlds/test/dcab44159215e6d8.json": "1754f7cf7f040b40d1378378b7f53844e1fe6f1a17821d811b8426fd0f87ca3f",
+    "data/caches/test/83f383c8dd0b275f.npz": "85a8d1e3016d3722c9f8a7b734588c7862923d3739445c54d2e97f63545b41d7",
+    "data/worlds/test/83f383c8dd0b275f.json": "c78fd01081247f369775ab53b513800e51ab73615018bb8db8a97f3b232e8b6f",
+    "data/caches/test/09268676b6d31b04.npz": "6d97c1dfca6ca2680820d434aba62a6b6ad711f0bd88ccf9e6fd7421b93eb28f",
+    "data/worlds/test/09268676b6d31b04.json": "1df4ddc319f8c0c394c91a32eb298368ccbe042f560108800a09fe3860b5b1de",
+    "data/caches/test/1cf39aba6730ccbb.npz": "b1bf02620748b9fa67c606b82bdc58a106380d92b69018fda16a0d8406110915",
+    "data/worlds/test/1cf39aba6730ccbb.json": "1c70aeb1841f26fa312a526ba555f1f0e6fb8219e908ac629fd194408a52e5c1",
+    "data/caches/test/f47b77a0449bf76f.npz": "0d808b16a475c1b2cb141749e4f762a786a476d3549509b25e58fe11abf79fb1",
+    "data/worlds/test/f47b77a0449bf76f.json": "649317b2c23339f25819705c0814e9d34d208e06bd972d94c215237a8ea68da8",
+    "data/caches/test/09ff34b19b6a9bea.npz": "667203d57a05b33514ffd90ac60d5f5891ec6de81970b16319d1c7d4bd7ec477",
+    "data/worlds/test/09ff34b19b6a9bea.json": "c8154bfb09d6e59954e51cdccf08d5ea934fccfa4482415e624b86b2c1550dc6",
+    "data/caches/test/187701dbdd0d1418.npz": "c4bb3cb363a57e37fd39130423164f18889c0ffee7348ae0ca39b9e45c266b9e",
+    "data/worlds/test/187701dbdd0d1418.json": "abf8b494a8e5308c173c1cde09c79af5ff5878a398d8b6b938ad4633bd0ca2dc",
+    "data/caches/test/e7d789376f1b1e87.npz": "6c2a5fda8f9018c053d9b0850fab86052a1904b9ba441eefe7f9dd8cd8ecf6c0",
+    "data/worlds/test/e7d789376f1b1e87.json": "96c5ad65693b846eeac1ad25a68b40e176bdd2a0f30ca7ba4537cee7317ded53",
+    "data/caches/test/68df93a215c60acd.npz": "3b36316d7789fac74c26ff30e1606a75e8e9724d5db1b36099d39a7291f6de48",
+    "data/worlds/test/68df93a215c60acd.json": "c860ebefb6e65737c914b5148118367767b529bc9d3567beed0af5123d830ed3",
+    "data/caches/test/8fba54ac6094eea6.npz": "82f6d75fbac59584f70b77f8a56af76eaa49f1f400776ef37a66c2dc97ae544f",
+    "data/worlds/test/8fba54ac6094eea6.json": "14726ac87b2b4642b41e2c3aea445d55bf9eca607682fec6482a27a2e571e1b8",
+    "data/caches/test/0f84edbbc5278b2b.npz": "b2c0590384858e766b84abd3fc239a122fd1a967a52ff6463fd810121c505b49",
+    "data/worlds/test/0f84edbbc5278b2b.json": "a01c0bf7239af4b569b7383148a5fed25fcb553ef926b15e1471f01b2fd01860",
+    "data/caches/test/ecf1fa376240deaa.npz": "99ec51eecca0b9670ee6791c43c0d390e8a8f58e43c564a3a1c8caa08df70ad1",
+    "data/worlds/test/ecf1fa376240deaa.json": "2ec6e9fb8f81bb7000707b84a7e7d150a6d243c7d722dcc807d3826e65ced142",
+    "data/caches/test/ac139e8cd91b4692.npz": "ffda96a914f645a4a874f5a5fc6e646edd204df6912dad7dcb270b4cae62de07",
+    "data/worlds/test/ac139e8cd91b4692.json": "90712da7aac8fd1cebbc16c10254f78f4fcda293e1b2ef231ed2dde63890d285"
+  },
+  "b_preflight_world_id": "48a9325328a6d2c4",
+  "live_episodes": 192,
+  "cached_episodes": 96,
+  "capture_attempts_per_waypoint": 3,
+  "deferral": {
+    "attempts_per_case": 3,
+    "consecutive_failure_limit": 3
+  },
+  "bootstrap": {
+    "seed": 20261102,
+    "samples": 2000
+  },
+  "demo_case": {
+    "world_id": "9da4366347431954",
+    "method": "B5",
+    "training_seed": 0,
+    "sensor": "original",
+    "smoke": false
+  },
+  "calibration_review": "docs/m10-calibration-review.json",
+  "calibration_run": "/home/aniket/altiseek-m10/continuations/cf148ad98784906d",
+  "calibration_quality_note": "Integrity verified (D55); coarse-level Gazebo recall loss and poor calibration are documented in the review. No T outcomes used.",
+  "protocol_id": "31b45c0d400dbc06"
+}

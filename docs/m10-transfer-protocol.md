@@ -4,7 +4,7 @@ This protocol was written, implemented and frozen before any T world was flown o
 any T cached reference was computed for M10. `scripts/freeze_m10_transfer.py`
 hashes this document, every source and config file, both sensor models, the
 three PPO checkpoints, the detector, the selected T world specs and caches, and
-the D55 calibration review into `configs/eval/m10_transfer_v1.json`. Every runner
+the D55 calibration review into `configs/eval/m10_transfer_v2.json`. Every runner
 command re-verifies those hashes; any change stops the study.
 
 The report and demo scripts do not affect any episode. They are committed and
@@ -59,9 +59,12 @@ failed attempts are listed in the report. No case is dropped.
 ## Preflight before T
 
 The full regression suite must pass. Then one complete B episode per policy
-(B5 and each PPO seed) is flown with the refit sensor on rl-val world
-`003b0c54f581c65b`, under the same rules. The runner stops there for review
-(`--stop-after-preflight`), and the measured runtimes set the ETA. The original
+(B5 and each PPO seed) is flown with the refit sensor under the same rules, on
+an rl-val world chosen by a fixed B-only rule. The rule takes the first
+`diffuse-single-low` world by the hash of `["m10-preflight-v2", world_id]`:
+`48a9325328a6d2c4`, a single target under a diffuse prior, so the search is
+genuine. The runner stops there for review (`--stop-after-preflight`), and the
+measured runtimes inform the ETA. The original
 all-seed pilots and the full-budget B check stay prerequisites. Preflight is B
 integration, not a held-out result.
 
@@ -101,3 +104,14 @@ committed.
 
 M10 is complete only after every case is complete, all integrity checks pass,
 the report and demo are produced and a final validity review is recorded.
+
+## Version history
+
+- **v1 `32c7970163d73479`, superseded before any T run.** Its preflight on
+  rl-val `003b0c54f581c65b` passed for all four policies with the refit sensor,
+  with confirmed cleanup and no recaptures. But each episode ended on the
+  initial L5 view (target declared; 1 view, 2.8–5.7 s of simulator time, about
+  130 s of wall time). No policy chose an action, so policy execution and
+  runtime went untested. v2 changes only the preflight world, chosen by the
+  B-only rule above. No T world, cache outcome or result was used. v1's records
+  stay under its own transfer root.
