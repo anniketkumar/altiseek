@@ -20,3 +20,19 @@ before any T run. They are not held-out results. The run root is
 - v1 (`32c7970163d73479`, world `003b0c54f581c65b`) passed too, but every
   episode ended on the first view and no policy acted. It was superseded
   before any T run; see `docs/m10-transfer-protocol.md`.
+
+## v3 `750d20fa9df98142` preflight (the one that governs the study)
+
+v2 was superseded after 13 live episodes (D57). The v3 preflight was re-flown on
+the same B world under the same rules; all four cases passed.
+
+| Policy | Views | Actions | Sim time (s) | Wall (s) | Found | False decl. |
+|---|---|---|---|---|---|---|
+| B5 | 2 | 1 | 33.9 | 207 | 1/1 | 0 |
+| PPO 17 | 3 | 2 | 28.2 | 144 | 1/1 | 0 |
+| PPO 29 | 3 | 2 | 31.1 | 144 | 1/1 | 0 |
+| PPO 43 | 24 | 23 | 333.6 | 446 | 1/1 | 0 |
+
+The checkpoints, refit sensor, cleanup and identity checks all verified, with
+no recaptures. The differences from v2 come from live timing: Gazebo is not
+bit-deterministic. The full study launched at 14:02 Singapore time.
