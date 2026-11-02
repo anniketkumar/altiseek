@@ -6,6 +6,16 @@
 > recovery behavior, unfinished transfer worktree, commands and remaining work.
 > The calibration job was left running; recheck its live state before acting.
 
+> **D56: M10 transfer protocol frozen (2026-11-02).** Protocol
+> `32c7970163d73479` (`configs/eval/m10_transfer_v1.json`,
+> `docs/m10-transfer-protocol.md`): 24 T worlds, B5 + PPO 17/29/43, original vs
+> refit sensor, 192 live + 96 cached. Launch only with
+> `scripts/launch_m10_transfer.py` from WSL; it refuses duplicates. Status:
+> `data/m10/transfer-run-path.txt` -> `status.json`, `failures.jsonl`; log
+> `data/m10/transfer/run.log`. Any edit to `src/`, `configs/` or execution scripts
+> breaks the freeze and stops the run; do not edit them while it is active.
+> Next decision D57.
+
 > **D55: B calibration complete and reviewed (2026-11-02).** Acquisition
 > `cf148ad98784906d` finished 40/40 worlds and 8,800 views, and refitted
 > `caba50dfc568562d`. `scripts/review_m10_calibration.py` re-verified all of it

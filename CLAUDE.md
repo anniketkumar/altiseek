@@ -1116,8 +1116,8 @@ T data read.
 ## M10 transfer protocol amendment (D56, 2026-11-02)
 
 Decision Log addition: **D56** — Held-out transfer follows
-`docs/m10-transfer-protocol.md`, frozen by hash in
-`configs/eval/m10_transfer_v1.json` before any M10 T flight or cached reference.
+`docs/m10-transfer-protocol.md`, frozen as protocol `32c7970163d73479`
+(`configs/eval/m10_transfer_v1.json`, 187 hashed inputs) before any M10 T flight or cached reference.
 24 T worlds are selected by metadata hash (three per original family). V3 B5 and
 all three frozen PPO seeds (17/29/43) run with the original (`fcf8cdae58ca3947`)
 and refit (`caba50dfc568562d`) sensors: 192 live episodes plus 96 paired cached
