@@ -1132,4 +1132,15 @@ first complete valid attempt is reported and every failed attempt listed. One
 full refit-sensor B episode per policy (rl-val `48a9325328a6d2c4`) precedes T
 and stops for review. Report and demo scripts are outside the execution hash;
 post-T changes to them need a Decision Log entry. The demo case is fixed:
-first selected world, B5, original sensor. Next decision D57.
+first selected world, B5, original sensor.
+
+## M10 transfer classifier amendment (D57, 2026-11-02)
+
+Decision Log addition: **D57** — Protocol v2 `31b45c0d400dbc06` stopped after 13
+of 192 live episodes. Telemetry went stale, which the flight report confirmed
+along with cleanup, and the policy thread raised `Flight is already landing`,
+which the v2 failure classifier did not list. v3 accepts that error string
+only with a confirmed stale-telemetry report, the category D56 already defers.
+Nothing else changes. Every v3 case, preflight included, is re-flown under one
+identity as v3 `750d20fa9df98142`. v2's episodes are kept as a superseded record, not reported, and
+their outcomes were not examined. Next decision D58.

@@ -9,9 +9,9 @@
 > longer dirty. Transfer status is tracked in the newest AGENTS.md entry.
 >
 > **Transfer (D56).** The worktree draft is preserved on branch
-> `m10-transfer` and finished on main. Protocol v2 `31b45c0d400dbc06`
-> (`configs/eval/m10_transfer_v2.json`) is frozen; v1 was superseded before any
-> T run. Runner root: `/home/aniket/altiseek-m10/transfers/<protocol_id>/`
+> `m10-transfer` and finished on main. Protocol v3 `750d20fa9df98142`
+> (`configs/eval/m10_transfer_v3.json`) is frozen. v1 was superseded before any
+> T run, and v2 after a classifier gap (D57). Runner root: `/home/aniket/altiseek-m10/transfers/<protocol_id>/`
 > (`status.json`, `failures.jsonl`, `preflight/`, `cached/`, `live/`). Launch
 > with `scripts/launch_m10_transfer.py <protocol>`, adding
 > `--stop-after-preflight` for the B gate only. It refuses duplicates and

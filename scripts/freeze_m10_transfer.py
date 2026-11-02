@@ -17,7 +17,7 @@ def main() -> None:
     parser.add_argument("calibration", type=Path)
     parser.add_argument("--out", type=Path, default=Path("data/m10/transfer"))
     parser.add_argument(
-        "--protocol-file", type=Path, default=Path("configs/eval/m10_transfer_v2.json")
+        "--protocol-file", type=Path, default=Path("configs/eval/m10_transfer_v3.json")
     )
     args = parser.parse_args()
     root = args.calibration
@@ -169,8 +169,8 @@ def main() -> None:
     protocol = {
         "status": "frozen",
         "schema_version": 1,
-        "design": "m10-transfer-v2",
-        "supersedes": "32c7970163d73479",
+        "design": "m10-transfer-v3",
+        "supersedes": ["32c7970163d73479", "31b45c0d400dbc06"],
         "decision": "D56",
         "world_ids": [w.world_id for w in selected],
         "worlds": [{"world_id": w.world_id, "seed": w.seed, "family": w.family} for w in selected],

@@ -20,6 +20,12 @@ OPERATIONAL_PREFIXES = (
     "ValueError('Image/pose mismatch ",
     "TimeoutError(",
 )
+# A stale-telemetry landing surfaces as either error, depending on whether the
+# policy thread is waiting for a capture or starting a new move (v3).
+STALE_TELEMETRY_ERRORS = (
+    "RuntimeError('Flight ended before policy observation')",
+    "RuntimeError('Flight is already landing')",
+)
 
 
 class OperationalFailure(RuntimeError):
@@ -79,7 +85,7 @@ def operational_failure(summary: dict, cleanup: dict, flight_summary: dict) -> b
     """Only recognised capture/flight failures with confirmed cleanup may be deferred."""
     reason = summary.get("error") or ""
     stale = (
-        reason == "RuntimeError('Flight ended before policy observation')"
+        reason in STALE_TELEMETRY_ERRORS
         and flight_summary.get("reason") == "Telemetry became stale or invalid"
     )
     return bool(

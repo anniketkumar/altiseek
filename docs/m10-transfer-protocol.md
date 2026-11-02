@@ -4,7 +4,7 @@ This protocol was written, implemented and frozen before any T world was flown o
 any T cached reference was computed for M10. `scripts/freeze_m10_transfer.py`
 hashes this document, every source and config file, both sensor models, the
 three PPO checkpoints, the detector, the selected T world specs and caches, and
-the D55 calibration review into `configs/eval/m10_transfer_v2.json`. Every runner
+the D55 calibration review into `configs/eval/m10_transfer_v3.json`. Every runner
 command re-verifies those hashes; any change stops the study.
 
 The report and demo scripts do not affect any episode. They are committed and
@@ -115,3 +115,15 @@ the report and demo are produced and a final validity review is recorded.
   runtime went untested. v2 changes only the preflight world, chosen by the
   B-only rule above. No T world, cache outcome or result was used. v1's records
   stay under its own transfer root.
+- **v2 `31b45c0d400dbc06`, superseded after 13 of 192 live episodes.** Its B
+  preflight passed (`docs/m10-transfer-preflight.md`). Live episode 14 (PPO 43,
+  original sensor, world `187701dbdd0d1418`) lost telemetry; the flight report
+  confirms `Telemetry became stale or invalid` and cleanup. The policy thread
+  saw that landing as `Flight is already landing`, an error string the v2
+  classifier did not recognise, so the run stopped for review as designed.
+  v3 changes only the classifier, accepting either error string with a
+  confirmed stale-telemetry report, which is the category this protocol already
+  defers. Every v3 case, preflight included, is flown afresh under one
+  identity. v2's 13 episodes and its failure stay under the v2 transfer root as
+  a superseded record. They are not reported as results, and their outcomes
+  were not examined.
