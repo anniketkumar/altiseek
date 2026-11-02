@@ -13,6 +13,7 @@ from pathlib import Path
 
 from altiseek.config import load_config
 from altiseek.deploy.assets import export_tiles
+from altiseek.deploy.transfer import authorize_world, load_protocol
 from altiseek.registry.run import sha256_file
 from altiseek.world.config import WorldConfig
 from altiseek.world.library import Library
@@ -24,9 +25,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("world", type=Path)
     parser.add_argument("--root", type=Path, default=Path.home() / "altiseek-m10/worlds")
+    parser.add_argument("--protocol", type=Path)
     args = parser.parse_args()
     spec = WorldSpec.load(args.world)
-    if spec.split != "B":
+    if args.protocol is not None:
+        authorize_world(load_protocol(args.protocol), spec)
+    if spec.split != "B" and args.protocol is None:
         raise ValueError("Integration exporter accepts B only; no T protocol is frozen")
     output = args.root / spec.world_id
     output.mkdir(parents=True, exist_ok=True)

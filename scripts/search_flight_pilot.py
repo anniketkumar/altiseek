@@ -1,4 +1,4 @@
-"""Three-view B5 stop-and-shoot B integration; not a transfer-scoring run."""
+"""Stop-and-shoot live search: B integration pilots, or frozen M10 transfer cases (D56)."""
 
 import argparse
 import json
@@ -18,9 +18,12 @@ from tf2_msgs.msg import TFMessage
 from altiseek.config import load_config
 from altiseek.deploy.meter import BudgetExhausted, FlightMeter
 from altiseek.deploy.search import LiveSearchPilot, LiveView
+from altiseek.deploy.transfer import authorize_world, load_protocol, paired_seed, sensor_path
 from altiseek.env.config import SearchConfig
+from altiseek.env.logging import EpisodeLog
 from altiseek.geometry.frames import enu_to_ned
 from altiseek.policies.baselines import Baseline
+from altiseek.policies.config import SelectedBaselines
 from altiseek.registry.run import sha256_file
 from altiseek.world.spec import WorldSpec
 
@@ -36,8 +39,43 @@ class SearchFlight(PerceptionFlight):
         normal_launch: bool = False,
         max_views: int = 3,
         battery_s: float = 500,
+        protocol_path: Path | None = None,
+        sensor_case: str = "original",
     ) -> None:
-        super().__init__(output, spec)
+        self.protocol = load_protocol(protocol_path) if protocol_path is not None else None
+        self.sensor_case = sensor_case
+        sensor_file = Path("data/sensor_models/fcf8cdae58ca3947.json")
+        if self.protocol is not None:
+            authorize_world(self.protocol, spec)
+            sensor_file = sensor_path(self.protocol, sensor_case)
+            if (
+                not measured
+                or not normal_launch
+                or battery_s != 500
+                or (spec.split == "T" and max_views != 0)
+            ):
+                raise ValueError("Frozen transfer requires measured 500 s and normal launch")
+        super().__init__(
+            output,
+            spec,
+            authorized_test=self.protocol is not None and spec.split == "T",
+            sensor_file=sensor_file,
+        )
+        if (
+            self.protocol is not None
+            and self.belief.model.cache_contract
+            != self.protocol["sensors"][sensor_case]["cache_contract"]
+        ):
+            raise ValueError("Frozen live sensor acquisition contract mismatch")
+        self.environment_seed = (
+            paired_seed(spec.world_id, "launch") if self.protocol is not None else 17
+        )
+        self.action_seed = (
+            paired_seed(spec.world_id, "actions", training_seed if method == "PPO" else 0)
+            if self.protocol is not None
+            else 1700 + training_seed
+        )
+        self.metrics = None
         self.measured, self.normal_launch, self.max_views = measured, normal_launch, max_views
         self.search_config = load_config("configs/env/search.yaml", SearchConfig)
         self.search_config = self.search_config.model_copy(
@@ -147,13 +185,28 @@ class SearchFlight(PerceptionFlight):
         self.records.append(metadata)
         if self.flight_meter is not None:
             metadata["measured"] = self.flight_meter.snapshot()
-        np.savez_compressed(self.output / f"detections-{timestamp:.6f}.npz", detections=evidence)
+        np.savez_compressed(
+            self.output / f"detections-{timestamp:.6f}.npz",
+            detections=evidence,
+            visible=camera.fully_visible_cells(self.cfg.render.levels.grid_cells, self.spec.cell_m),
+        )
         return LiveView(camera, evidence)
 
     def run_search(self) -> None:
         try:
             config = self.search_config
-            env = LiveSearchPilot(self.spec, self.cfg, self.belief.model, config, self.sense)
+            env = LiveSearchPilot(
+                self.spec,
+                self.cfg,
+                self.belief.model,
+                config,
+                self.sense,
+                authorized_test_ids=frozenset(self.protocol["world_ids"])
+                if self.protocol
+                else frozenset(),
+                deployment_contract=self.belief.model.cache_contract.get("deployment"),
+            )
+            logger = EpisodeLog(env)
             if self.measured:
                 self.flight_meter = FlightMeter(config.energy, env.nav.altitudes)
                 env.meter = self.flight_meter
@@ -161,7 +214,15 @@ class SearchFlight(PerceptionFlight):
             if not self.normal_launch:
                 target = self.spec.targets[0]
                 options["start_node"] = env.nav.nearest(0, np.array([target.x_m, target.y_m]))
-            policy = Baseline("B5", env.nav, env.sensor, "V3", seed=17, parameters={})
+            selected = load_config("configs/policy/selected.yaml", SelectedBaselines)
+            policy = Baseline(
+                "B5",
+                env.nav,
+                env.sensor,
+                "V3",
+                seed=self.action_seed,
+                parameters=selected.settings[self.spec.family]["V3"]["B5"],
+            )
             model = None
             if self.method == "PPO":
                 manifest = json.loads(Path("configs/eval/artifacts_v1.json").read_text())
@@ -180,8 +241,14 @@ class SearchFlight(PerceptionFlight):
                     or model.policy.features_extractor.zero_belief
                 ):
                     raise ValueError("Frozen PPO observation/action contract mismatch")
-            rng = np.random.default_rng(1700 + self.training_seed)
-            observation, info = env.reset(seed=17, options=options)
+            rng = np.random.default_rng(self.action_seed)
+            observation, info = logger.reset(seed=self.environment_seed, options=options)
+            np.savez_compressed(
+                self.output / "belief-1.npz",
+                probabilities=env.belief.probabilities,
+                map=observation["map"],
+                vector=observation["vector"],
+            )
             self.search_records.append({"observation": 0, **info})
             for _ in range(self.max_views - 1 if self.max_views else config.max_steps):
                 if info["terminated"]:
@@ -201,7 +268,7 @@ class SearchFlight(PerceptionFlight):
                     )
                 if not mask[action]:
                     raise ValueError("Policy selected a masked action")
-                observation, _, terminated, truncated, info = env.step(action)
+                observation, _, terminated, truncated, info = logger.step(action)
                 self.search_records.append({"action": int(action), **info})
                 np.savez_compressed(
                     self.output / f"belief-{env.observations}.npz",
@@ -211,6 +278,7 @@ class SearchFlight(PerceptionFlight):
                 )
                 if terminated or truncated:
                     break
+            self.metrics = logger.summary()
         except Exception as error:
             self.search_error = repr(error)
         finally:
@@ -229,6 +297,8 @@ def main() -> None:
     parser.add_argument("--normal-launch", action="store_true")
     parser.add_argument("--max-views", type=int, default=3, help="0 runs until episode completion")
     parser.add_argument("--battery-s", type=float, default=500)
+    parser.add_argument("--protocol", type=Path)
+    parser.add_argument("--sensor-case", choices=("original", "refit"), default="original")
     args = parser.parse_args()
     rclpy.init()
     node = SearchFlight(
@@ -240,6 +310,8 @@ def main() -> None:
         args.normal_launch,
         args.max_views,
         args.battery_s,
+        args.protocol,
+        args.sensor_case,
     )
     try:
         while rclpy.ok() and not node.done:
@@ -251,13 +323,22 @@ def main() -> None:
         )
         report = {
             "passed": bool(node.passed and completed and not node.search_error),
-            "scope": "B integration; measured energy"
-            if args.measured
-            else "B integration; ideal energy only",
+            "scope": (
+                "frozen M10 transfer"
+                if node.protocol
+                else "B integration; measured energy"
+                if args.measured
+                else "B integration; ideal energy only"
+            ),
             "measured_energy": args.measured,
             "normal_edge_launch": args.normal_launch,
             "view_cap": args.max_views,
             "battery_s": args.battery_s,
+            "protocol_id": node.protocol["protocol_id"] if node.protocol else None,
+            "sensor_case": node.sensor_case,
+            "environment_seed": node.environment_seed,
+            "action_seed": node.action_seed,
+            "metrics": node.metrics,
             "meter": node.flight_meter.snapshot() if node.flight_meter is not None else None,
             "world_id": node.spec.world_id,
             "method": node.method,

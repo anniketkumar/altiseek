@@ -1111,4 +1111,24 @@ Limitations kept: Gazebo recall is below cached at L3–L5 (L5 0.263 against
 bound, and conditional recall is unmeasured. The D54 correction was never
 exercised (no recaptures), so it is not credited with the later successes. 233 views accepted by
 failed flights were retained. See `docs/m10-calibration-review.md`. B only; no
-T data read. Next decision D56.
+T data read.
+
+## M10 transfer protocol amendment (D56, 2026-11-02)
+
+Decision Log addition: **D56** — Held-out transfer follows
+`docs/m10-transfer-protocol.md`, frozen by hash in
+`configs/eval/m10_transfer_v1.json` before any M10 T flight or cached reference.
+24 T worlds are selected by metadata hash (three per original family). V3 B5 and
+all three frozen PPO seeds (17/29/43) run with the original (`fcf8cdae58ca3947`)
+and refit (`caba50dfc568562d`) sensors: 192 live episodes plus 96 paired cached
+references with shared seeds. Search flights reuse D54's same-waypoint
+recapture (at most three attempts). Its time is charged to the measured
+battery, and rejected frames never update belief. Episodes failing for
+recognised operational causes with confirmed cleanup are logged, deferred and
+re-flown from the start: three attempts per case, persisted across relaunches;
+three consecutive failures, integrity or unknown errors stop for review. The
+first complete valid attempt is reported and every failed attempt listed. One
+full refit-sensor B episode per policy (rl-val `003b0c54f581c65b`) precedes T
+and stops for review. Report and demo scripts are outside the execution hash;
+post-T changes to them need a Decision Log entry. The demo case is fixed:
+first selected world, B5, original sensor. Next decision D57.
