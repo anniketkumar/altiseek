@@ -13,6 +13,7 @@ import search_flight_pilot
 from retry_m10_capture import retry_capture
 
 from altiseek.deploy.search import LiveView
+from altiseek.deploy.transfer import retry_record
 from altiseek.registry.run import sha256_file
 
 FILES = ("search_recovery.py", "retry_m10_capture.py", "run_m10_transfer_flight.py")
@@ -24,15 +25,8 @@ class RecoverySearch(search_flight_pilot.SearchFlight):
 
         def rejected(attempt: int, reason: str) -> None:
             meter = self.flight_meter.snapshot() if self.flight_meter is not None else None
-            record = {
-                "attempt": attempt,
-                "reason": reason,
-                "goal": goal.tolist(),
-                "level": level,
-                "meter": meter,
-            }
             with (self.output / "capture-retries.jsonl").open("a") as log:
-                log.write(json.dumps(record) + "\n")
+                log.write(retry_record(attempt, reason, goal, level, meter) + "\n")
             print(f"Recapturing same waypoint after rejection: {reason}", flush=True)
 
         # The original sense recomputes PX4's target from the latest measured

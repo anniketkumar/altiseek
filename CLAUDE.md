@@ -1143,4 +1143,16 @@ which the v2 failure classifier did not list. v3 accepts that error string
 only with a confirmed stale-telemetry report, the category D56 already defers.
 Nothing else changes. Every v3 case, preflight included, is re-flown under one
 identity as v3 `750d20fa9df98142`. v2's episodes are kept as a superseded record, not reported, and
-their outcomes were not examined. Next decision D58.
+their outcomes were not examined.
+
+## M10 recapture logging amendment (D58, 2026-11-02)
+
+Decision Log addition: **D58** — v3 stopped after 30 of 192 live episodes, at
+the study's first rejected capture. The D56 recapture logger could not
+serialise the battery meter's NumPy array, so the episode crashed instead of
+recapturing. The preflight had not exercised the path, and its test did not
+cover the log line. v4 moves the record into a tested JSON-safe helper.
+Execution semantics are otherwise unchanged. All v4 cases are re-flown under
+one identity as v4 `5560516d08907341`; v3's are kept as a superseded record, with only their ending
+types inspected. The live recapture flow itself is still unexercised; a
+failure in it stops the run for review. Next decision D59.

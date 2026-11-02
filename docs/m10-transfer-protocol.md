@@ -4,7 +4,7 @@ This protocol was written, implemented and frozen before any T world was flown o
 any T cached reference was computed for M10. `scripts/freeze_m10_transfer.py`
 hashes this document, every source and config file, both sensor models, the
 three PPO checkpoints, the detector, the selected T world specs and caches, and
-the D55 calibration review into `configs/eval/m10_transfer_v3.json`. Every runner
+the D55 calibration review into `configs/eval/m10_transfer_v4.json`. Every runner
 command re-verifies those hashes; any change stops the study.
 
 The report and demo scripts do not affect any episode. They are committed and
@@ -127,3 +127,13 @@ the report and demo are produced and a final validity review is recorded.
   identity. v2's 13 episodes and its failure stay under the v2 transfer root as
   a superseded record. They are not reported as results, and their outcomes
   were not examined.
+- **v3 `750d20fa9df98142`, superseded after 30 of 192 live episodes.** Its B
+  preflight passed. Live episode 31 (PPO 17, original sensor, world
+  `ac139e8cd91b4692`) hit the first rejected capture of the study. The
+  recapture logger then failed to serialise the battery meter's NumPy array
+  (`TypeError`), so the episode crashed instead of recapturing. Cleanup was
+  confirmed and the run stopped for review. The 30 completed episodes ended by
+  finding all targets (25) or battery expiry (5). None had invoked recapture.
+  v4 changes only the logging, moving it to a tested JSON-safe helper. Every
+  v4 case is again flown afresh under one identity. v3's episodes stay as a
+  superseded record, not reported; only their ending types were inspected.

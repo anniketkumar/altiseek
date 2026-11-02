@@ -32,6 +32,18 @@ class OperationalFailure(RuntimeError):
     """A failed live case with verified cleanup and a recognised operational cause."""
 
 
+def retry_record(attempt: int, reason: str, goal: Iterable, level: int, meter: dict | None) -> str:
+    """One JSON line for a rejected capture; meter snapshots hold NumPy arrays (v4)."""
+    record = {
+        "attempt": attempt,
+        "reason": reason,
+        "goal": [float(v) for v in goal],
+        "level": int(level),
+        "meter": meter,
+    }
+    return json.dumps(record, default=lambda v: v.tolist() if hasattr(v, "tolist") else str(v))
+
+
 def paired_seed(world_id: str, purpose: str, training_seed: int = 0) -> int:
     return int(digest(["m10-v1", world_id, purpose, training_seed])[:8], 16) % (2**31)
 

@@ -15,6 +15,7 @@ from altiseek.deploy.transfer import (
     load_protocol,
     operational_failure,
     paired_seed,
+    retry_record,
     run_deferred,
 )
 from altiseek.deploy.transfer_report import (
@@ -103,6 +104,21 @@ def test_only_recognised_failures_with_cleanup_are_operational(error, flight, cl
     summary = {"passed": False, "error": error}
     assert operational_failure(summary, {"owned_processes_stopped": cleanup}, flight) is expected
     assert not operational_failure({**summary, "passed": True}, {"owned_processes_stopped": 1}, {})
+
+
+def test_retry_record_serialises_live_meter_snapshots():
+    meter = {"elapsed_s": np.float64(32.8), "time_per_level": np.zeros(5), "exhausted": False}
+    line = retry_record(1, "Image/pose mismatch 0.060 s", np.array([1.0, 2.0, 3.0]), 2, meter)
+    record = json.loads(line)
+    assert record["meter"]["time_per_level"] == [0.0] * 5
+    assert record["goal"] == [1.0, 2.0, 3.0]
+    assert json.loads(retry_record(2, "x", (0, 0, 0), np.int64(4), None))["level"] == 4
+
+
+def test_recovery_adapter_logs_through_tested_helper():
+    source = (SCRIPTS / "search_recovery.py").read_text()
+    assert "retry_record(attempt, reason, goal, level, meter)" in source
+    assert "json.dumps(record" not in source
 
 
 def test_deferred_queue_retries_failures_last_and_persists_attempts():
