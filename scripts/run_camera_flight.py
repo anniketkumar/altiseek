@@ -14,6 +14,7 @@ from pathlib import Path
 
 from altiseek.config import load_config
 from altiseek.deploy.assets import camera_sensor, checker_texture, export_tiles
+from altiseek.deploy.transfer import authorize_world, load_protocol
 from altiseek.imaging.config import CameraSpec
 from altiseek.registry.run import sha256_file
 from altiseek.world.spec import WorldSpec
@@ -34,6 +35,8 @@ def main() -> None:
     parser.add_argument("--calibration-dir", type=Path)
     parser.add_argument("--calibration-contract")
     parser.add_argument("--calibration-pilot", action="store_true")
+    parser.add_argument("--protocol", type=Path)
+    parser.add_argument("--sensor-case", choices=("original", "refit"), default="original")
     args = parser.parse_args()
     if args.search_pilot and args.world_export is None:
         parser.error("--search-pilot requires a B world export")
@@ -57,9 +60,11 @@ def main() -> None:
             ground = export_tiles(checker_texture(), run / "textures", 0.25)
         else:
             spec = WorldSpec.load(args.world_export / "world.json")
+            if args.protocol is not None:
+                authorize_world(load_protocol(args.protocol), spec)
             metadata = json.loads((args.world_export / "export.json").read_text())
             if (
-                spec.split != "B"
+                (spec.split != "B" and args.protocol is None)
                 or metadata["world_id"] != spec.world_id
                 or any(
                     sha256_file(args.world_export / name) != digest
@@ -231,6 +236,8 @@ def main() -> None:
                     command.append("--measured")
                 if args.normal_launch:
                     command.append("--normal-launch")
+                if args.protocol is not None:
+                    command += ["--protocol", str(args.protocol), "--sensor-case", args.sensor_case]
             controller = start("controller", command)
             result["state"] = "flight"
             (run / "status.json").write_text(json.dumps(result, indent=2))

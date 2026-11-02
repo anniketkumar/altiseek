@@ -32,8 +32,15 @@ from altiseek.world.spec import WorldSpec
 
 
 class PerceptionFlight(CameraFlight):
-    def __init__(self, output: Path, spec: WorldSpec) -> None:
-        if spec.split != "B":
+    def __init__(
+        self,
+        output: Path,
+        spec: WorldSpec,
+        *,
+        authorized_test: bool = False,
+        sensor_file: Path = Path("data/sensor_models/fcf8cdae58ca3947.json"),
+    ) -> None:
+        if spec.split != "B" and not authorized_test:
             raise ValueError("Perception integration uses B only")
         torch.set_num_threads(2)
         self.cfg = load_config("configs/cache/default.yaml", CacheConfig)
@@ -45,7 +52,7 @@ class PerceptionFlight(CameraFlight):
         )
         check_detector(self.detector, self.cfg)
         model = SensorModel.load(
-            Path("data/sensor_models/fcf8cdae58ca3947.json"),
+            sensor_file,
             detector_id=self.detector.detector_id,
             fit_world_set_id="5dc45d0e1ea5afbd",
         )
@@ -100,6 +107,7 @@ class PerceptionFlight(CameraFlight):
             "pose_stamp_s": pose_stamp,
             "pose_delta_s": delta,
             "camera_enu_m": origin.tolist(),
+            "camera_rotation": camera.rotation.tolist(),
             "detections": len(evidence),
             "swimmer_detections": int((evidence["class_id"] == 0).sum()),
             "elapsed_s": time.monotonic() - started,

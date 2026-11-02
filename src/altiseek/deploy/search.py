@@ -37,9 +37,14 @@ class LiveSearchPilot(SearchEnv):
         source: Callable[[np.ndarray, int], LiveView],
         *,
         meter: FlightMeter | None = None,
+        authorized_test_ids: frozenset[str] = frozenset(),
+        deployment_contract: dict | None = None,
     ) -> None:
-        if world.split != "B":
+        if world.split != "B" and not (
+            world.split == "T" and world.world_id in authorized_test_ids
+        ):
             raise ValueError("Live integration pilot accepts B only")
+        self.deployment_contract = deployment_contract
         if config.relook_rule != "first" or config.declaration_mode != "auto":
             raise ValueError("Live pilot requires frozen first-look and automatic declaration")
         if config.observation_frame != "north_up":
@@ -52,6 +57,12 @@ class LiveSearchPilot(SearchEnv):
     def _load_cache(self, expected: CacheHeader) -> None:
         # Parent reset still checks world/sensor contracts. Never read cached detections.
         return None
+
+    def _sensor_contract(self, world: WorldSpec, cache: CacheConfig) -> dict:
+        contract = super()._sensor_contract(world, cache)
+        if self.deployment_contract is not None:
+            contract["deployment"] = self.deployment_contract
+        return contract
 
     def _observe(self) -> dict:
         node = self.nav.nodes[self.node]

@@ -46,9 +46,7 @@ class SearchEnv(gym.Env):
         if prior_override is not None and len(worlds) != 1:
             raise ValueError("a prior override requires exactly one physical world")
         self.prior_override = prior_override
-        contract = header_for(worlds[0], cache).model_dump(
-            mode="json", exclude={"world_id", "cache_id"}
-        )
+        contract = self._sensor_contract(worlds[0], cache)
         if (
             sensor.detector_id != cache.detector_id
             or sensor.cache_contract != contract
@@ -93,10 +91,7 @@ class SearchEnv(gym.Env):
         if self.world.world_id != self.world.content_id():
             raise ValueError("invalid world content ID")
         expected = header_for(self.world, self.cache_config)
-        if (
-            expected.model_dump(mode="json", exclude={"world_id", "cache_id"})
-            != self.sensor.cache_contract
-        ):
+        if self._sensor_contract(self.world, self.cache_config) != self.sensor.cache_contract:
             raise ValueError("world cache contract mismatch")
         self.cache = self._load_cache(expected)
         self._targets = np.array([(t.x_m, t.y_m) for t in self.world.targets], dtype=float)
@@ -139,6 +134,9 @@ class SearchEnv(gym.Env):
         self._pending_termination = bool(self.found.all())
         self._ended = False
         return self._observation(), self._info()
+
+    def _sensor_contract(self, world: WorldSpec, cache: CacheConfig) -> dict:
+        return header_for(world, cache).model_dump(mode="json", exclude={"world_id", "cache_id"})
 
     def _load_cache(self, expected: CacheHeader) -> WorldCache | None:
         """Live integration overrides only the observation source, not search state."""
