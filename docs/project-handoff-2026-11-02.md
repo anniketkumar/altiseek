@@ -1,5 +1,13 @@
 # Project continuation handoff — 2 November 2026
 
+> **Update (D55, later on 2 November 2026).** The calibration job described below
+> completed at 08:33 Singapore time: 40/40 worlds, 8,800 views, no deferred
+> worlds, refit sensor `caba50dfc568562d`. It was reviewed and its integrity
+> accepted in `docs/m10-calibration-review.md`. No calibration process is
+> running, and calibration must not be relaunched. The "immediate state" and
+> remaining-work items 1–2 below are historical. `registry/manifest.json` is no
+> longer dirty. Transfer status is tracked in the newest AGENTS.md entry.
+
 Snapshot taken around **01:52 Singapore time, 2 November 2026**.
 Read `CLAUDE.md` in full, then the latest entries at the top of `AGENTS.md`.
 Historical stop/pending notes in those files are superseded by later decisions.

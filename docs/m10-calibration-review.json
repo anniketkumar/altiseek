@@ -1,0 +1,1102 @@
+{
+  "decision": "D55",
+  "run_id": "cf148ad98784906d",
+  "contract_id": "0e81d39c16e288b9",
+  "sensor_model_id": "caba50dfc568562d",
+  "sensor_model_sha256": "71c0046cd984ece448946420bc84145a0263f7d0d2bee657ed3adb18e4ec21f6",
+  "fit_world_set_id": "5dc45d0e1ea5afbd",
+  "detector_id": "700e0ff3455259e8",
+  "worlds": 40,
+  "views": 8800,
+  "refit_reproduced": true,
+  "stages": {
+    "full-budget-B5": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T043133Z",
+      "report_sha256": "9b0fbdc0aca9f856480c449071f99e6993c08017ec65f6d0489e35385b9fe9ca"
+    },
+    "calibration-pilot": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T043439Z",
+      "report_sha256": "50ce3c2306522ba7a113b081ffebe383702d6693bfd6ba9cf96528e1d649a9b4"
+    },
+    "calibration-b816b2024fdd5911": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T044201Z",
+      "report_sha256": "c3f51796c8913f641e0a01b2cfb171a67730dfb00958302bce4ed397c9bca526"
+    },
+    "calibration-62e762d871d64eeb": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T052639Z",
+      "report_sha256": "0ab6302eca2cefe052cfffeefeab994437ff80a82266f0478f9f20101f95e34f"
+    },
+    "calibration-d3d61faa0f9bf1fb": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T061504Z",
+      "report_sha256": "9a8df8ef8769f8ef140b057e29c38fdaaf465d7a25b19dad050c898e09c0b9dc"
+    },
+    "calibration-73d65a67bae49925": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T070200Z",
+      "report_sha256": "49a32a2e9269a10e7736c1c398ab2651c94ceecdc353880a3506da28e42a29a6"
+    },
+    "calibration-3bf26a1901edcd79": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T075059Z",
+      "report_sha256": "e7485d46807816b5ffa953b025365880cafe018003ca45614b4bc2498810af6a"
+    },
+    "calibration-e7322a66b6b8597e": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T083859Z",
+      "report_sha256": "543ef6bd1783815374e3fc917779a061af5280600b224b8351b58234fd373523"
+    },
+    "calibration-d52830c19cdb64c1": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T092701Z",
+      "report_sha256": "542dded93129374b1fefaee980b9e7134cd7fbe88840406d6184d09a55ae6009"
+    },
+    "calibration-6ea29286bbb66bb4": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T101347Z",
+      "report_sha256": "f5a81856a26f5e15fa5cf22eb4d60ee997fbc0082a1220bcdb60616557804ad4"
+    },
+    "calibration-38cfa9a637bb2cdf": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T110053Z",
+      "report_sha256": "34ac7e92a86215394ed35e2d26b4ecf774aa0b569948df5d6279cd5c528a70e2"
+    },
+    "calibration-fc5887ab72031fb1": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T114824Z",
+      "report_sha256": "ab7b82b55667785bf8d80357ad70282b57109a45b5c3f0be010e5fb37317f2cf"
+    },
+    "calibration-7a886e5cb9fe85d7": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T123553Z",
+      "report_sha256": "2d9dea142f6f55792a5b5f53b646acedab158cd9a811d044fd43f30f68b8d99e"
+    },
+    "calibration-d76b53eda8ebef65": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T132248Z",
+      "report_sha256": "cc5e384c754c53b05316ee5601ff866eb40fca5a51d1cc656b2cb12e43d27cdf"
+    },
+    "calibration-a955fb3dcb9f3373": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T141025Z",
+      "report_sha256": "f38525c1eba0e5c17f15fc6582786c02043a9e8e23a11a24e1ffb3ac8c193b1d"
+    },
+    "calibration-2373633e0e57d587": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T145756Z",
+      "report_sha256": "173e5fae1849fc39c7372101861a1cdd1a89c22b4f4079018cc6c332f37855c0"
+    },
+    "calibration-7ad1c27070b54d2e": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T154441Z",
+      "report_sha256": "48e528fcee98d39bd3eef7886ce4c2056e383e6bb143890b597846c218882343"
+    },
+    "calibration-01b766d3fbfa331a": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T163219Z",
+      "report_sha256": "ae93ca96419ef04a76c630caee567de4a3c8cd0425e33e8351ed26cf0d6dc4b2"
+    },
+    "calibration-6d211c72297f41d2": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261031T210241Z",
+      "report_sha256": "a0fbec1fd78a141c45826d2d776c0b3610f8ec274db1638cee554dfdf1e9506b"
+    },
+    "calibration-588ba0a493a70658": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T024421Z",
+      "report_sha256": "9c4f96c5aed39b443b9741a4031192eff03aa82838bc5667adc20229827c200d"
+    },
+    "calibration-8ec53f22c7d36b77": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T033302Z",
+      "report_sha256": "275c99501d9c5f3ef18173606b1265dfefbeb81044f89ea9e801b678c332340d"
+    },
+    "calibration-fec1dc984c2924cb": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T042237Z",
+      "report_sha256": "06d45700b72798aec1fc6403d86f47e7058b93a7d1af22ed17738ea1c99d3177"
+    },
+    "calibration-d25f67133243e0d7": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T051225Z",
+      "report_sha256": "006cbcd515dd6922760812a63286b7900419e03f7f0104294ca81f347f42d3c2"
+    },
+    "calibration-6f885d28fb7d5ea1": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T060252Z",
+      "report_sha256": "462565d22a48f280d8f16837c9aa6296eed06b5cb680730b875d82c08161c198"
+    },
+    "calibration-c2ecfde2cb7788e3": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T065047Z",
+      "report_sha256": "7e9ca2a8c7a287a6b19e7c04679f9a934722a265d9fc4de43052119641487593"
+    },
+    "calibration-1c83115e8cd94485": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T161327Z",
+      "report_sha256": "8f5e93799a20f826ee778bf5f8a44757dba7853dd2166c652dfbad196ae25bdb"
+    },
+    "calibration-837d513e5f3ab743": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T090330Z",
+      "report_sha256": "403b2a1fb518aa0923156ad00f3bea989b2f6a29292ae4654042fea5cac77e94"
+    },
+    "calibration-cc1f7741762a2d15": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T095547Z",
+      "report_sha256": "9a3dd52cde350380e59a4d6d6ab74cd7599f1c0812ff42331c7fc002c09556a1"
+    },
+    "calibration-552c5538e21af2e5": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T104645Z",
+      "report_sha256": "35218e546389c057c869ea61b06dfafea686fea00be7c38a577241340857d163"
+    },
+    "calibration-795fb74cabae27cb": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T113330Z",
+      "report_sha256": "f594575dfe48d0ed1c18461ad22520434e8c75273fe9ffc6c613fe979291f302"
+    },
+    "calibration-972cda951c5aefbe": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T122054Z",
+      "report_sha256": "68e74507bc76157c11b4faad57d15f5735d60147f39fca5b8c8b550311365389"
+    },
+    "calibration-df35ac8edde0714d": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T130755Z",
+      "report_sha256": "d5e3dd70e8887919cacc7b9478e5d020b7a8f8fb3bffdf7d26d52e22c7683be7"
+    },
+    "calibration-be2489df842ea4ee": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T135528Z",
+      "report_sha256": "a8bb80dc588bd55a947143f56baeb16eaad739dc8de854e950f838837c046746"
+    },
+    "calibration-a626e23c05e26f80": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T174808Z",
+      "report_sha256": "c0e68362bbd61a5e1a42c020fca3000ca7074acd506042aa7181ba5289892696"
+    },
+    "calibration-0f31773f33dba8fd": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T183308Z",
+      "report_sha256": "8791a30df9c591d9d3e53a9453ad79ba6b4f89b02d82197096e2203bd6fadcaa"
+    },
+    "calibration-ede5c620d6e90fc2": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T190525Z",
+      "report_sha256": "4c930b40736ae9eefa25778bc955b286daaa7b948cb0635233dab4917a24343c"
+    },
+    "calibration-1b3cd1a66dc1efb6": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T234925Z",
+      "report_sha256": "181a275ec95f2157c1633901bad1ea34b598bf85dbe182d6b5590beff1f4ea7b"
+    },
+    "calibration-cf4608fc9091a75d": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T195150Z",
+      "report_sha256": "898d38e51953edea082c776269f00e4ff08e6a696e33ef2bf954942806e4cc7c"
+    },
+    "calibration-ac1e1f60e484c655": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T203901Z",
+      "report_sha256": "6a28b6da5fb222a56ad3af1e05f5602a71f781e97d9b12a02da203ed11c9f6f1"
+    },
+    "calibration-fb5a0224ccd5b4c7": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T212615Z",
+      "report_sha256": "d54fa1c514c205fb76647216365b1276e111d89abac8f33200eebf6fa401616b"
+    },
+    "calibration-5a1a078fa5053e60": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T221358Z",
+      "report_sha256": "943f67ce8ff4036d211ffaeacbb5f623ac37730b0afdae0afcbc6bbcfcfeefd2"
+    },
+    "calibration-90acf0727b679e2c": {
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T230159Z",
+      "report_sha256": "433623a808a1faa0f49c89584cf1e2beb5be895d4d0f044085b1c55abf110ab6"
+    }
+  },
+  "pose_delta_s": {
+    "count": 8800,
+    "mean": 0.0,
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "goal_error_m": {
+    "count": 8800,
+    "mean": 0.16624419746126382,
+    "p50": 0.15047122881935038,
+    "p95": 0.3036839643120163,
+    "max": 0.9663059291068063
+  },
+  "views_by_controller": {
+    "D52 original": 6944,
+    "D54 adapter": 1856
+  },
+  "capture_retry_records": 0,
+  "flights": {
+    "/home/aniket/altiseek-m10/camera-flights/20261031T043439Z": {
+      "views": 10,
+      "worlds": [
+        "b816b2024fdd5911"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T044201Z": {
+      "views": 210,
+      "worlds": [
+        "b816b2024fdd5911"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T052639Z": {
+      "views": 220,
+      "worlds": [
+        "62e762d871d64eeb"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T061504Z": {
+      "views": 220,
+      "worlds": [
+        "d3d61faa0f9bf1fb"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T070200Z": {
+      "views": 220,
+      "worlds": [
+        "73d65a67bae49925"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T075059Z": {
+      "views": 220,
+      "worlds": [
+        "3bf26a1901edcd79"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T083859Z": {
+      "views": 220,
+      "worlds": [
+        "e7322a66b6b8597e"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T092701Z": {
+      "views": 220,
+      "worlds": [
+        "d52830c19cdb64c1"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T101347Z": {
+      "views": 220,
+      "worlds": [
+        "6ea29286bbb66bb4"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T110053Z": {
+      "views": 220,
+      "worlds": [
+        "38cfa9a637bb2cdf"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T114824Z": {
+      "views": 220,
+      "worlds": [
+        "fc5887ab72031fb1"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T123553Z": {
+      "views": 220,
+      "worlds": [
+        "7a886e5cb9fe85d7"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T132248Z": {
+      "views": 220,
+      "worlds": [
+        "d76b53eda8ebef65"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T141025Z": {
+      "views": 220,
+      "worlds": [
+        "a955fb3dcb9f3373"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T145756Z": {
+      "views": 220,
+      "worlds": [
+        "2373633e0e57d587"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T154441Z": {
+      "views": 220,
+      "worlds": [
+        "7ad1c27070b54d2e"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T163219Z": {
+      "views": 220,
+      "worlds": [
+        "01b766d3fbfa331a"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T171910Z": {
+      "views": 26,
+      "worlds": [
+        "6d211c72297f41d2"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261031T210241Z": {
+      "views": 194,
+      "worlds": [
+        "6d211c72297f41d2"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T024421Z": {
+      "views": 220,
+      "worlds": [
+        "588ba0a493a70658"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T033302Z": {
+      "views": 220,
+      "worlds": [
+        "8ec53f22c7d36b77"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T042237Z": {
+      "views": 220,
+      "worlds": [
+        "fec1dc984c2924cb"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T051225Z": {
+      "views": 220,
+      "worlds": [
+        "d25f67133243e0d7"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T060252Z": {
+      "views": 220,
+      "worlds": [
+        "6f885d28fb7d5ea1"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T065047Z": {
+      "views": 220,
+      "worlds": [
+        "c2ecfde2cb7788e3"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T073809Z": {
+      "views": 109,
+      "worlds": [
+        "1c83115e8cd94485"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T161327Z": {
+      "views": 111,
+      "worlds": [
+        "1c83115e8cd94485"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T090330Z": {
+      "views": 220,
+      "worlds": [
+        "837d513e5f3ab743"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T095547Z": {
+      "views": 220,
+      "worlds": [
+        "cc1f7741762a2d15"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T104645Z": {
+      "views": 220,
+      "worlds": [
+        "552c5538e21af2e5"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T113330Z": {
+      "views": 220,
+      "worlds": [
+        "795fb74cabae27cb"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T122054Z": {
+      "views": 220,
+      "worlds": [
+        "972cda951c5aefbe"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T130755Z": {
+      "views": 220,
+      "worlds": [
+        "df35ac8edde0714d"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T135528Z": {
+      "views": 220,
+      "worlds": [
+        "be2489df842ea4ee"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T144329Z": {
+      "views": 14,
+      "worlds": [
+        "a626e23c05e26f80"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T174808Z": {
+      "views": 200,
+      "worlds": [
+        "a626e23c05e26f80"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T164133Z": {
+      "views": 6,
+      "worlds": [
+        "a626e23c05e26f80"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T144825Z": {
+      "views": 79,
+      "worlds": [
+        "0f31773f33dba8fd"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T183308Z": {
+      "views": 141,
+      "worlds": [
+        "0f31773f33dba8fd"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T164505Z": {
+      "views": 5,
+      "worlds": [
+        "ede5c620d6e90fc2"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T190525Z": {
+      "views": 215,
+      "worlds": [
+        "ede5c620d6e90fc2"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T164855Z": {
+      "views": 20,
+      "worlds": [
+        "1b3cd1a66dc1efb6"
+      ],
+      "controller": "D52 original",
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T234925Z": {
+      "views": 200,
+      "worlds": [
+        "1b3cd1a66dc1efb6"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T195150Z": {
+      "views": 220,
+      "worlds": [
+        "cf4608fc9091a75d"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T203901Z": {
+      "views": 220,
+      "worlds": [
+        "ac1e1f60e484c655"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T212615Z": {
+      "views": 220,
+      "worlds": [
+        "fb5a0224ccd5b4c7"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T221358Z": {
+      "views": 220,
+      "worlds": [
+        "5a1a078fa5053e60"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T230159Z": {
+      "views": 220,
+      "worlds": [
+        "90acf0727b679e2c"
+      ],
+      "controller": "D54 adapter",
+      "adapter_sources_sha256": {
+        "calibration_recovery.py": "425a43a5c85e6d56cabc0e45bed1cc77c6f96987a69025c3ffa1419dd4e48792",
+        "retry_m10_capture.py": "995a1be6ad74794e15af4f86399beb7a66bd40bdf82fa693598f31718e388027",
+        "run_m10_capture.py": "3cf15d71eed1a482f24548a13d139f4c362369ab750f30c798e664259bb7853d"
+      },
+      "retry_records": 0
+    }
+  },
+  "failures": [
+    {
+      "stage": "calibration-1c83115e8cd94485",
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T073809Z",
+      "error": "ValueError('Image/pose mismatch 0.060 s')",
+      "action": "deferred on scheduler takeover"
+    },
+    {
+      "stage": "calibration-a626e23c05e26f80",
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T144329Z",
+      "error": "ValueError('Actual camera missed policy goal by 2.037 m')",
+      "time_utc": "2026-11-01T14:48:08Z"
+    },
+    {
+      "stage": "calibration-0f31773f33dba8fd",
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T144825Z",
+      "error": "RuntimeError('Flight ended before policy observation')",
+      "action": "deferred on scheduler takeover"
+    },
+    {
+      "stage": "calibration-a626e23c05e26f80",
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T164133Z",
+      "error": "ValueError('Actual camera missed policy goal by 1.189 m')",
+      "time_utc": "2026-11-01T16:44:26Z"
+    },
+    {
+      "stage": "calibration-ede5c620d6e90fc2",
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T164505Z",
+      "error": "ValueError('Actual camera missed policy goal by 1.578 m')",
+      "time_utc": "2026-11-01T16:48:08Z"
+    },
+    {
+      "stage": "calibration-1b3cd1a66dc1efb6",
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T164855Z",
+      "error": "ValueError('Actual camera missed policy goal by 1.152 m')",
+      "time_utc": "2026-11-01T16:55:14Z"
+    },
+    {
+      "stage": "calibration-1b3cd1a66dc1efb6",
+      "flight": "/home/aniket/altiseek-m10/camera-flights/20261101T164855Z",
+      "error": "ValueError('Actual camera missed policy goal by 1.152 m')",
+      "action": "deferred on scheduler takeover"
+    }
+  ],
+  "failed_flights": {
+    "/home/aniket/altiseek-m10/camera-flights/20261101T073809Z": {
+      "stage": "calibration-1c83115e8cd94485",
+      "error": "ValueError('Image/pose mismatch 0.060 s')",
+      "views_contributed": 109
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T144329Z": {
+      "stage": "calibration-a626e23c05e26f80",
+      "error": "ValueError('Actual camera missed policy goal by 2.037 m')",
+      "views_contributed": 14
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T144825Z": {
+      "stage": "calibration-0f31773f33dba8fd",
+      "error": "RuntimeError('Flight ended before policy observation')",
+      "views_contributed": 79
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T164133Z": {
+      "stage": "calibration-a626e23c05e26f80",
+      "error": "ValueError('Actual camera missed policy goal by 1.189 m')",
+      "views_contributed": 6
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T164505Z": {
+      "stage": "calibration-ede5c620d6e90fc2",
+      "error": "ValueError('Actual camera missed policy goal by 1.578 m')",
+      "views_contributed": 5
+    },
+    "/home/aniket/altiseek-m10/camera-flights/20261101T164855Z": {
+      "stage": "calibration-1b3cd1a66dc1efb6",
+      "error": "ValueError('Actual camera missed policy goal by 1.152 m')",
+      "views_contributed": 20
+    }
+  },
+  "global_binary": {
+    "gazebo": {
+      "recall": {
+        "numerator": 836,
+        "denominator": 1318,
+        "raw": 0.6342943854324734,
+        "smoothed": 0.6341925701288855,
+        "ci95": [
+          0.5830465626015076,
+          0.6848825206538721
+        ],
+        "bootstrap_valid": 2000
+      },
+      "false_alarm": {
+        "numerator": 2875,
+        "denominator": 7589183,
+        "raw": 0.00037882865652337017,
+        "smoothed": 0.0003788944898423862,
+        "ci95": [
+          0.0002847604748974699,
+          0.000470998832673632
+        ],
+        "bootstrap_valid": 2000
+      }
+    },
+    "cached_original": {
+      "recall": {
+        "numerator": 3956,
+        "denominator": 5580,
+        "raw": 0.7089605734767025,
+        "smoothed": 0.7089231320551872,
+        "ci95": [
+          0.6452080230648795,
+          0.7707576753836373
+        ],
+        "bootstrap_valid": 2000
+      },
+      "false_alarm": {
+        "numerator": 11708,
+        "denominator": 32276660,
+        "raw": 0.0003627388955362792,
+        "smoothed": 0.0003627543753673901,
+        "ci95": [
+          0.00027400169361413586,
+          0.0004523159935715923
+        ],
+        "bootstrap_valid": 2000
+      }
+    }
+  },
+  "levels": [
+    {
+      "level": "L1",
+      "views": 4840,
+      "visible_cells": 1751687,
+      "gazebo": {
+        "binary_recall": {
+          "numerator": 217,
+          "denominator": 280,
+          "raw": 0.775,
+          "smoothed": 0.7740213523131673,
+          "ci95": [
+            0.6912135554714124,
+            0.8556347103237985
+          ],
+          "bootstrap_valid": 2000
+        },
+        "binary_false_alarm": {
+          "numerator": 556,
+          "denominator": 1751407,
+          "raw": 0.00031745904863917984,
+          "smoothed": 0.0003177443519728127,
+          "ci95": [
+            0.0002551226656411885,
+            0.0003814245846437753
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_recall": {
+          "numerator": 252,
+          "denominator": 280,
+          "raw": 0.9,
+          "smoothed": 0.8985765124555161,
+          "ci95": [
+            0.8321033422973492,
+            0.9561886652524102
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_false_alarm": {
+          "numerator": 901,
+          "denominator": 1751407,
+          "raw": 0.0005144435302588148,
+          "smoothed": 0.0005147287211203786,
+          "ci95": [
+            0.0004180561790646531,
+            0.0006103586780005393
+          ],
+          "bootstrap_valid": 2000
+        },
+        "temperature": 0.8670539639580737,
+        "ece_before": 0.18885024763314182,
+        "ece_after": 0.18200340487906783
+      },
+      "cached_original": {
+        "binary_recall_raw": 0.7935126582278481,
+        "binary_recall_ci95": [
+          0.7177871378150639,
+          0.8675706298403667
+        ],
+        "binary_false_alarm_raw": 0.00029847330452697856,
+        "soft_recall_raw": 0.9208860759493671,
+        "soft_false_alarm_raw": 0.000563754207814912,
+        "temperature": 0.744142937966268,
+        "ece_before": 0.16898289581379747,
+        "ece_after": 0.16221667454985972
+      }
+    },
+    {
+      "level": "L2",
+      "views": 1960,
+      "visible_cells": 1650445,
+      "gazebo": {
+        "binary_recall": {
+          "numerator": 220,
+          "denominator": 284,
+          "raw": 0.7746478873239436,
+          "smoothed": 0.7736842105263158,
+          "ci95": [
+            0.7197405222459867,
+            0.8286873055722317
+          ],
+          "bootstrap_valid": 2000
+        },
+        "binary_false_alarm": {
+          "numerator": 649,
+          "denominator": 1650161,
+          "raw": 0.00039329495727992604,
+          "smoothed": 0.00039359771949663125,
+          "ci95": [
+            0.00029675076923125495,
+            0.0004904180079486595
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_recall": {
+          "numerator": 246,
+          "denominator": 284,
+          "raw": 0.8661971830985915,
+          "smoothed": 0.8649122807017544,
+          "ci95": [
+            0.8108063212714376,
+            0.9166666666666666
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_false_alarm": {
+          "numerator": 838,
+          "denominator": 1650161,
+          "raw": 0.0005078292360563606,
+          "smoothed": 0.000508131928865166,
+          "ci95": [
+            0.0003998333939437292,
+            0.0006107771355064488
+          ],
+          "bootstrap_valid": 2000
+        },
+        "temperature": 20.0,
+        "ece_before": 0.28787500506466274,
+        "ece_after": 0.27229144842058606
+      },
+      "cached_original": {
+        "binary_recall_raw": 0.7973421926910299,
+        "binary_recall_ci95": [
+          0.7269230769230769,
+          0.8679961995093314
+        ],
+        "binary_false_alarm_raw": 0.0003818678810840172,
+        "soft_recall_raw": 0.9036544850498339,
+        "soft_false_alarm_raw": 0.0004990930992193112,
+        "temperature": 19.863697344566614,
+        "ece_before": 0.28425934460975133,
+        "ece_after": 0.2625886286778123
+      }
+    },
+    {
+      "level": "L3",
+      "views": 1000,
+      "visible_cells": 1521225,
+      "gazebo": {
+        "binary_recall": {
+          "numerator": 189,
+          "denominator": 266,
+          "raw": 0.7105263157894737,
+          "smoothed": 0.7097378277153558,
+          "ci95": [
+            0.6370058072626192,
+            0.7791238483345145
+          ],
+          "bootstrap_valid": 2000
+        },
+        "binary_false_alarm": {
+          "numerator": 593,
+          "denominator": 1520959,
+          "raw": 0.0003898855919193088,
+          "smoothed": 0.00039021407532085,
+          "ci95": [
+            0.00028730805662631026,
+            0.0004938112579433618
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_recall": {
+          "numerator": 230,
+          "denominator": 266,
+          "raw": 0.8646616541353384,
+          "smoothed": 0.8632958801498127,
+          "ci95": [
+            0.8115821256038648,
+            0.9169934969774683
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_false_alarm": {
+          "numerator": 731,
+          "denominator": 1520959,
+          "raw": 0.0004806178207302103,
+          "smoothed": 0.00048094624447717234,
+          "ci95": [
+            0.0003642259709578995,
+            0.0005970702689466064
+          ],
+          "bootstrap_valid": 2000
+        },
+        "temperature": 20.0,
+        "ece_before": 0.2807584676918701,
+        "ece_after": 0.2586808726569024
+      },
+      "cached_original": {
+        "binary_recall_raw": 0.779891304347826,
+        "binary_recall_ci95": [
+          0.6921234368593686,
+          0.8607519492387283
+        ],
+        "binary_false_alarm_raw": 0.0003785027917315737,
+        "soft_recall_raw": 0.8686594202898551,
+        "soft_false_alarm_raw": 0.0004896157087097524,
+        "temperature": 5.283759496892702,
+        "ece_before": 0.2581482026917188,
+        "ece_after": 0.25850669552828026
+      }
+    },
+    {
+      "level": "L4",
+      "views": 640,
+      "visible_cells": 1413641,
+      "gazebo": {
+        "binary_recall": {
+          "numerator": 151,
+          "denominator": 264,
+          "raw": 0.571969696969697,
+          "smoothed": 0.5716981132075472,
+          "ci95": [
+            0.4766658878504673,
+            0.6628414287479916
+          ],
+          "bootstrap_valid": 2000
+        },
+        "binary_false_alarm": {
+          "numerator": 571,
+          "denominator": 1413377,
+          "raw": 0.00040399695198096476,
+          "smoothed": 0.000404350428547777,
+          "ci95": [
+            0.00029499932640671925,
+            0.0005137379507947841
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_recall": {
+          "numerator": 206,
+          "denominator": 264,
+          "raw": 0.7803030303030303,
+          "smoothed": 0.779245283018868,
+          "ci95": [
+            0.6980300957592339,
+            0.8609047957732168
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_false_alarm": {
+          "numerator": 715,
+          "denominator": 1413377,
+          "raw": 0.0005058805966136424,
+          "smoothed": 0.0005062340010952484,
+          "ci95": [
+            0.00037712565902680195,
+            0.0006360185212436439
+          ],
+          "bootstrap_valid": 2000
+        },
+        "temperature": 7.541275634579558,
+        "ece_before": 0.290867897181344,
+        "ece_after": 0.26831423201958216
+      },
+      "cached_original": {
+        "binary_recall_raw": 0.6636029411764706,
+        "binary_recall_ci95": [
+          0.5513726995795675,
+          0.7693766576337638
+        ],
+        "binary_false_alarm_raw": 0.00038577944065203,
+        "soft_recall_raw": 0.8336397058823529,
+        "soft_false_alarm_raw": 0.0005134681961733393,
+        "temperature": 3.157310438156643,
+        "ece_before": 0.271587349845539,
+        "ece_after": 0.24637731219655482
+      }
+    },
+    {
+      "level": "L5",
+      "views": 360,
+      "visible_cells": 1253503,
+      "gazebo": {
+        "binary_recall": {
+          "numerator": 59,
+          "denominator": 224,
+          "raw": 0.26339285714285715,
+          "smoothed": 0.2644444444444444,
+          "ci95": [
+            0.19213920020650935,
+            0.34184344790547794
+          ],
+          "bootstrap_valid": 2000
+        },
+        "binary_false_alarm": {
+          "numerator": 506,
+          "denominator": 1253279,
+          "raw": 0.00040374090685314285,
+          "smoothed": 0.0004041395378526746,
+          "ci95": [
+            0.00029440710309950745,
+            0.000518029100813077
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_recall": {
+          "numerator": 165,
+          "denominator": 224,
+          "raw": 0.7366071428571429,
+          "smoothed": 0.7355555555555555,
+          "ci95": [
+            0.632551360934404,
+            0.8364485981308412
+          ],
+          "bootstrap_valid": 2000
+        },
+        "soft_false_alarm": {
+          "numerator": 687,
+          "denominator": 1253279,
+          "raw": 0.0005481620612808481,
+          "smoothed": 0.0005485605770458317,
+          "ci95": [
+            0.00040541033661270454,
+            0.0006984552747034892
+          ],
+          "bootstrap_valid": 2000
+        },
+        "temperature": 3.7560185332562255,
+        "ece_before": 0.33799476064129474,
+        "ece_after": 0.316121310421843
+      },
+      "cached_original": {
+        "binary_recall_raw": 0.44565217391304346,
+        "binary_recall_ci95": [
+          0.35575929752066116,
+          0.5377573254072271
+        ],
+        "binary_false_alarm_raw": 0.0003870285621676686,
+        "soft_recall_raw": 0.7619565217391304,
+        "soft_false_alarm_raw": 0.0005400263935729334,
+        "temperature": 2.4614438857757346,
+        "ece_before": 0.31023712411416426,
+        "ece_after": 0.2847098702932182
+      }
+    }
+  ],
+  "conditional_recall": "not measured: one view per lattice location (D52)",
+  "frozen_sources_changed": [],
+  "findings": [
+    "L3: cached binary recall 0.780 lies outside the Gazebo 95% CI [0.637, 0.779]",
+    "L4: cached binary recall 0.664 lies outside the Gazebo 95% CI [0.477, 0.663]",
+    "L5: cached binary recall 0.446 lies outside the Gazebo 95% CI [0.192, 0.342]"
+  ]
+}

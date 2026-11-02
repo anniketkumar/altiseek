@@ -6,6 +6,14 @@
 > recovery behavior, unfinished transfer worktree, commands and remaining work.
 > The calibration job was left running; recheck its live state before acting.
 
+> **D55: B calibration complete and reviewed (2026-11-02).** Acquisition
+> `cf148ad98784906d` finished 40/40 worlds and 8,800 views, and refitted
+> `caba50dfc568562d`. `scripts/review_m10_calibration.py` re-verified all of it
+> and reproduced the model; see `docs/m10-calibration-review.md`. No simulator
+> process remains. Do not relaunch calibration. Coarse-level Gazebo recall is
+> below cached, and the D54 correction was never exercised. Held-out transfer
+> is next and not started. Next decision D56.
+
 > **D54: bounded capture correction (2026-11-02).** See
 > `docs/m10-position-diagnosis.md`. Calibration now retries a rejected capture
 > at the same waypoint up to three times, recomputing the local setpoint and

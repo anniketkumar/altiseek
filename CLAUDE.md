@@ -24,7 +24,7 @@ Update as milestones complete (§21).
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
 | M8 PPO | complete with qualifications (D42, owner approved 2026-10-28): six D41 runs and report; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; historical zero-p gate failure retained. See `docs/ppo-acceptance.md`; revisit later using B only |
 | M9 Main experiments | complete (D48, 2026-10-30): both frozen phases accepted, 44,640 unique evaluation episodes, all 24 ablation training runs and 320 additional caches verified. Negative policy findings and separate B-only distractor scope retained. See `docs/m9-extension-acceptance.md` |
-| M10 PX4 / Gazebo / ROS 2 | full continuation authorized (D51, 2026-10-31); completed first flight preserved. Camera geometry and live pipeline integration underway; no transfer result yet. See `docs/m10-continuation.md` |
+| M10 PX4 / Gazebo / ROS 2 | full continuation authorized (D51, 2026-10-31). B calibration complete and reviewed (D55, 2026-11-02): 40 worlds, 8,800 verified views, refit sensor `caba50dfc568562d` reproduced; coarse-level Gazebo recall below cached. Held-out transfer not yet run; no transfer result. See `docs/m10-calibration-review.md` |
 | M11 Write-up & polish | not started |
 
 ---
@@ -1097,3 +1097,18 @@ Per-flight adapter source hashes and rejected-attempt logs expose the controller
 revision; do not describe all views as using one controller version. Exhausted
 attempts still defer, and repeated-flight/integrity safeguards remain. See
 `docs/m10-position-diagnosis.md`. Next decision D55.
+
+## M10 calibration review amendment (D55, 2026-11-02)
+
+Decision Log addition: **D55** — B calibration acquisition `cf148ad98784906d`
+completed (40 worlds, 8,800 views, no deferred worlds) and refitted
+`caba50dfc568562d`. An independent audit re-verified identity, every view
+checksum/contract and capture limit, all stage reports and cleanup, and
+reproduced the model and fit report exactly. Integrity is accepted; the model
+is frozen as the refit arm for H3b, beside original `fcf8cdae58ca3947`.
+Limitations kept: Gazebo recall is below cached at L3–L5 (L5 0.263 against
+0.446), ECE after scaling is 0.18–0.32 with L2/L3 temperatures at the 20.0
+bound, and conditional recall is unmeasured. The D54 correction was never
+exercised (no recaptures), so it is not credited with the later successes. 233 views accepted by
+failed flights were retained. See `docs/m10-calibration-review.md`. B only; no
+T data read. Next decision D56.
