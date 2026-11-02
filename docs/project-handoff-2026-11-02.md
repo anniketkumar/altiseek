@@ -7,6 +7,16 @@
 > running, and calibration must not be relaunched. The "immediate state" and
 > remaining-work items 1–2 below are historical. `registry/manifest.json` is no
 > longer dirty. Transfer status is tracked in the newest AGENTS.md entry.
+>
+> **Transfer (D56).** The worktree draft is preserved on branch
+> `m10-transfer` and finished on main. Protocol v2 `31b45c0d400dbc06`
+> (`configs/eval/m10_transfer_v2.json`) is frozen; v1 was superseded before any
+> T run. Runner root: `/home/aniket/altiseek-m10/transfers/<protocol_id>/`
+> (`status.json`, `failures.jsonl`, `preflight/`, `cached/`, `live/`). Launch
+> with `scripts/launch_m10_transfer.py <protocol>`, adding
+> `--stop-after-preflight` for the B gate only. It refuses duplicates and
+> reuses verified completions. Never edit `src/`, `configs/` or execution
+> scripts while it runs; the hash check stops it.
 
 Snapshot taken around **01:52 Singapore time, 2 November 2026**.
 Read `CLAUDE.md` in full, then the latest entries at the top of `AGENTS.md`.
