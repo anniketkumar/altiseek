@@ -1,0 +1,39 @@
+{
+  "protocol_id": "5560516d08907341",
+  "case": {
+    "world_id": "9da4366347431954",
+    "method": "B5",
+    "training_seed": 0,
+    "sensor": "original",
+    "smoke": false
+  },
+  "flight": "/home/aniket/altiseek-m10/camera-flights/20261102T193342Z",
+  "video": "data/m10/demo/5560516d08907341/30988c2109126434/demo.mp4",
+  "video_sha256": "057bbabdac495bba53c7de1c7b8ba7d57750bf1dc616c9f3a2f006560164adee",
+  "frames": 20,
+  "fps": 4,
+  "views": 3,
+  "metrics": {
+    "found_fraction": 1.0,
+    "success": true,
+    "auc": 0.92404,
+    "first_find_s": 37.98,
+    "false_declarations": 1,
+    "reward": 1.42286,
+    "energy_s": 39.06,
+    "elapsed_s": 37.98,
+    "path_m": 155.66312579796804,
+    "steps": 2,
+    "time_per_level_s": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      37.98
+    ],
+    "false_clear_crossings": 0,
+    "coarse_target_negative_updates": 0
+  },
+  "source_sha256": "8dea4d01536141299fc2cab771b966251f556c83c7d3d539e2aba401bd157db1",
+  "note": "Local only: contains dataset-derived imagery. Case fixed before outcomes."
+}

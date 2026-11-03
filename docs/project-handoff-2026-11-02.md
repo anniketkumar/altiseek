@@ -1,5 +1,9 @@
 # Project continuation handoff — 2 November 2026
 
+> **Final update (D60, 3 November 2026):** M10 is complete; see
+> `docs/m10-acceptance.md`. Everything below about pending transfer work is
+> historical. M11 (write-up) is next.
+
 > **Update (D55, later on 2 November 2026).** The calibration job described below
 > completed at 08:33 Singapore time: 40/40 worlds, 8,800 views, no deferred
 > worlds, refit sensor `caba50dfc568562d`. It was reviewed and its integrity

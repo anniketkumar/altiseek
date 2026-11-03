@@ -24,7 +24,7 @@ Update as milestones complete (§21).
 | M7 Environment & baselines | done (2026-10-28): environment/checker/tests, 3,520 rl-val baseline episodes, coverage and completed false-clear checks; settings frozen (D36–D38; `docs/baseline-results.md`) |
 | M8 PPO | complete with qualifications (D42, owner approved 2026-10-28): six D41 runs and report; V3/V0 mean validation AUC 0.720/0.212. V0 stability not demonstrated; historical zero-p gate failure retained. See `docs/ppo-acceptance.md`; revisit later using B only |
 | M9 Main experiments | complete (D48, 2026-10-30): both frozen phases accepted, 44,640 unique evaluation episodes, all 24 ablation training runs and 320 additional caches verified. Negative policy findings and separate B-only distractor scope retained. See `docs/m9-extension-acceptance.md` |
-| M10 PX4 / Gazebo / ROS 2 | full continuation authorized (D51, 2026-10-31). B calibration complete and reviewed (D55, 2026-11-02): 40 worlds, 8,800 verified views, refit sensor `caba50dfc568562d` reproduced; coarse-level Gazebo recall below cached. Held-out transfer not yet run; no transfer result. See `docs/m10-calibration-review.md` |
+| M10 PX4 / Gazebo / ROS 2 | done (D60, 2026-11-03): protocol v4 `5560516d08907341`, 192 live + 96 cached T episodes, all verified. B5 transfers (AUC −0.008 [−0.069, 0.078]); PPO loses −0.135 [−0.199, −0.073]; refit does not recover it (H3b unsupported). Demo local. See `docs/m10-acceptance.md` |
 | M11 Write-up & polish | not started |
 
 ---
@@ -1167,4 +1167,20 @@ darkened the whole map. The overlay is now scaled per frame across three orders
 of magnitude below the most likely cell, with opacity following belief. It is
 cosmetic only: no episode, metric, comparison or demo-case choice changes.
 The report script ran unchanged in its partial code-check mode; I did not
-inspect its numbers. Next decision D60.
+inspect its numbers.
+
+## M10 acceptance (D60, 2026-11-03)
+
+Decision Log addition: **D60** — M10 complete under protocol v4
+`5560516d08907341`. All 192 live and 96 cached episodes verified; 5
+stale-telemetry failures were re-flown and listed; 3 recaptures were accepted.
+- H3a: B5 shows no resolved gap (−0.008 [−0.069, 0.078]); PPO loses
+  −0.135 [−0.199, −0.073] AUC.
+- H3b is unsupported: the refit changes PPO AUC by +0.027 [−0.036, 0.096] and
+  B5 by −0.036 [−0.073, −0.010].
+- PPO stays below B5 in every condition.
+- Contributors are not isolated: live L5 recall is lower on matched nodes, and
+  a post-hoc analysis shows live steps cost about 1.65× cached time.
+- The demo video stays local; `docs/m10-demo.json` is its manifest.
+
+Limitations are in `docs/m10-acceptance.md`. M11 is next. Next decision D61.

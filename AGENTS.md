@@ -6,6 +6,13 @@
 > recovery behavior, unfinished transfer worktree, commands and remaining work.
 > The calibration job was left running; recheck its live state before acting.
 
+> **D60: M10 complete (2026-11-03).** Protocol v4 `5560516d08907341`: all 192
+> live and 96 cached episodes verified. Results are in `docs/m10-transfer-results/`
+> and the review in `docs/m10-acceptance.md`. B5 transfers; PPO loses about
+> 0.135 AUC live; the refit does not recover it. Do not rerun or tune on T. The
+> laptop's lid/hibernate settings were changed for the run (see memory).
+> M11 write-up is next. Next decision D61.
+
 > **D56: M10 transfer protocol frozen (2026-11-02).** Protocol
 > `5560516d08907341` (`configs/eval/m10_transfer_v4.json`; v1 superseded pre-T,
 > v2 after a classifier gap (D57), v3 after a recapture-logging bug (D58),
