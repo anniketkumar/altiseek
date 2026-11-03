@@ -5,8 +5,11 @@ stage named with it, and each figure is that stage's own plot.
 
 ## Latest milestone disposition
 
-M8 has qualified acceptance (D42); M9 is complete (D48, 2026-10-30).
-Historical pending statements below describe earlier stages. Current evidence:
+All milestones are complete: M10 (D60, 2026-11-03) and M11 (D61). The write-up is
+[paper.md](paper.md), and M10 transfer results are in
+[m10-transfer-results](m10-transfer-results/results.md) with the
+[M10 review](m10-acceptance.md). M8 has qualified acceptance (D42); M9 is complete (D48).
+Historical pending statements below describe earlier stages. M9 evidence:
 [M9 acceptance](m9-extension-acceptance.md),
 [main tables](m9-results/results.md),
 [extension tables](m9-extension-results/results.md),
@@ -18,6 +21,8 @@ findings, imperfect calibration and the separate B-only distractor scope.
 
 | Figure | Stage | Shows |
 |---|---|---|
+| [m11_found_curves.png](figures/m11_found_curves.png) | make-figures | M9 nominal V3 found fraction over time per family: B3, B5, PPO, random and oracle |
+| [m10_transfer.png](figures/m10_transfer.png) | make-figures | M10 Gazebo versus cached AUC per policy and sensor, and detector recall per level on executed views |
 | [horizon_fit_mavic_4k.png](figures/horizon_fit_mavic_4k.png) | fit-camera | `mavic_4k` focal length fitted from the sea horizon (D12) |
 | [leakage_calibration.png](figures/leakage_calibration.png) | check-leakage | Near-duplicate thresholds and their calibration (D17) |
 | [fidelity_700e0ff3_d30.png](figures/fidelity_700e0ff3_d30.png) | check-fidelity | Rendered worlds vs real frames per level (recall, false detections), and the paste test (D30) |
