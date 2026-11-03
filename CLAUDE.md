@@ -1016,16 +1016,16 @@ Each milestone depends on the ones before it. Don't start the next one until the
 | D50 | Accept only the completed first-flight check and stop further M10 work, as explicitly requested by the owner. Clear the px4_msgs clock-skew warning by a clean-object rebuild; verify live takeoff, 10 s offboard hold at 5 m, landing and automatic disarm. | Warning-free rebuild and ROS type-support checks passed. Run `20261030T084811Z` passed in 48.546 s; independent telemetry audit confirms the hold limits and landing/disarm. All owned processes stopped. Earlier unarmed startup attempts are retained. No search or transfer result is claimed. See `docs/m10-deployment/m10-first-flight.md`. | First-flight increment complete; full M10 remains incomplete and further work awaits owner instruction |
 | D51 | Owner authorizes completing full M10 on 2026-10-31, lifting D50's stop. Log failed online operations, continue independent offline work and retry when access returns. | Preserve completed flights/training/evaluations. Installed software rendering and CPU inference must be profiled on B before fixing deployment timing or transfer scope. Camera scale/orientation, pose synchronization, shared search logic, B sensor refit and the demo remain required; no pending check is waived for connectivity. See `docs/m10-deployment/m10-continuation.md`. | Full M10 implementation underway; transfer protocol not yet frozen |
 | D52 | Freeze live accounting and B calibration acquisition in `docs/m10-deployment/m10-live-protocol.md`: actual simulator time, measured climb multiplier, normal seeded L5 edge launch, whole-cell visibility, 40 sensor-fit B worlds and all 8,800 lattice views. Co-locate detector/belief/policy/supervisor components while keeping control callbacks independent. | Eliminates free inference/settling time and partial-cell updates while retaining shared logic and historical M7–M9 results. Co-location reduces transport complexity on CPU-only WSL. A ten-view pilot gates resumable full calibration. No T tuning or transfer acceptance is implied. | Complete |
-| D53 | Bounded deferred recovery for M10 calibration (`scripts/deploy/continue_m10_resilient.py`): recognised position/capture-timeout failures with confirmed cleanup are logged and deferred, then retried; integrity or unknown failures, three consecutive flight failures or three exhausted passes stop. | Owner authorised logging and deferring isolated failed flights, 2026-11-01. Changes scheduling only: D52 sources, identity, thresholds and saved views are preserved; all 40 worlds and 8,800 views remain required. See `docs/m10-deployment/m10-recovery.md`. | Complete |
-| D54 | Same-waypoint capture correction: at most three capture attempts per waypoint after a position or image/pose rejection, recomputing the setpoint and settling each time. Acceptance thresholds unchanged. | Three consecutive position-rejected flights: PX4 hold error stayed < 0.291 m while actual camera error exceeded 1 m, because a one-shot world-to-local conversion ignores offset drift during travel. Per-flight adapter hashes and retries are logged. See `docs/m10-deployment/m10-position-diagnosis.md`. | Complete; never exercised in calibration (D55) |
-| D55 | Accept B calibration `cf148ad98784906d`: 40 worlds, 8,800 views; refit `caba50dfc568562d` frozen as the H3b arm beside original `fcf8cdae58ca3947`. | An independent audit re-verified identity, every view checksum and capture limit, stage reports and cleanup, and reproduced the model exactly. Limitations kept: Gazebo recall below cached at L3–L5 (L5 0.263 against 0.446), ECE 0.18–0.32, L2/L3 temperatures at the bound, conditional recall unmeasured, D54 never exercised. See `docs/m10-deployment/m10-calibration-review.md`. | Complete |
-| D56 | M10 transfer protocol (`docs/m10-deployment/m10-transfer-protocol.md`): 24 T worlds by metadata hash, B5 and PPO 17/29/43 × original/refit sensor = 192 live + 96 cached references, paired seeds; D54-style recapture with time charged to the battery; operational failures deferred and re-flown (three attempts per case, persisted); B preflight gate; report/demo scripts outside the execution hash; demo case fixed. | Finishes the m10-transfer draft without T-driven choices. All inputs are hash-frozen and re-verified on every runner command. | Executed as v4 |
-| D57 | Protocol v3: accept the `Flight is already landing` error as stale telemetry when the flight report confirms it. | v2 `31b45c0d400dbc06` stopped after 13 live episodes on that unlisted variant. v1 `32c7970163d73479` had been superseded pre-T because its preflight ended on the first view. Every v3 case was re-flown; superseded outcomes were not examined. | Superseded by D58 |
-| D58 | Protocol v4 `5560516d08907341`: move the recapture log record into a tested JSON-safe helper. | v3 `750d20fa9df98142` stopped after 30 live episodes at the first rejected capture: the logger could not serialise the meter's NumPy array. All v4 cases re-flown; only v3 ending types were inspected. | Executed |
-| D59 | Demo belief overlay scaled per frame (three decades below the most likely cell), opacity following belief. | The demo script is outside the execution hash; the change after T outcomes existed is cosmetic and logged. No metric or comparison changed. | Complete |
-| D60 | Accept M10: 192 live and 96 cached episodes verified; 5 stale-telemetry failures re-flown and listed; 3 recaptures accepted. | B5 shows no resolved live gap (−0.008 [−0.069, 0.078]); PPO loses −0.135 [−0.199, −0.073]; the refit does not recover it (+0.027 [−0.036, 0.096]), so H3b is unsupported. Live L5 recall is lower and live steps cost about 1.65× cached time (post-hoc). See `docs/m10-deployment/m10-acceptance.md`. | Complete |
-| D61 | M11 deliverables: `docs/paper.md`, README rewrite, `scripts/figures/make_figures.py` for the per-family found curves and the Gazebo-versus-cache figure. | Every number comes from committed results; no experiment rerun or tuned. All §20 figures exist; the demo video stays local (dataset imagery). | Complete |
-| D62 | Reorganise the repository: scripts into `scripts/<stage>/`, docs into per-milestone folders with an index, amendments folded into this table, AGENTS.md condensed (history in `docs/archive/`). Tag `results-final` marks the last pre-reorganisation tree. | Owner request, 2026-11-03. Every path reference in code, configs, tests and docs was rewritten; generated and frozen records keep their bytes. Frozen protocols hash the old paths, so verification of M9/M10 artifacts is done at the tag. | Complete |
+| D53 | Bounded deferred recovery for M10 calibration (`scripts/deploy/continue_m10_resilient.py`): recognised position/capture-timeout failures with confirmed cleanup are logged and deferred, then retried; integrity or unknown failures, three consecutive flight failures or three exhausted passes stop. | Owner authorised logging and deferring isolated failed flights, 2026-11-01. Changes scheduling only: D52 sources, identity, thresholds and saved views are preserved; all 40 worlds and 8,800 views remain required. See `docs/m10-deployment/m10-recovery.md`. | Complete; full text in §28 |
+| D54 | Same-waypoint capture correction: at most three capture attempts per waypoint after a position or image/pose rejection, recomputing the setpoint and settling each time. Acceptance thresholds unchanged. | Three consecutive position-rejected flights: PX4 hold error stayed < 0.291 m while actual camera error exceeded 1 m, because a one-shot world-to-local conversion ignores offset drift during travel. Per-flight adapter hashes and retries are logged. See `docs/m10-deployment/m10-position-diagnosis.md`. | Complete; never exercised in calibration (D55); full text in §28 |
+| D55 | Accept B calibration `cf148ad98784906d`: 40 worlds, 8,800 views; refit `caba50dfc568562d` frozen as the H3b arm beside original `fcf8cdae58ca3947`. | An independent audit re-verified identity, every view checksum and capture limit, stage reports and cleanup, and reproduced the model exactly. Limitations kept: Gazebo recall below cached at L3–L5 (L5 0.263 against 0.446), ECE 0.18–0.32, L2/L3 temperatures at the bound, conditional recall unmeasured, D54 never exercised. See `docs/m10-deployment/m10-calibration-review.md`. | Complete; full text in §28 |
+| D56 | M10 transfer protocol (`docs/m10-deployment/m10-transfer-protocol.md`): 24 T worlds by metadata hash, B5 and PPO 17/29/43 × original/refit sensor = 192 live + 96 cached references, paired seeds; D54-style recapture with time charged to the battery; operational failures deferred and re-flown (three attempts per case, persisted); B preflight gate; report/demo scripts outside the execution hash; demo case fixed. | Finishes the m10-transfer draft without T-driven choices. All inputs are hash-frozen and re-verified on every runner command. | Executed as v4; full text in §28 |
+| D57 | Protocol v3: accept the `Flight is already landing` error as stale telemetry when the flight report confirms it. | v2 `31b45c0d400dbc06` stopped after 13 live episodes on that unlisted variant. v1 `32c7970163d73479` had been superseded pre-T because its preflight ended on the first view. Every v3 case was re-flown; superseded outcomes were not examined. | Superseded by D58; full text in §28 |
+| D58 | Protocol v4 `5560516d08907341`: move the recapture log record into a tested JSON-safe helper. | v3 `750d20fa9df98142` stopped after 30 live episodes at the first rejected capture: the logger could not serialise the meter's NumPy array. All v4 cases re-flown; only v3 ending types were inspected. | Executed; full text in §28 |
+| D59 | Demo belief overlay scaled per frame (three decades below the most likely cell), opacity following belief. | The demo script is outside the execution hash; the change after T outcomes existed is cosmetic and logged. No metric or comparison changed. | Complete; full text in §28 |
+| D60 | Accept M10: 192 live and 96 cached episodes verified; 5 stale-telemetry failures re-flown and listed; 3 recaptures accepted. | B5 shows no resolved live gap (−0.008 [−0.069, 0.078]); PPO loses −0.135 [−0.199, −0.073]; the refit does not recover it (+0.027 [−0.036, 0.096]), so H3b is unsupported. Live L5 recall is lower and live steps cost about 1.65× cached time (post-hoc). See `docs/m10-deployment/m10-acceptance.md`. | Complete; full text in §28 |
+| D61 | M11 deliverables: `docs/paper.md`, README rewrite, `scripts/figures/make_figures.py` for the per-family found curves and the Gazebo-versus-cache figure. | Every number comes from committed results; no experiment rerun or tuned. All §20 figures exist; the demo video stays local (dataset imagery). | Complete; full text in §28 |
+| D62 | Reorganise the repository: scripts into `scripts/<stage>/`, docs into per-milestone folders with an index, amendments summarised in this table with their full text kept in §28, AGENTS.md condensed (history in `docs/archive/`). Tag `results-final` marks the last pre-reorganisation tree. | Owner request, 2026-11-03. Every path reference in code, configs, tests and docs was rewritten; generated and frozen records keep their bytes. Frozen protocols hash the old paths, so verification of M9/M10 artifacts is done at the tag. | Complete |
 ---
 
 
@@ -1087,3 +1087,139 @@ Each milestone depends on the ones before it. Don't start the next one until the
 
 **Deployment**
 - PX4 User Guide (current version): ROS 2 integration, offboard mode, Gazebo simulation.
+
+---
+
+## 28. Decision details (D53–D61)
+
+Full original text of each decision recorded after the §24 table was last restructured, kept verbatim apart from path updates (D62). The §24 rows summarise them.
+
+### M10 recovery amendment (D53, 2026-11-01)
+
+The owner authorized logging and deferring isolated failed calibration flights,
+continuing other worlds and retrying unfinished worlds afterward. The separate
+scheduler in `scripts/deploy/continue_m10_resilient.py` preserves D52 acquisition source
+hashes, identity, thresholds and saved views. Only recognized position/capture
+timeout failures with confirmed process cleanup are recoverable. Integrity and
+unknown failures stop; three consecutive flight failures or three exhausted
+passes also stop. All 40 worlds and 8,800 verified views remain required before
+refitting; input order remains frozen. See `docs/m10-deployment/m10-recovery.md`.
+
+Decision Log addition: **D53** — Owner-approved bounded deferred recovery for
+M10 acquisition. This changes scheduling only, not accepted observations or
+scientific settings. The scheduler records its own source hash separately and
+waits for the existing job lock before taking over. Next free decision is D54.
+
+### M10 position correction amendment (D54, 2026-11-02)
+
+Decision Log addition: **D54** — Owner requested diagnosis and continuation after
+three consecutive position-rejected flights. PX4 estimated-position settling
+was satisfied while actual camera-world error exceeded 1 m. A one-shot world-to-
+local setpoint conversion permits estimator/stream offset changes during motion;
+the available logs do not uniquely separate those causes. Calibration now uses
+a separate adapter with at most three same-goal capture attempts, recomputing
+the setpoint and resetting settling on each. Position and image/pose acceptance
+thresholds, detector, renderer, visibility and saved valid views are unchanged.
+Per-flight adapter source hashes and rejected-attempt logs expose the controller
+revision; do not describe all views as using one controller version. Exhausted
+attempts still defer, and repeated-flight/integrity safeguards remain. See
+`docs/m10-deployment/m10-position-diagnosis.md`. Next decision D55.
+
+### M10 calibration review amendment (D55, 2026-11-02)
+
+Decision Log addition: **D55** — B calibration acquisition `cf148ad98784906d`
+completed (40 worlds, 8,800 views, no deferred worlds) and refitted
+`caba50dfc568562d`. An independent audit re-verified identity, every view
+checksum/contract and capture limit, all stage reports and cleanup, and
+reproduced the model and fit report exactly. Integrity is accepted; the model
+is frozen as the refit arm for H3b, beside original `fcf8cdae58ca3947`.
+Limitations kept: Gazebo recall is below cached at L3–L5 (L5 0.263 against
+0.446), ECE after scaling is 0.18–0.32 with L2/L3 temperatures at the 20.0
+bound, and conditional recall is unmeasured. The D54 correction was never
+exercised (no recaptures), so it is not credited with the later successes. 233 views accepted by
+failed flights were retained. See `docs/m10-deployment/m10-calibration-review.md`. B only; no
+T data read.
+
+### M10 transfer protocol amendment (D56, 2026-11-02)
+
+Decision Log addition: **D56** — Held-out transfer follows
+`docs/m10-deployment/m10-transfer-protocol.md`, frozen as protocol `31b45c0d400dbc06`
+(`configs/eval/m10_transfer_v2.json`; v1 `32c7970163d73479` superseded before any T
+run because its B preflight ended on the first view) before any M10 T flight or cached reference.
+24 T worlds are selected by metadata hash (three per original family). V3 B5 and
+all three frozen PPO seeds (17/29/43) run with the original (`fcf8cdae58ca3947`)
+and refit (`caba50dfc568562d`) sensors: 192 live episodes plus 96 paired cached
+references with shared seeds. Search flights reuse D54's same-waypoint
+recapture (at most three attempts). Its time is charged to the measured
+battery, and rejected frames never update belief. Episodes failing for
+recognised operational causes with confirmed cleanup are logged, deferred and
+re-flown from the start: three attempts per case, persisted across relaunches;
+three consecutive failures, integrity or unknown errors stop for review. The
+first complete valid attempt is reported and every failed attempt listed. One
+full refit-sensor B episode per policy (rl-val `48a9325328a6d2c4`) precedes T
+and stops for review. Report and demo scripts are outside the execution hash;
+post-T changes to them need a Decision Log entry. The demo case is fixed:
+first selected world, B5, original sensor.
+
+### M10 transfer classifier amendment (D57, 2026-11-02)
+
+Decision Log addition: **D57** — Protocol v2 `31b45c0d400dbc06` stopped after 13
+of 192 live episodes. Telemetry went stale, which the flight report confirmed
+along with cleanup, and the policy thread raised `Flight is already landing`,
+which the v2 failure classifier did not list. v3 accepts that error string
+only with a confirmed stale-telemetry report, the category D56 already defers.
+Nothing else changes. Every v3 case, preflight included, is re-flown under one
+identity as v3 `750d20fa9df98142`. v2's episodes are kept as a superseded record, not reported, and
+their outcomes were not examined.
+
+### M10 recapture logging amendment (D58, 2026-11-02)
+
+Decision Log addition: **D58** — v3 stopped after 30 of 192 live episodes, at
+the study's first rejected capture. The D56 recapture logger could not
+serialise the battery meter's NumPy array, so the episode crashed instead of
+recapturing. The preflight had not exercised the path, and its test did not
+cover the log line. v4 moves the record into a tested JSON-safe helper.
+Execution semantics are otherwise unchanged. All v4 cases are re-flown under
+one identity as v4 `5560516d08907341`; v3's are kept as a superseded record, with only their ending
+types inspected. The live recapture flow itself is still unexercised; a
+failure in it stops the run for review.
+
+### M10 demo rendering amendment (D59, 2026-11-03)
+
+Decision Log addition: **D59** — The demo script lies outside the execution
+hash (D56), so changing it after T outcomes exist needs this entry. Checking it
+on one completed non-demo T case showed the belief overlay was nearly
+invisible: cell probabilities are around 10⁻³, and the fixed colour scale
+darkened the whole map. The overlay is now scaled per frame across three orders
+of magnitude below the most likely cell, with opacity following belief. It is
+cosmetic only: no episode, metric, comparison or demo-case choice changes.
+The report script ran unchanged in its partial code-check mode; I did not
+inspect its numbers.
+
+### M10 acceptance (D60, 2026-11-03)
+
+Decision Log addition: **D60** — M10 complete under protocol v4
+`5560516d08907341`. All 192 live and 96 cached episodes verified; 5
+stale-telemetry failures were re-flown and listed; 3 recaptures were accepted.
+- H3a: B5 shows no resolved gap (−0.008 [−0.069, 0.078]); PPO loses
+  −0.135 [−0.199, −0.073] AUC.
+- H3b is unsupported: the refit changes PPO AUC by +0.027 [−0.036, 0.096] and
+  B5 by −0.036 [−0.073, −0.010].
+- PPO stays below B5 in every condition.
+- Contributors are not isolated: live L5 recall is lower on matched nodes, and
+  a post-hoc analysis shows live steps cost about 1.65× cached time.
+- The demo video stays local; `docs/m10-deployment/m10-demo.json` is its manifest.
+
+Limitations are in `docs/m10-deployment/m10-acceptance.md`.
+
+### M11 write-up (D61, 2026-11-03)
+
+Decision Log addition: **D61** — M11 deliverables are complete. They are the
+paper-style write-up `docs/paper.md`, a README covering method, results, stage
+reproduction, limitations, licences and citations, and two figures that were
+missing from §20. `scripts/figures/make_figures.py` generates both from published
+results JSON only: per-family found curves and the Gazebo-versus-cache
+comparison. Every number in the write-up comes from committed results or
+acceptance reviews. No experiment was rerun and nothing was tuned. All required
+§20 figures now exist in `docs/figures/`. The demo video stays local because it
+contains dataset-derived imagery. Next decision D62.
