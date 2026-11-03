@@ -1155,4 +1155,16 @@ cover the log line. v4 moves the record into a tested JSON-safe helper.
 Execution semantics are otherwise unchanged. All v4 cases are re-flown under
 one identity as v4 `5560516d08907341`; v3's are kept as a superseded record, with only their ending
 types inspected. The live recapture flow itself is still unexercised; a
-failure in it stops the run for review. Next decision D59.
+failure in it stops the run for review.
+
+## M10 demo rendering amendment (D59, 2026-11-03)
+
+Decision Log addition: **D59** — The demo script lies outside the execution
+hash (D56), so changing it after T outcomes exist needs this entry. Checking it
+on one completed non-demo T case showed the belief overlay was nearly
+invisible: cell probabilities are around 10⁻³, and the fixed colour scale
+darkened the whole map. The overlay is now scaled per frame across three orders
+of magnitude below the most likely cell, with opacity following belief. It is
+cosmetic only: no episode, metric, comparison or demo-case choice changes.
+The report script ran unchanged in its partial code-check mode; I did not
+inspect its numbers. Next decision D60.

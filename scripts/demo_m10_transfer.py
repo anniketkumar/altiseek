@@ -93,12 +93,14 @@ def main() -> None:
         with np.load(belief_file) as arrays:
             p = arrays["probabilities"]
         # Belief p[ix, iy] -> image rows from the north edge.
-        heat = np.log10(np.clip(p.T[::-1], 1e-4, 1.0))
-        heat = ((heat + 4) / 4 * 255).astype(np.uint8)
+        # Three decades below this frame's most likely cell; cell probabilities are small.
+        heat = np.log10(np.clip(p.T[::-1], 1e-12, 1.0) / max(float(p.max()), 1e-12))
+        heat = np.clip((heat + 3) / 3, 0, 1).astype(np.float32)
         heat = cv2.resize(heat, (MAP_PX, MAP_PX), interpolation=cv2.INTER_NEAREST)
-        frame_map = cv2.addWeighted(
-            background, 0.55, cv2.applyColorMap(heat, cv2.COLORMAP_INFERNO), 0.45, 0
-        )
+        colour = cv2.applyColorMap((heat * 255).astype(np.uint8), cv2.COLORMAP_INFERNO)
+        # Opacity follows belief, so likely cells stand out and the sea shows elsewhere.
+        alpha = (0.75 * heat)[..., None]
+        frame_map = (background * (1 - alpha) + colour * alpha).astype(np.uint8)
         level = view["level"]
         x, y = view["camera_enu_m"][:2]
         path_points.append((to_px(x, y), level))
