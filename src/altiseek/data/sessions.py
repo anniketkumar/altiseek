@@ -1,7 +1,8 @@
 """Sessions: groups of frames that must stay in one split (CLAUDE.md §7 step 5).
 
 A session is one capture day across every camera group. The drones of a campaign filmed the same
-exercise in the same hours (docs/data_notes.md), so splitting a day would put the same swimmers,
+exercise in the same hours (docs/data/data_notes.md), so splitting a day would put the same
+swimmers,
 boats and sea state on both sides of a split. A day counts only if the frame's timestamp is
 trusted: an image-level ``date_time``, or a MicaSense ``meta.date_time`` on a frame with a GPS fix.
 

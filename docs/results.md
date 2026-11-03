@@ -7,13 +7,13 @@ stage named with it, and each figure is that stage's own plot.
 
 All milestones are complete: M10 (D60, 2026-11-03) and M11 (D61). The write-up is
 [paper.md](paper.md), and M10 transfer results are in
-[m10-transfer-results](m10-transfer-results/results.md) with the
-[M10 review](m10-acceptance.md). M8 has qualified acceptance (D42); M9 is complete (D48).
+[m10-transfer-results](m10-deployment/m10-transfer-results/results.md) with the
+[M10 review](m10-deployment/m10-acceptance.md). M8 has qualified acceptance (D42); M9 is complete (D48).
 Historical pending statements below describe earlier stages. M9 evidence:
-[M9 acceptance](m9-extension-acceptance.md),
-[main tables](m9-results/results.md),
-[extension tables](m9-extension-results/results.md),
-[all-seed training curves](m9-training-results.md).
+[M9 acceptance](m9-evaluation/m9-extension-acceptance.md),
+[main tables](m9-evaluation/m9-results/results.md),
+[extension tables](m9-evaluation/m9-extension-results/results.md),
+[all-seed training curves](m9-evaluation/m9-training-results.md).
 The nominal V3 PPO trails B5; the full review retains negative robustness
 findings, imperfect calibration and the separate B-only distractor scope.
 
@@ -178,9 +178,9 @@ Recall (IoU) at τ. Size is √(width × height) of the box in view pixels; swim
   - B's coarse end is `NorthSea_Sat_DJI_0129`, about 88 m up; T's is `NorthSea_Thu_DJI_0107`.
   - Tight groups do not explain B's flat curve. B's swimmers are less clustered than T's: the
     median distance to the nearest other swimmer is 4.0 m in B against 2.6 m in T
-    ([data notes](data_notes.md#swimmer-spacing)).
+    ([data notes](data/data_notes.md#swimmer-spacing)).
 - **IoU and centre matching disagree in every B and T video, for both detectors,** which points at
-  the annotations rather than at either model ([data notes](data_notes.md#annotation-offsets)). In
+  the annotations rather than at either model ([data notes](data/data_notes.md#annotation-offsets)). In
   image 10465 every box in the frame is offset from its swimmer by about half a box.
 
 ## Evaluation with 5% tiles (D25)
@@ -546,7 +546,7 @@ coordinate tolerance 0.05 px. Local collection verified all file checksums, head
 input provenance and validation records. No full live re-inference was run locally.
 
 Source: `data/caches/collection-summary.json` and the archived production ZIP; reproduction and
-archive SHA-256 are documented in `docs/cache.md`. These are cache integrity/cost results, not
+archive SHA-256 are documented in `docs/data/cache.md`. These are cache integrity/cost results, not
 sensor-model performance or final search results.
 
 ## M6 sensor models (completed 2026-10-27)
@@ -554,8 +554,8 @@ sensor-model performance or final search results.
 Model `fcf8cdae58ca3947` implements V0–V3, fitted only on the 40 sensor-fit B worlds.
 Evaluation covers all 80 test worlds plus 688 real-T views from 405 frames, with CPU inference
 and no re-fitting. The frozen protocol, numeric results and reproduction instructions are in
-[sensor-protocol.md](sensor-protocol.md), [sensor-results.md](sensor-results.md) and
-[sensor-models.md](sensor-models.md).
+[sensor-protocol.md](m6-sensor/sensor-protocol.md), [sensor-results.md](m6-sensor/sensor-results.md) and
+[sensor-models.md](m6-sensor/sensor-models.md).
 
 B cell recall falls from 0.794 at L1 to 0.446 at L5; second-look recall after a miss is
 0.095–0.186. The owner retained first observation per cell/level, five levels and a 500 s
@@ -571,8 +571,8 @@ distractors, unlike B, and real exercise scenes differ again. No settings were c
 Run `8cd76bdb72f965a1` completed 3,520 validation episodes on 40 B worlds, covering
 random, oracle and B1–B5 under V0–V3. Baseline settings are frozen per family and
 variant in `configs/policy/selected.yaml`. Full tables, bootstrap intervals and the
-numeric figure are in [baseline-results.md](baseline-results.md); commands and
-artifact provenance are in [search.md](search.md).
+numeric figure are in [baseline-results.md](m7-search/baseline-results.md); commands and
+artifact provenance are in [search.md](m7-search/search.md).
 
 | V3 method | Validation AUC | Mean found fraction | All-found rate |
 |---|---:|---:|---:|
@@ -602,10 +602,10 @@ zero-belief check remains for M8. No test worlds or detector inference were used
 
 All six initial runs completed: V0/V3, seeds 17/29/43, 131,072 transitions each.
 Selected validation AUC averages 0.072 (V0) and 0.439 (V3), versus B5's 0.551 and
-0.888. The all-seed [results](ppo-results.md) preserve this negative outcome.
+0.888. The all-seed [results](m8-ppo/ppo-results.md) preserve this negative outcome.
 M8 is not declared complete.
 
-The [diagnosis](ppo-diagnosis.md) uses 240 exact deterministic replays, 720
+The [diagnosis](m8-ppo/ppo-diagnosis.md) uses 240 exact deterministic replays, 720
 sampled-action episodes, 1,783 public-input probes and a separate fixed four-world
 training check. It finds:
 

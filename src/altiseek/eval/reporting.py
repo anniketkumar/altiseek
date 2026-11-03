@@ -249,7 +249,7 @@ def figures(rows: list[dict[str, Any]], output: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run", type=Path)
-    parser.add_argument("--out", type=Path, default=Path("docs/m9-results"))
+    parser.add_argument("--out", type=Path, default=Path("docs/m9-evaluation/m9-results"))
     args = parser.parse_args()
     report(args.run, args.out)
 

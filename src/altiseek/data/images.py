@@ -1,7 +1,7 @@
 """Local ODv2 images, fetched on demand from the dataset's public WebDAV share.
 
 Images live at ``<root>/<official split>/<file_name>``, the layout of the share's ``images/``
-folders (docs/data_notes.md). Files are written under a temporary name first, so an interrupted
+folders (docs/data/data_notes.md). Files are written under a temporary name first, so an interrupted
 fetch never leaves a truncated image behind and simply resumes on the next call.
 """
 

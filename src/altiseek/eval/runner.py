@@ -212,7 +212,7 @@ def run(protocol_path: Path, manifest_path: Path, out: Path, *, smoke: bool, lim
         "search": Path("configs/env/search.yaml"),
     }
     inputs.update({f"source:{p.as_posix()}": p for p in Path("src/altiseek").rglob("*.py")})
-    inputs["runner"] = Path("scripts/evaluate.py")
+    inputs["runner"] = Path("scripts/eval/evaluate.py")
     for world in worlds:
         path = cache.out_dir / world.world_set / f"{world.world_id}.npz"
         if resume_metadata(path, world, cache) is None:

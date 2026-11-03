@@ -387,9 +387,9 @@ Each needs a new protocol with B-only design choices.
 Each stage has a script in `scripts/` and a frozen protocol in `configs/eval/` or `docs/`. Every
 table and figure regenerates from saved results:
 
-- `scripts/report_evaluation.py` and `scripts/report_m9_extension.py` for M9;
-- `scripts/report_m10_transfer.py` for M10;
-- `scripts/make_figures.py` for the M11 figures.
+- `scripts/eval/report_evaluation.py` and `scripts/eval/report_m9_extension.py` for M9;
+- `scripts/deploy/report_m10_transfer.py` for M10;
+- `scripts/figures/make_figures.py` for the M11 figures.
 
 Data, caches, checkpoints and imagery are never committed. Design, decisions (D1–D60) and
 acceptance reviews are in `CLAUDE.md` and `docs/`.

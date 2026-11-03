@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 SPEC = importlib.util.spec_from_file_location(
-    "capture_retry", Path(__file__).resolve().parents[2] / "scripts/retry_m10_capture.py"
+    "capture_retry", Path(__file__).resolve().parents[2] / "scripts/deploy/retry_m10_capture.py"
 )
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)

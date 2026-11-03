@@ -28,7 +28,7 @@ from altiseek.registry.run import sha256_file
 from tests.cache.test_cache import built, cfg, library
 
 __all__ = ["built", "cfg", "library"]
-SCRIPTS = Path(__file__).resolve().parents[2] / "scripts"
+SCRIPTS = Path(__file__).resolve().parents[2] / "scripts/deploy"
 
 
 def test_protocol_rejects_mutation_and_changed_inputs(tmp_path):

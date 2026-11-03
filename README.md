@@ -9,7 +9,7 @@ closed-loop flight in PX4/Gazebo.
 
 Simulation only; no hardware and no real-world performance claims. **All milestones M0–M11 are
 complete.** The full write-up is [docs/paper.md](docs/paper.md); the design, data contracts and
-decision log (D1–D61) are in [CLAUDE.md](CLAUDE.md).
+decision log (D1–D62) are in [CLAUDE.md](CLAUDE.md).
 
 ## Method
 
@@ -60,17 +60,17 @@ Detailed results:
 | Stage | Result | Acceptance review |
 |---|---|---|
 | Detector, levels, fidelity (M2–M4) | [docs/results.md](docs/results.md) | [CLAUDE.md §0](CLAUDE.md) |
-| Sensor models (M6) | [docs/sensor-results.md](docs/sensor-results.md) | D34–D35 |
-| Baselines (M7) | [docs/baseline-results.md](docs/baseline-results.md) | D36–D38 |
-| PPO (M8) | [docs/ppo-auc-results.md](docs/ppo-auc-results.md) | [docs/ppo-acceptance.md](docs/ppo-acceptance.md) |
-| Main experiments (M9) | [results](docs/m9-results/results.md), [extension](docs/m9-extension-results/results.md) | [docs/m9-extension-acceptance.md](docs/m9-extension-acceptance.md) |
-| Calibration and transfer (M10) | [docs/m10-transfer-results/results.md](docs/m10-transfer-results/results.md) | [docs/m10-acceptance.md](docs/m10-acceptance.md) |
+| Sensor models (M6) | [docs/m6-sensor/sensor-results.md](docs/m6-sensor/sensor-results.md) | D34–D35 |
+| Baselines (M7) | [docs/m7-search/baseline-results.md](docs/m7-search/baseline-results.md) | D36–D38 |
+| PPO (M8) | [docs/m8-ppo/ppo-auc-results.md](docs/m8-ppo/ppo-auc-results.md) | [docs/m8-ppo/ppo-acceptance.md](docs/m8-ppo/ppo-acceptance.md) |
+| Main experiments (M9) | [results](docs/m9-evaluation/m9-results/results.md), [extension](docs/m9-evaluation/m9-extension-results/results.md) | [docs/m9-evaluation/m9-extension-acceptance.md](docs/m9-evaluation/m9-extension-acceptance.md) |
+| Calibration and transfer (M10) | [docs/m10-deployment/m10-transfer-results/results.md](docs/m10-deployment/m10-transfer-results/results.md) | [docs/m10-deployment/m10-acceptance.md](docs/m10-deployment/m10-acceptance.md) |
 
 ## Setup
 
 Requires [uv](https://docs.astral.sh/uv/) ≥ 0.13.4. Python 3.12 is used locally and in WSL (ROS 2
-Jazzy); Kaggle uses Python 3.13. Exact versions are in [docs/env.md](docs/env.md), and the PX4 /
-Gazebo / ROS 2 stack is in [docs/deployment.md](docs/deployment.md).
+Jazzy); Kaggle uses Python 3.13. Exact versions are in [docs/setup/env.md](docs/setup/env.md), and the PX4 /
+Gazebo / ROS 2 stack is in [docs/setup/deployment.md](docs/setup/deployment.md).
 
 ```bash
 uv sync         # creates .venv with the pinned dependencies
@@ -80,28 +80,51 @@ uv run pytest   # unit tests, plus ruff lint and format checks
 Datasets, rendered worlds, caches, checkpoints and run outputs live under `data/` and `runs/`, which
 are never committed.
 
+## Repository layout
+
+```text
+src/altiseek/      the library (geometry, data, detector, world, cache, calibration, belief,
+                   env, policies, eval, deploy, registry)
+scripts/<stage>/   CLI entry points: data, detector, world, cache, sensor, search, ppo, eval,
+                   deploy, figures
+configs/           schema-validated YAML; configs/eval/ holds frozen protocols
+docs/              write-up, per-milestone protocols, results and reviews (see docs/README.md)
+tests/             mirrors src/altiseek
+data/, runs/       gitignored datasets, caches, checkpoints and run outputs
+```
+
+The full layout is in [CLAUDE.md §6](CLAUDE.md), and [docs/README.md](docs/README.md) indexes every
+document.
+
 ## Reproducing each stage
 
 Every script reads a config under `configs/`, writes outputs plus a metadata record (commit, config,
-package versions, artifact IDs) and is resumable where it runs long. Run from the repository root.
+package versions, artifact IDs) and is resumable where it runs long. Run from the repository root
+as `uv run python scripts/<stage>/<name>.py`.
 
-| Stage | Commands |
-|---|---|
-| M1 data | `prepare_data`, `fit_camera`, `make_splits`, `scan_images`, `check_leakage` |
-| M2 detector | `make_views`, `train_detector` (cloud GPU via `kaggle_job`), `eval_detector`, `register_detector` |
-| M3 levels | `design_levels` |
-| M4 worlds | `build_libraries`, `generate_worlds`, `check_fidelity` |
-| M5 cache | `build_cache` (cloud GPU), `validate_cache` |
-| M6 sensors | `fit_sensor_models`, `evaluate_sensor_real`, `report_sensor_models` |
-| M7 baselines | `run_baselines`, `report_baselines` |
-| M8 PPO | `train_ppo` / `run_ppo_suite`, `report_ppo` |
-| M9 evaluation | `evaluate`, `evaluate_extension`, `report_evaluation`, `report_m9_extension` |
-| M10 deployment | `continue_m10_resilient` (calibration), `review_m10_calibration`, `freeze_m10_transfer`, `launch_m10_transfer`, `report_m10_transfer`, `demo_m10_transfer` |
-| M11 figures | `make_figures` |
+| Stage | Folder | Entry points |
+|---|---|---|
+| M1 data | `scripts/data/` | `prepare_data`, `fit_camera`, `make_splits`, `scan_images`, `check_leakage` |
+| M2 detector | `scripts/detector/` | `make_views`, `train_detector` (cloud GPU via `kaggle_job`), `eval_detector`, `register_detector` |
+| M3–M4 levels and worlds | `scripts/world/` | `design_levels`, `build_libraries`, `generate_worlds`, `check_fidelity` |
+| M5 cache | `scripts/cache/` | `build_cache` (cloud GPU), `validate_cache` |
+| M6 sensors | `scripts/sensor/` | `fit_sensor_models`, `evaluate_sensor_real`, `report_sensor_models` |
+| M7 baselines | `scripts/search/` | `run_baselines`, `report_baselines` |
+| M8 PPO | `scripts/ppo/` | `train_ppo`, `run_ppo_suite`, `report_ppo` |
+| M9 evaluation | `scripts/eval/` | `evaluate`, `evaluate_extension`, `report_evaluation`, `report_m9_extension` |
+| M10 deployment | `scripts/deploy/` | `continue_m10_resilient` (calibration), `review_m10_calibration`, `freeze_m10_transfer`, `launch_m10_transfer`, `report_m10_transfer`, `demo_m10_transfer` |
+| M11 figures | `scripts/figures/` | `make_figures` |
 
-Each command is `uv run python scripts/<name>.py`. Tables and figures regenerate from saved
-results without rerunning episodes. The commands for each milestone are in its acceptance review.
-Frozen protocols for every test run are in `configs/eval/` and `docs/*-protocol.md`.
+Tables and figures regenerate from saved results without rerunning episodes; each milestone's
+acceptance review gives its exact commands. Frozen protocols are in `configs/eval/` and the
+milestone folders under `docs/`.
+
+**Paths changed on 2026-11-03** when the repository was reorganised (D62). Frozen M9/M10 protocols
+hash the earlier flat paths, so verify those artifacts at git tag `results-final`:
+
+```bash
+git worktree add ../altiseek-results-final results-final
+```
 
 ## Limitations
 

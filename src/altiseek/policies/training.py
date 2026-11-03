@@ -27,7 +27,7 @@ from altiseek.registry.run import sha256_file
 from altiseek.world.spec import WorldSpec
 
 SENSOR_PATH = Path("data/sensor_models/fcf8cdae58ca3947.json")
-BASELINE_PATH = Path("docs/baseline-results.json")
+BASELINE_PATH = Path("docs/m7-search/baseline-results.json")
 
 
 def training_worlds(

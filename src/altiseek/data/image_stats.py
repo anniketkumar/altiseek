@@ -1,6 +1,6 @@
 """Per-image pixel statistics: perceptual hashes for the leakage check and blackened-region flags.
 
-ODv2 has no ignore boxes; ignored regions are blackened in the pixels (docs/data_notes.md), so
+ODv2 has no ignore boxes; ignored regions are blackened in the pixels (docs/data/data_notes.md), so
 ``has_ignore_regions`` (CLAUDE.md §7 step 1) has to be measured here. Images are analysed at a
 quarter of their resolution (JPEG draft decoding), which keeps a streaming pass over the whole
 dataset cheap.

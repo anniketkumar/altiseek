@@ -1,4 +1,4 @@
-"""ODv2 parsing on synthetic COCO files shaped like the real ones (docs/data_notes.md)."""
+"""ODv2 parsing on synthetic COCO files shaped like the real ones (docs/data/data_notes.md)."""
 
 import json
 import math

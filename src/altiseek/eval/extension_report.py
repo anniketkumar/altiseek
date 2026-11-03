@@ -70,7 +70,7 @@ def report(root: Path, output: Path) -> None:
         checksums[path.as_posix()] = sha256_file(path)
     # Reuse original nominal episodes, retaining both their checksums and provenance.
     v1 = Path(manifest["v1_run"])
-    published_path = Path("docs/m9-results/results.json")
+    published_path = Path("docs/m9-evaluation/m9-results/results.json")
     if sha256_file(published_path) != manifest["files"][published_path.as_posix()]:
         raise ValueError("original published reference report changed")
     published = read(published_path)

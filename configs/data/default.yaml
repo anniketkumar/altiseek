@@ -1,4 +1,4 @@
-# prepare-data (CLAUDE.md §7). Field names, cameras and counts: docs/data_notes.md.
+# prepare-data (CLAUDE.md §7). Field names, cameras and counts: docs/data/data_notes.md.
 # The compressed (JPEG) and uncompressed (PNG) annotation files are identical apart from the
 # file-name extension; use the ones matching the image version on disk.
 annotations:
@@ -10,7 +10,7 @@ images:
   version: compressed
   root: data/raw/seadronessee_odv2/compressed/images
   webdav_url: https://cloud.cs.uni-tuebingen.de/public.php/webdav
-  share_token: ZZxX65FGnQ8zjBP  # public ODv2 share (docs/data_notes.md)
+  share_token: ZZxX65FGnQ8zjBP  # public ODv2 share (docs/data/data_notes.md)
 horizon_fit:
   camera_groups: [mavic_4k]  # the only 4K group with open-sea (North Sea) footage
   latitude_deg: [53.0, 54.5]  # North Sea site; Lake Constance horizons are shorelines

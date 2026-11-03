@@ -9,7 +9,7 @@ import pytest
 
 pytest.importorskip("fcntl")
 SPEC = importlib.util.spec_from_file_location(
-    "m10_recovery", Path(__file__).resolve().parents[2] / "scripts/continue_m10_resilient.py"
+    "m10_recovery", Path(__file__).resolve().parents[2] / "scripts/deploy/continue_m10_resilient.py"
 )
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
@@ -70,7 +70,7 @@ def test_failed_world_is_deferred_and_fit_order_preserved(tmp_path, monkeypatch,
     native = tmp_path / "altiseek-m10"
     (repo / "data/m10").mkdir(parents=True)
     native.mkdir()
-    monkeypatch.setattr(MODULE, "__file__", str(repo / "scripts/continue_m10_resilient.py"))
+    monkeypatch.setattr(MODULE, "__file__", str(repo / "scripts/deploy/continue_m10_resilient.py"))
     monkeypatch.setattr(MODULE.Path, "home", lambda: tmp_path)
     monkeypatch.setattr(MODULE, "sha256_file", lambda path: "verified-test-hash")
     worlds = [SimpleNamespace(world_id=f"world-{i}", split="B") for i in range(40)]
@@ -120,7 +120,10 @@ def test_failed_world_is_deferred_and_fit_order_preserved(tmp_path, monkeypatch,
     attempts = []
 
     def run(command, **kwargs):
-        if command[1] not in ("scripts/run_camera_flight.py", "scripts/run_m10_capture.py"):
+        if command[1] not in (
+            "scripts/deploy/run_camera_flight.py",
+            "scripts/deploy/run_m10_capture.py",
+        ):
             return SimpleNamespace(returncode=0)
         flight = tmp_path / f"flight-{len(list(tmp_path.glob('flight-*')))}"
         flight.mkdir()

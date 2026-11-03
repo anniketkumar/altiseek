@@ -29,3 +29,6 @@ kaggle.json
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local git worktrees
+/.worktrees/

@@ -15,7 +15,7 @@ from tests.world.test_render import world
 __all__ = ["built", "cfg", "library"]
 
 module_spec = importlib.util.spec_from_file_location(
-    "build_cache", Path(__file__).resolve().parents[2] / "scripts/build_cache.py"
+    "build_cache", Path(__file__).resolve().parents[2] / "scripts/cache/build_cache.py"
 )
 assert module_spec is not None
 assert module_spec.loader is not None
@@ -75,9 +75,9 @@ def test_resumed_stage_keeps_completed_worlds_outside_limit(tmp_path, cfg, libra
 
 
 def test_attached_input_identity_and_split_checks(tmp_path, cfg):
-    read = runpy.run_path(str(Path(__file__).resolve().parents[2] / "scripts/cache_pilot.py"))[
-        "attached_config"
-    ]
+    read = runpy.run_path(
+        str(Path(__file__).resolve().parents[2] / "scripts/cache/cache_pilot.py")
+    )["attached_config"]
     cfg = cfg.model_copy(
         update={
             "libraries": {"B": tmp_path / "unused"},
@@ -110,7 +110,7 @@ def test_attached_input_identity_and_split_checks(tmp_path, cfg):
 
 def test_manual_notebook_requires_preserved_inputs():
     make = runpy.run_path(
-        str(Path(__file__).resolve().parents[2] / "scripts/prepare_cache_notebook.py")
+        str(Path(__file__).resolve().parents[2] / "scripts/cache/prepare_cache_notebook.py")
     )["notebook"]
     notebook = make("a" * 40)
     code = "".join(notebook["cells"][1]["source"])
@@ -120,13 +120,13 @@ def test_manual_notebook_requires_preserved_inputs():
     production = make("a" * 40, production=True)
     code = "".join(production["cells"][1]["source"])
     compile(code, "production.ipynb", "exec")
-    assert "scripts/cache_production.py" in code
+    assert "scripts/cache/cache_production.py" in code
     assert "cache-production.log" in code
 
 
 def test_production_resume_preserves_verified_bytes_and_reports_partial(tmp_path, cfg, built):
     module = runpy.run_path(
-        str(Path(__file__).resolve().parents[2] / "scripts/cache_production.py")
+        str(Path(__file__).resolve().parents[2] / "scripts/cache/cache_production.py")
     )
     spec, cache = built
     cfg = cfg.model_copy(

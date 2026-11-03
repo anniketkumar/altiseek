@@ -19,7 +19,7 @@ class BackgroundSettings(Config):
     #: Least share of a tile with valid source for it to be rendered at all.
     tile_coverage: float
     #: Patches keep at least this far from every annotated object's ground footprint, metres.
-    #: It absorbs offset boxes (docs/data_notes.md).
+    #: It absorbs offset boxes (docs/data/data_notes.md).
     object_margin_m: float
     #: ... and this far from blackened (ignore-region) pixels, pixels at g0.
     black_margin_px: int

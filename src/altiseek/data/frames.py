@@ -1,6 +1,6 @@
 """SeaDronesSee ODv2 frame and box tables (CLAUDE.md §7, step 1).
 
-Field names and conventions were verified on the ODv2 files (docs/data_notes.md):
+Field names and conventions were verified on the ODv2 files (docs/data/data_notes.md):
 
 - ``meta`` comes in two schemas. Frames from the DJI quadcopters carry flight-log fields
   (``height_above_takeoff(meter)``, ``gimbal_pitch(degrees)``, ``latitude``, ...); the

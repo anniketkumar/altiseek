@@ -7,7 +7,7 @@ pixel must be valid, no blackened (ignore-region) pixel may lie within ``black_m
 the patch keeps ``object_margin_m`` from every annotated object's ground footprint.
 
 Object crops paste the box footprint grown by an allowance, because some ODv2 boxes are offset
-from their objects (docs/data_notes.md): the grown region holds the object, its splash and wake
+from their objects (docs/data/data_notes.md): the grown region holds the object, its splash and wake
 even then. A pixel-based cut-out was tried and dropped (D27): dark wetsuits, splash and nearby
 life rings defeat any colour threshold. Around the pasted region, a ring of the object's own
 water fades the paste into the background and gives the water's colour for matching. The
@@ -292,7 +292,7 @@ def object_crop(
 
 @dataclass(frozen=True)
 class Library:
-    """A built library (``scripts/build_libraries.py``): its index tables and where its images
+    """A built library (``scripts/world/build_libraries.py``): its index tables and where its images
     are."""
 
     path: Path
