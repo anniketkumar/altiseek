@@ -1,17 +1,18 @@
 # AGENTS.md: hand-off for coding agents
 
 **CLAUDE.md is the source of truth** for goals, design, data contracts, working rules and the
-decision log (D1–D62). Read it in full before changing anything. This file covers only where the
+decision log (D1–D63). Read it in full before changing anything. This file covers only where the
 work stands and how the owner wants you to work. The full history of earlier hand-off notes is in
 [docs/archive/agents-history.md](docs/archive/agents-history.md).
 
-## Status (2026-11-03)
+## Status (2026-11-06)
 
-**All milestones M0–M11 are complete.** Nothing is running and nothing is queued.
+**All milestones M0–M11 are complete.** M12 Phase 1 is authorized (D63); no training or flight is queued.
 
-**Next work (proposed, not started):** M12, the PPO revisit with a B5 warm start, a B-fitted
-energy correction and a larger test set. Follow
-[docs/m12-ppo-revisit/handoff.md](docs/m12-ppo-revisit/handoff.md), including its owner stop points.
+**Current work:** M12 Phase 1, the B-fitted energy correction. Follow
+[docs/m12-ppo-revisit/energy-protocol.md](docs/m12-ppo-revisit/energy-protocol.md) and the
+[handoff](docs/m12-ppo-revisit/handoff.md), including the coverage and Phase 1 owner stop points.
+Later phases are not yet authorized.
 
 - Results and acceptance reviews: [docs/README.md](docs/README.md) indexes everything.
 - Write-up: [docs/paper.md](docs/paper.md).
@@ -33,11 +34,12 @@ energy correction and a larger test set. Follow
   caches, checkpoints or demo videos. `data/` and `runs/` are gitignored. Plots of numbers may
   go in `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
-  add a Decision Log row (§24) in the same commit. The next free ID is **D63**.
+  add a Decision Log row (§24) in the same commit. **D64** is reserved for M12's evaluation freeze;
+  use **D65** for any intervening new decision.
 - **Tell the owner** where their input is needed and give factual progress updates. Background
   jobs are not alerts; do not promise unsolicited notifications.
-- **Test before committing.** `uv run pytest` runs the tests plus ruff format and lint (391 pass
-  at D62).
+- **Test before committing.** On Windows use `uv run python -m pytest` (`pytest.exe` is blocked).
+  Baseline on 2026-11-06: 378 passed, 2 skipped (`fcntl` unavailable); ruff format/lint included.
 
 ## Environment
 
