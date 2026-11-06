@@ -69,6 +69,12 @@ copies of their reports; do not edit them by hand.
 
 Small JSON files in `m10-deployment/` are the integration-check records the reviews cite.
 
+## M12: PPO revisit (proposed)
+
+| Document | What it covers |
+|---|---|
+| [handoff.md](m12-ppo-revisit/handoff.md) | Work plan: B-fitted energy correction, B5 warm start, test-v2 worlds, owner stop points |
+
 ## Archive
 
 | Document | What it covers |

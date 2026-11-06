@@ -9,6 +9,10 @@ work stands and how the owner wants you to work. The full history of earlier han
 
 **All milestones M0–M11 are complete.** Nothing is running and nothing is queued.
 
+**Next work (proposed, not started):** M12, the PPO revisit with a B5 warm start, a B-fitted
+energy correction and a larger test set. Follow
+[docs/m12-ppo-revisit/handoff.md](docs/m12-ppo-revisit/handoff.md), including its owner stop points.
+
 - Results and acceptance reviews: [docs/README.md](docs/README.md) indexes everything.
 - Write-up: [docs/paper.md](docs/paper.md).
 - The repository was reorganised (D62). Git tag `results-final` is the last tree whose paths match
