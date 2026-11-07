@@ -1,5 +1,5 @@
-# D63 B-only fit; candidate only: the L5 coverage gate failed.
-# Owner review is required before using this config for the baseline retune.
+# D63 B-only fit: the original 25% L5 coverage gate failed.
+# D65 authorizes Phase 1 with 30% coverage allowance; numeric values are unchanged.
 # Source: docs/m12-ppo-revisit/energy-correction.json
 _base_: energy.yaml
 dwell_s: 8.420000000000016

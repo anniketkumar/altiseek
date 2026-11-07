@@ -1,0 +1,4 @@
+# D65 authorizes Phase 1 under the new 30% coarse-coverage allowance.
+_base_: search.yaml
+energy:
+  _base_: energy_live.yaml

@@ -1,23 +1,22 @@
 # AGENTS.md: hand-off for coding agents
 
 **CLAUDE.md is the source of truth** for goals, design, data contracts, working rules and the
-decision log (D1–D63). Read it in full before changing anything. This file covers only where the
+decision log (D1–D63, D65; D64 reserved). Read it in full before changing anything. This file covers only where the
 work stands and how the owner wants you to work. The full history of earlier hand-off notes is in
 [docs/archive/agents-history.md](docs/archive/agents-history.md).
 
 ## Status (2026-11-07)
 
-**All milestones M0–M11 are complete.** M12 Phase 1 is stopped at its coverage gate (D63).
-Nothing is running or queued.
+**All milestones M0–M11 are complete.** M12 Phase 1 continuation is authorized (D65).
 
-**Owner input needed:** B overhead is 6.42 s [3.31, 7.16], giving 8.42 s candidate dwell.
-L5 coverage costs 135.78 s, above the existing 125 s (25% of 500 s) limit. See
-[energy-correction.md](docs/m12-ppo-revisit/energy-correction.md). The new energy config is
-an unused candidate. Do not retune baselines until the owner approves a battery or
-coverage-rule decision, recorded prospectively under D65. Follow
+**Current work:** the owner authorized relaxing the coverage rule to finish Phase 1.
+D65 gives M12 a 30% coarse allowance, retaining the 500 s battery and D63 dwell.
+The original 25% coverage failure remains in [energy-correction.md](docs/m12-ppo-revisit/energy-correction.md).
+Follow [baseline-protocol.md](docs/m12-ppo-revisit/baseline-protocol.md),
 [docs/m12-ppo-revisit/energy-protocol.md](docs/m12-ppo-revisit/energy-protocol.md) and the
 [handoff](docs/m12-ppo-revisit/handoff.md), including the coverage and Phase 1 owner stop points.
-Baseline retuning has not started; B5's AUC change is unmeasured. Later phases are not authorized.
+Complete the corrected-cost baseline retune and report every result honestly, then stop
+for Phase 1 owner review. Later phases are not authorized.
 
 - Results and acceptance reviews: [docs/README.md](docs/README.md) indexes everything.
 - Write-up: [docs/paper.md](docs/paper.md).
@@ -40,7 +39,7 @@ Baseline retuning has not started; B5's AUC change is unmeasured. Later phases a
   go in `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
   add a Decision Log row (§24) in the same commit. **D64** is reserved for M12's evaluation freeze;
-  use **D65** for any intervening new decision.
+  use **D66** for the next intervening new decision.
 - **Tell the owner** where their input is needed and give factual progress updates. Background
   jobs are not alerts; do not promise unsolicited notifications.
 - **Test before committing.** On Windows use `uv run python -m pytest` (`pytest.exe` is blocked).

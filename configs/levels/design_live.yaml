@@ -1,0 +1,5 @@
+# D65: M12-only coverage amendment; the historical 25% check remains unchanged.
+_base_: design.yaml
+energy:
+  _base_: ../env/energy_live.yaml
+coarse_share: 0.30

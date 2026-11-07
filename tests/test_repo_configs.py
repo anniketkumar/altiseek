@@ -35,9 +35,11 @@ SCHEMAS: dict[str, type[Config]] = {
     "eval/protocol_v2": ExtensionProtocol,
     "levels": LevelTable,
     "levels/design": LevelDesign,
+    "levels/design_live": LevelDesign,
     "sensor": SensorConfig,
     "policy/baselines": BaselineRun,
     "policy/selected": SelectedBaselines,
+    "policy/selected_live": SelectedBaselines,
     "policy/ppo": PPOConfig,
     "policy/ppo_auc": PPOConfig,
     "policy/m9_ablations": PPOConfig,
@@ -70,3 +72,23 @@ def test_chosen_levels_pass_the_coverage_cost_check():
         for lvl in (table.levels[0], table.levels[-1])
     )
     assert finest > design.energy.battery_s >= coarsest / design.coarse_share
+
+
+def test_m12_coverage_amendment_preserves_original_failure_and_battery():
+    table = load_config(CONFIG_DIR / "levels/default.yaml", LevelTable)
+    original = load_config(CONFIG_DIR / "levels/design.yaml", LevelDesign)
+    revised = load_config(CONFIG_DIR / "levels/design_live.yaml", LevelDesign)
+    search = load_config(CONFIG_DIR / "env/search_live.yaml", SearchConfig)
+    assert original.coarse_share == 0.25
+    assert revised.coarse_share == 0.30
+    assert revised.energy == search.energy
+    assert revised.energy.battery_s == original.energy.battery_s == 500
+    assert revised.energy.model_dump(exclude={"dwell_s"}) == original.energy.model_dump(
+        exclude={"dwell_s"}
+    )
+    finest, coarsest = (
+        coverage_energy_s(table, level, revised.camera.hfov_deg, revised.energy)
+        for level in (table.levels[0], table.levels[-1])
+    )
+    assert finest > revised.energy.battery_s
+    assert original.coarse_share < coarsest / revised.energy.battery_s <= revised.coarse_share
