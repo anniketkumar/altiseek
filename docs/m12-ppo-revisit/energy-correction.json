@@ -1,0 +1,1055 @@
+{
+  "decision": "D63",
+  "protocol": "docs/m12-ppo-revisit/energy-protocol.md",
+  "git_commit": "6d33b9a6fdc06dff77b1836f3e714ea8d2e4412b",
+  "source_sha256": {
+    "docs/m12-ppo-revisit/energy-protocol.md": "dd1572b800ffd4c10cded47d8a67d4edad862b1d86b1025e22f6fe6f22736472",
+    "src/altiseek/deploy/energy_fit.py": "e601d45f57fd1282428284862801e87330575a179276fb1fc82db431e001b8ee",
+    "scripts/search/fit_live_energy.py": "53f2bb7a9ce4d2950bdf46efa1d765d4a4696a87770605e664c38fc2e5f17a07",
+    "src/altiseek/env/energy.py": "ee695c36108ec297f17d3447fc4f9a03c13456a88ac07ac5cce248cb77559923",
+    "src/altiseek/geometry/level_design.py": "c8bb1afbf018472bc6b341147ee6ee2ae20dc441d471d7817edd2efb8aaa2785",
+    "configs/env/energy.yaml": "7c133ca4a7c342d4b356c40bfc5ca4a8e95335b98bc98d64c7c66ab1483a492a",
+    "configs/levels/default.yaml": "6010ac542d8666aed4c8f59f6da2d0326ceb7cdc349799f6b7dcd12ab96530fc",
+    "configs/levels/design.yaml": "68a34d4782b32715bad9027060cae9aa27163d87205436fb6f58c615949bc7bf"
+  },
+  "primary": {
+    "overhead_s": 6.420000000000016,
+    "ci95_s": [
+      3.309955846734656,
+      7.159999999999997
+    ],
+    "flight_medians_s": [
+      6.489999999999998,
+      7.159999999999997,
+      3.8399558467346537,
+      3.309955846734656,
+      6.420000000000016
+    ],
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 20261106,
+    "bootstrap_unit": "flight",
+    "candidate_dwell_s": 8.420000000000016,
+    "flights": [
+      {
+        "flight": "20261031T043133Z",
+        "world_id": "003b0c54f581c65b",
+        "method": "B5",
+        "training_seed": 0,
+        "report_sha256": "9b0fbdc0aca9f856480c449071f99e6993c08017ec65f6d0489e35385b9fe9ca",
+        "manifest_sha256": "029ea9c8d7842a9b267a2122e315b2aafa41b8cbdbd0ebffc99d31c65803b2fe",
+        "cleanup_sha256": "a46f5d3b827338cc8d5a73c2c9dc0096666a124b084f05986a87b509418d88ad",
+        "views": 3,
+        "transitions": 2,
+        "median_overhead_s": 6.489999999999998,
+        "min_overhead_s": 6.3799999999999955,
+        "max_overhead_s": 6.600000000000001,
+        "initial_elapsed_s": 5.079999999999998,
+        "initial_overhead_s": 3.0799999999999983,
+        "median_energy_residual_s": 6.749999999999998
+      },
+      {
+        "flight": "20261102T090615Z",
+        "world_id": "48a9325328a6d2c4",
+        "method": "B5",
+        "training_seed": 0,
+        "report_sha256": "45e44581ef38524c8bd187d26570bac6f79679da8754a5264a75b617e625eb69",
+        "manifest_sha256": "3f9e97c4adf89fc0b1f89aedafe635becad0fbda3d098fb8a2e61db16e06f6b5",
+        "cleanup_sha256": "8ddf14874afc213f745d175ef348a58e6c031b4017740fc6bb81bd7c54e4a89e",
+        "views": 2,
+        "transitions": 1,
+        "median_overhead_s": 7.159999999999997,
+        "min_overhead_s": 7.159999999999997,
+        "max_overhead_s": 7.159999999999997,
+        "initial_elapsed_s": 4.640000000000001,
+        "initial_overhead_s": 2.6400000000000006,
+        "median_energy_residual_s": 7.429999999999996
+      },
+      {
+        "flight": "20261102T090914Z",
+        "world_id": "48a9325328a6d2c4",
+        "method": "PPO",
+        "training_seed": 17,
+        "report_sha256": "fff15dbf6ccce7d166aa8260fbbdb507797739cbe859a335c88aaaa1bc6c5b0c",
+        "manifest_sha256": "bd10e5736a6c6a4977c48eef1ad7c536c6b20f221cc032c403f1952f8851ed61",
+        "cleanup_sha256": "639ab08f5e217c60534584c46b25febc96df82871a0e02c80198a079623c7aae",
+        "views": 3,
+        "transitions": 2,
+        "median_overhead_s": 3.8399558467346537,
+        "min_overhead_s": 1.1799116934693146,
+        "max_overhead_s": 6.499999999999993,
+        "initial_elapsed_s": 2.559999999999995,
+        "initial_overhead_s": 0.5599999999999952,
+        "median_energy_residual_s": 3.949955846734653
+      },
+      {
+        "flight": "20261102T091144Z",
+        "world_id": "48a9325328a6d2c4",
+        "method": "PPO",
+        "training_seed": 29,
+        "report_sha256": "07615968f3c1e1e2a7d197af36578f17a3c939f5c7b6fa0798485683e17ce97c",
+        "manifest_sha256": "8fb03c9c3d63f1bd17b83e83a37922da140f7c0edeec331e89c82112597e58a9",
+        "cleanup_sha256": "3ba437c921a8b49316dd764d9db0dc683484eb6e275233c03b659f1041ae92f4",
+        "views": 3,
+        "transitions": 2,
+        "median_overhead_s": 3.309955846734656,
+        "min_overhead_s": 0.5999116934693092,
+        "max_overhead_s": 6.020000000000003,
+        "initial_elapsed_s": 3.0600000000000023,
+        "initial_overhead_s": 1.0600000000000023,
+        "median_energy_residual_s": 3.409955846734656
+      },
+      {
+        "flight": "20261102T091411Z",
+        "world_id": "48a9325328a6d2c4",
+        "method": "PPO",
+        "training_seed": 43,
+        "report_sha256": "bc33fcde522c9fa5d9cdc57ef1ef0580f50c4f1decf42a2acd8aeed29d35d188",
+        "manifest_sha256": "8a2bc71e84127f39d3169b6a65f88ff929f7b22d8e49dee5b1ab8a6b6f91b699",
+        "cleanup_sha256": "bde97d5c615b25408cfcb0971f63b727d2e1f45d3c588c937800917b04f02327",
+        "views": 16,
+        "transitions": 15,
+        "median_overhead_s": 6.420000000000016,
+        "min_overhead_s": 0.8199116934693151,
+        "max_overhead_s": 10.47999999999999,
+        "initial_elapsed_s": 4.519999999999996,
+        "initial_overhead_s": 2.519999999999996,
+        "median_energy_residual_s": 6.660000000000025
+      }
+    ],
+    "strata": [
+      {
+        "level": 3,
+        "motion": "descend",
+        "horizontal_m": 21.213203,
+        "transitions": 3,
+        "median_overhead_s": 0.8199116934693151,
+        "min_overhead_s": 0.5999116934693092,
+        "max_overhead_s": 1.1799116934693146
+      },
+      {
+        "level": 3,
+        "motion": "same-level",
+        "horizontal_m": 60.0,
+        "transitions": 14,
+        "median_overhead_s": 6.440000000000005,
+        "min_overhead_s": 5.480000000000011,
+        "max_overhead_s": 10.47999999999999
+      },
+      {
+        "level": 4,
+        "motion": "same-level",
+        "horizontal_m": 75.0,
+        "transitions": 5,
+        "median_overhead_s": 6.600000000000001,
+        "min_overhead_s": 6.259999999999998,
+        "max_overhead_s": 8.079999999999998
+      }
+    ],
+    "transitions": 22
+  },
+  "coverage": [
+    {
+      "setting": "original",
+      "dwell_s": 2.0,
+      "costs_s": [
+        542.0,
+        278.0,
+        170.0,
+        122.0,
+        78.0
+      ],
+      "l1_exceeds_battery": true,
+      "l5_budget_fraction": 0.156,
+      "l5_within_coarse_share": true
+    },
+    {
+      "setting": "estimate",
+      "dwell_s": 8.420000000000016,
+      "costs_s": [
+        1318.820000000006,
+        592.5800000000011,
+        330.5000000000004,
+        224.72000000000025,
+        135.78000000000014
+      ],
+      "l1_exceeds_battery": true,
+      "l5_budget_fraction": 0.2715600000000003,
+      "l5_within_coarse_share": false
+    },
+    {
+      "setting": "ci_low",
+      "dwell_s": 5.309955846734656,
+      "costs_s": [
+        942.5046574548924,
+        440.1878364899986,
+        252.74889616836634,
+        174.95929354775447,
+        107.78960262061189
+      ],
+      "l1_exceeds_battery": true,
+      "l5_budget_fraction": 0.2155792052412238,
+      "l5_within_coarse_share": true
+    },
+    {
+      "setting": "ci_high",
+      "dwell_s": 9.159999999999997,
+      "costs_s": [
+        1408.3600000000006,
+        628.839999999999,
+        348.9999999999998,
+        236.55999999999995,
+        142.43999999999997
+      ],
+      "l1_exceeds_battery": true,
+      "l5_budget_fraction": 0.2848799999999999,
+      "l5_within_coarse_share": false
+    }
+  ],
+  "coverage_gate_passed": false,
+  "calibration": {
+    "acquisition_id": "cf148ad98784906d",
+    "contract_id": "0e81d39c16e288b9",
+    "definition_sha256": "5e1c63ec3b309d6e273c2dec1a3975bb006203ba87a9fb475e914632865714bc",
+    "contract_sha256": "bcaae27fdcb4ada4041660762b32942ea1481c0c0234551c2e1a69a06f781e94",
+    "review_sha256": "d0dc61840aae1c89553e41635e78318f798430aa67d2b7787ea68303d5175f8e",
+    "view_records_id": "fb881236bb354e89",
+    "worlds": 40,
+    "views": 8800,
+    "flights": [
+      {
+        "flight": "20261031T043439Z",
+        "views": 10,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "fd5b53da60ea6274dcbae44c071d311e3900ef01cc77f8d3c8021c7977584b4e"
+      },
+      {
+        "flight": "20261031T044201Z",
+        "views": 210,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "5ba967dd23259fa94a258c471cabfa5b358c6e07b347458e65c54fa8f28506ac"
+      },
+      {
+        "flight": "20261031T052639Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "5384949aae02828e86951452b3b46a6c4975c3db684e6741b9e8ef199d20276b"
+      },
+      {
+        "flight": "20261031T061504Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "61b941b1b3ddb6814623a8f1d0137c8aa5c1b862b6e8efd8adb398715aba80a0"
+      },
+      {
+        "flight": "20261031T070200Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "63d6eb5591c926c1a93e2b3911b8a98b00156dfbd61511cc81f2e33d9257f9c0"
+      },
+      {
+        "flight": "20261031T075059Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "366af02a33dd909dc10496d28546b5695cc6f631c0fc8f340721a12e5a37e5e5"
+      },
+      {
+        "flight": "20261031T083859Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "e6ffc9f93527f0da5bf4a8dab4e5d42b2ec3d6153f3bf477708fe4fa59f75239"
+      },
+      {
+        "flight": "20261031T092701Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "de3eb27f81a93167b8aa9d027d729be624d061070690318741659be6d857292a"
+      },
+      {
+        "flight": "20261031T101347Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "eafb59235498a166c9a8db21524fc49965cfdb7a9b83298fd33a455295ca2ba5"
+      },
+      {
+        "flight": "20261031T110053Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "9cbb5e6aa00d290edb7e4984b918be4f94e21033c1da2084603a0a811753eead"
+      },
+      {
+        "flight": "20261031T114824Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "51ab6495af5887d27ecc70d1fbdb8c28d9dbfe537601ff9064a595e9adf4328f"
+      },
+      {
+        "flight": "20261031T123553Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "384f0b221cf2286c8801ffb2c30a5dff55a9a6ee2d236ccf978215476be58c93"
+      },
+      {
+        "flight": "20261031T132248Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "c189859737954bf73df0ecef584e8425bd3c0699d621b5a404a2b533c549f5b0"
+      },
+      {
+        "flight": "20261031T141025Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "49aece79fdb74fd109cd285b44b623209e17e892be393955227acd2ea7ea4236"
+      },
+      {
+        "flight": "20261031T145756Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "292c169beb7da74ca12fc675a730f0d993c630aa936a63707c70869eb3448c52"
+      },
+      {
+        "flight": "20261031T154441Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "973868d4fe7002f5787d4cbae7ca48cd8a11557b384ba4b8cb078b3c877cce82"
+      },
+      {
+        "flight": "20261031T163219Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "cd262970d81948debfe7e3f1c8f89606cfc079f69b690d5cc41498f352d48a4d"
+      },
+      {
+        "flight": "20261031T171910Z",
+        "views": 26,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "b2d54865865bb0166f17773501a04cc610a5df1b2e6a255a0be05f039abd23a2"
+      },
+      {
+        "flight": "20261031T210241Z",
+        "views": 194,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "0456b9103be5073b5f9ba0ac871ec7d5a454d90cc8db7a14e504b9bf63a9e442"
+      },
+      {
+        "flight": "20261101T024421Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "5f9ef3298020286105038ac465ae3d2ede9b66749f535e4b475024b4d2751a80"
+      },
+      {
+        "flight": "20261101T033302Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "cc7a7d3f355d4c091eb1907208647970ef2f517e66322bd40c31c59aae7e91e8"
+      },
+      {
+        "flight": "20261101T042237Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "725d057c477ad7e7037a64c410a4517ebc01cc8d5cb98b3c803c4601980a6e87"
+      },
+      {
+        "flight": "20261101T051225Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "38afc61910fddac14e7de47db6e3f94a1a26edde619eae7a49b1b98b0f0c579d"
+      },
+      {
+        "flight": "20261101T060252Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "5c4395acfbd881206ee00efa9bd01b852a1e0d2e0e4da63cf9e6363a2e0a17bd"
+      },
+      {
+        "flight": "20261101T065047Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "49f25e217fcac84d759dc97765e4fd37fc4bad48f7bdf1b59206c1c30b1b0a34"
+      },
+      {
+        "flight": "20261101T073809Z",
+        "views": 109,
+        "controller": "D52 original",
+        "failed": true,
+        "cleanup_sha256": "e51f9ccff9c5b603f048bb7570badc0d432783738ce6b199458f265512f4f51e"
+      },
+      {
+        "flight": "20261101T090330Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "d4a23e3790c986e95004fcb1cf3117a3fc34d9a395ea8c0c97c22505446da10e"
+      },
+      {
+        "flight": "20261101T095547Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "ab602755b7a920119a705cbf41e6082fd7b1df70ed0985330a819dc891a9d170"
+      },
+      {
+        "flight": "20261101T104645Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "37557b49b08e5de1bf30e03dcd2afaacac1d9e5e09a0326759ff9354d5d5c9bf"
+      },
+      {
+        "flight": "20261101T113330Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "02e49906b3447225a84bbf40a727aeeba10da5655960dcaa8922225a81731687"
+      },
+      {
+        "flight": "20261101T122054Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "250682862b3c12b1a58802feb1735ed25dd399ec1b81d023ae966563e8fbe103"
+      },
+      {
+        "flight": "20261101T130755Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "74a254e09ea58e2388bfcf5699018f97b1f14fb0182ca6273a8575df47fc81a2"
+      },
+      {
+        "flight": "20261101T135528Z",
+        "views": 220,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "afd79d548966506201dd1aed78a82a0f935952ffd483f4c3f68bc2fb035925fb"
+      },
+      {
+        "flight": "20261101T144329Z",
+        "views": 14,
+        "controller": "D52 original",
+        "failed": true,
+        "cleanup_sha256": "6812c71eb59577c3cddced8fc2569c632cbac9f1e9856fbffc531b02a1f6b7ca"
+      },
+      {
+        "flight": "20261101T144825Z",
+        "views": 79,
+        "controller": "D52 original",
+        "failed": true,
+        "cleanup_sha256": "5d0bda064b1b7815e528cb870088235252cf5bad58d594af4e3c5dfc6e238fe1"
+      },
+      {
+        "flight": "20261101T161327Z",
+        "views": 111,
+        "controller": "D52 original",
+        "failed": false,
+        "cleanup_sha256": "3993f60916823a525823c342ad14dabc4987dc116ca3dc16a9c9a6211472eadf"
+      },
+      {
+        "flight": "20261101T164133Z",
+        "views": 6,
+        "controller": "D52 original",
+        "failed": true,
+        "cleanup_sha256": "7ef26d1dbf5e47dde206524ae6b306000c03e929fe7c9dd4fdb859ad031211e2"
+      },
+      {
+        "flight": "20261101T164505Z",
+        "views": 5,
+        "controller": "D52 original",
+        "failed": true,
+        "cleanup_sha256": "14b7ab2a5876a718ad44cdff805c71d9e9b5412ed6c14acfe6816db72c6ed5f7"
+      },
+      {
+        "flight": "20261101T164855Z",
+        "views": 20,
+        "controller": "D52 original",
+        "failed": true,
+        "cleanup_sha256": "81d3755e1ac857a91abe4f5fad29da4d3dc21276014849cddd1fd3e6a2e7680c"
+      },
+      {
+        "flight": "20261101T174808Z",
+        "views": 200,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "8e2f5720cc1cf78c34766cd024d882217e3149f3a972103f610f590cce90d1f2"
+      },
+      {
+        "flight": "20261101T183308Z",
+        "views": 141,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "50ac75ee811dab3ddac6e35dd7491de40f55e221c2d736398da1140fce1aca11"
+      },
+      {
+        "flight": "20261101T190525Z",
+        "views": 215,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "4a65e878fa5274ba31413da30096e5a167d785fe7d72cf232b941e1b812417fb"
+      },
+      {
+        "flight": "20261101T195150Z",
+        "views": 220,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "36e85d196e2732952b07d59fa71d6db774c58122c194840b8e182145039192b1"
+      },
+      {
+        "flight": "20261101T203901Z",
+        "views": 220,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "eb515ff5e66026f85b596ef97799860af7f92fe9afe4d44ffd0c1c74c402a03f"
+      },
+      {
+        "flight": "20261101T212615Z",
+        "views": 220,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "7c21b38fe88081b2a08bbe4da4ac50483281ce46c3b00ebe7bb35d57b2b2a091"
+      },
+      {
+        "flight": "20261101T221358Z",
+        "views": 220,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "5b55db9f186f680b61d46f8a22d1a902325ecb0b4f829c6366698041fd301e7c"
+      },
+      {
+        "flight": "20261101T230159Z",
+        "views": 220,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "00f4d475d389c0040d81e5f451185beb19a3486377bad55ad1f4aa7d5f824ec5"
+      },
+      {
+        "flight": "20261101T234925Z",
+        "views": 200,
+        "controller": "D54 adapter",
+        "failed": false,
+        "cleanup_sha256": "a68af5723693922759e4ae40c8c217ceeee86b5a7848b218c571c5ca1863dfee"
+      }
+    ],
+    "transitions": 8752,
+    "median_overhead_s": 6.0,
+    "min_overhead_s": -0.5268094887519403,
+    "max_overhead_s": 31.0,
+    "strata": [
+      {
+        "level": 0,
+        "motion": "same-level",
+        "horizontal_m": 25.0,
+        "transitions": 4791,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 4.0,
+        "max_overhead_s": 31.0
+      },
+      {
+        "level": 0,
+        "motion": "same-level",
+        "horizontal_m": 353.553391,
+        "transitions": 1,
+        "median_overhead_s": 7.1446609406726225,
+        "min_overhead_s": 7.1446609406726225,
+        "max_overhead_s": 7.1446609406726225
+      },
+      {
+        "level": 1,
+        "motion": "climb",
+        "horizontal_m": 295.010593,
+        "transitions": 1,
+        "median_overhead_s": 1.5333007278425939,
+        "min_overhead_s": 1.5333007278425939,
+        "max_overhead_s": 1.5333007278425939
+      },
+      {
+        "level": 1,
+        "motion": "climb",
+        "horizontal_m": 335.875721,
+        "transitions": 40,
+        "median_overhead_s": 0.9467879244964479,
+        "min_overhead_s": 0.4467879244964479,
+        "max_overhead_s": 5.446787924496448
+      },
+      {
+        "level": 1,
+        "motion": "same-level",
+        "horizontal_m": 37.5,
+        "transitions": 1918,
+        "median_overhead_s": 6.25,
+        "min_overhead_s": 4.75,
+        "max_overhead_s": 15.25
+      },
+      {
+        "level": 1,
+        "motion": "same-level",
+        "horizontal_m": 318.198052,
+        "transitions": 1,
+        "median_overhead_s": 5.68019484660536,
+        "min_overhead_s": 5.68019484660536,
+        "max_overhead_s": 5.68019484660536
+      },
+      {
+        "level": 2,
+        "motion": "climb",
+        "horizontal_m": 246.538537,
+        "transitions": 1,
+        "median_overhead_s": 1.3805063767124324,
+        "min_overhead_s": 1.3805063767124324,
+        "max_overhead_s": 1.3805063767124324
+      },
+      {
+        "level": 2,
+        "motion": "climb",
+        "horizontal_m": 300.520382,
+        "transitions": 40,
+        "median_overhead_s": 0.9823218304291856,
+        "min_overhead_s": 0.48232183042918564,
+        "max_overhead_s": 3.9823218304291856
+      },
+      {
+        "level": 2,
+        "motion": "same-level",
+        "horizontal_m": 50.0,
+        "transitions": 958,
+        "median_overhead_s": 6.5,
+        "min_overhead_s": 5.5,
+        "max_overhead_s": 27.0
+      },
+      {
+        "level": 2,
+        "motion": "same-level",
+        "horizontal_m": 282.842712,
+        "transitions": 1,
+        "median_overhead_s": 5.715728752538098,
+        "min_overhead_s": 5.715728752538098,
+        "max_overhead_s": 5.715728752538098
+      },
+      {
+        "level": 3,
+        "motion": "climb",
+        "horizontal_m": 206.155281,
+        "transitions": 1,
+        "median_overhead_s": 3.4119598965976614,
+        "min_overhead_s": 3.4119598965976614,
+        "max_overhead_s": 3.4119598965976614
+      },
+      {
+        "level": 3,
+        "motion": "climb",
+        "horizontal_m": 268.700577,
+        "transitions": 40,
+        "median_overhead_s": 1.657430339597159,
+        "min_overhead_s": 1.657430339597159,
+        "max_overhead_s": 4.657430339597159
+      },
+      {
+        "level": 3,
+        "motion": "same-level",
+        "horizontal_m": 60.0,
+        "transitions": 598,
+        "median_overhead_s": 6.5,
+        "min_overhead_s": 5.5,
+        "max_overhead_s": 17.5
+      },
+      {
+        "level": 3,
+        "motion": "same-level",
+        "horizontal_m": 180.0,
+        "transitions": 1,
+        "median_overhead_s": 5.5,
+        "min_overhead_s": 5.5,
+        "max_overhead_s": 5.5
+      },
+      {
+        "level": 4,
+        "motion": "climb",
+        "horizontal_m": 165.680415,
+        "transitions": 40,
+        "median_overhead_s": -0.026809488751940336,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 3.4731905112480597
+      },
+      {
+        "level": 4,
+        "motion": "climb",
+        "horizontal_m": 167.705098,
+        "transitions": 1,
+        "median_overhead_s": 0.7707222057805261,
+        "min_overhead_s": 0.7707222057805261,
+        "max_overhead_s": 0.7707222057805261
+      },
+      {
+        "level": 4,
+        "motion": "same-level",
+        "horizontal_m": 75.0,
+        "transitions": 318,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 5.5,
+        "max_overhead_s": 18.0
+      },
+      {
+        "level": 4,
+        "motion": "same-level",
+        "horizontal_m": 212.132034,
+        "transitions": 1,
+        "median_overhead_s": 5.2867965644035735,
+        "min_overhead_s": 5.2867965644035735,
+        "max_overhead_s": 5.2867965644035735
+      }
+    ],
+    "per_world": [
+      {
+        "world_id": "01b766d3fbfa331a",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 11.5
+      },
+      {
+        "world_id": "0f31773f33dba8fd",
+        "transitions": 218,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 13.0
+      },
+      {
+        "world_id": "1b3cd1a66dc1efb6",
+        "transitions": 218,
+        "median_overhead_s": 6.25,
+        "min_overhead_s": 0.9467879244964479,
+        "max_overhead_s": 13.5
+      },
+      {
+        "world_id": "1c83115e8cd94485",
+        "transitions": 218,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 10.0
+      },
+      {
+        "world_id": "2373633e0e57d587",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.47319051124805966,
+        "max_overhead_s": 11.5
+      },
+      {
+        "world_id": "38cfa9a637bb2cdf",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.9823218304291856,
+        "max_overhead_s": 10.5
+      },
+      {
+        "world_id": "3bf26a1901edcd79",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 14.5
+      },
+      {
+        "world_id": "552c5538e21af2e5",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.47319051124805966,
+        "max_overhead_s": 10.0
+      },
+      {
+        "world_id": "588ba0a493a70658",
+        "transitions": 219,
+        "median_overhead_s": 5.75,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 11.5
+      },
+      {
+        "world_id": "5a1a078fa5053e60",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.48232183042918564,
+        "max_overhead_s": 13.0
+      },
+      {
+        "world_id": "62e762d871d64eeb",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.48232183042918564,
+        "max_overhead_s": 12.5
+      },
+      {
+        "world_id": "6d211c72297f41d2",
+        "transitions": 218,
+        "median_overhead_s": 6.25,
+        "min_overhead_s": 0.47319051124805966,
+        "max_overhead_s": 18.0
+      },
+      {
+        "world_id": "6ea29286bbb66bb4",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 11.0
+      },
+      {
+        "world_id": "6f885d28fb7d5ea1",
+        "transitions": 219,
+        "median_overhead_s": 6.25,
+        "min_overhead_s": 0.9731905112480597,
+        "max_overhead_s": 10.0
+      },
+      {
+        "world_id": "73d65a67bae49925",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 31.0
+      },
+      {
+        "world_id": "795fb74cabae27cb",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 11.0
+      },
+      {
+        "world_id": "7a886e5cb9fe85d7",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 9.75
+      },
+      {
+        "world_id": "7ad1c27070b54d2e",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 11.5
+      },
+      {
+        "world_id": "837d513e5f3ab743",
+        "transitions": 219,
+        "median_overhead_s": 6.25,
+        "min_overhead_s": 0.4467879244964479,
+        "max_overhead_s": 16.0
+      },
+      {
+        "world_id": "8ec53f22c7d36b77",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.4467879244964479,
+        "max_overhead_s": 9.75
+      },
+      {
+        "world_id": "90acf0727b679e2c",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 10.0
+      },
+      {
+        "world_id": "972cda951c5aefbe",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 10.0
+      },
+      {
+        "world_id": "a626e23c05e26f80",
+        "transitions": 217,
+        "median_overhead_s": 6.5,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 21.0
+      },
+      {
+        "world_id": "a955fb3dcb9f3373",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 12.0
+      },
+      {
+        "world_id": "ac1e1f60e484c655",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.9731905112480597,
+        "max_overhead_s": 10.5
+      },
+      {
+        "world_id": "b816b2024fdd5911",
+        "transitions": 218,
+        "median_overhead_s": 5.75,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 11.5
+      },
+      {
+        "world_id": "be2489df842ea4ee",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 14.5
+      },
+      {
+        "world_id": "c2ecfde2cb7788e3",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.47319051124805966,
+        "max_overhead_s": 10.5
+      },
+      {
+        "world_id": "cc1f7741762a2d15",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 9.0
+      },
+      {
+        "world_id": "cf4608fc9091a75d",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 11.5
+      },
+      {
+        "world_id": "d25f67133243e0d7",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 27.0
+      },
+      {
+        "world_id": "d3d61faa0f9bf1fb",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 13.0
+      },
+      {
+        "world_id": "d52830c19cdb64c1",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.4467879244964479,
+        "max_overhead_s": 10.0
+      },
+      {
+        "world_id": "d76b53eda8ebef65",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 13.5
+      },
+      {
+        "world_id": "df35ac8edde0714d",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 11.0
+      },
+      {
+        "world_id": "e7322a66b6b8597e",
+        "transitions": 219,
+        "median_overhead_s": 6.25,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 11.0
+      },
+      {
+        "world_id": "ede5c620d6e90fc2",
+        "transitions": 218,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 0.47319051124805966,
+        "max_overhead_s": 17.0
+      },
+      {
+        "world_id": "fb5a0224ccd5b4c7",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 13.0
+      },
+      {
+        "world_id": "fc5887ab72031fb1",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 11.5
+      },
+      {
+        "world_id": "fec1dc984c2924cb",
+        "transitions": 219,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.026809488751940336,
+        "max_overhead_s": 10.25
+      }
+    ],
+    "per_level": [
+      {
+        "level": 0,
+        "transitions": 4792,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 4.0,
+        "max_overhead_s": 31.0
+      },
+      {
+        "level": 1,
+        "transitions": 1960,
+        "median_overhead_s": 6.25,
+        "min_overhead_s": 0.4467879244964479,
+        "max_overhead_s": 15.25
+      },
+      {
+        "level": 2,
+        "transitions": 1000,
+        "median_overhead_s": 6.5,
+        "min_overhead_s": 0.48232183042918564,
+        "max_overhead_s": 27.0
+      },
+      {
+        "level": 3,
+        "transitions": 640,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": 1.657430339597159,
+        "max_overhead_s": 17.5
+      },
+      {
+        "level": 4,
+        "transitions": 360,
+        "median_overhead_s": 6.0,
+        "min_overhead_s": -0.5268094887519403,
+        "max_overhead_s": 18.0
+      }
+    ],
+    "excluded_first_captures": 48,
+    "clock": "capture-to-capture; not pooled into the primary estimate"
+  },
+  "limitations": [
+    "Five search flights, two B worlds; bootstrap is conditional on these records.",
+    "Calibration intervals omit current inference and policy decisions.",
+    "Calibration level and stride length are confounded; no distance term is fitted.",
+    "A shared dwell approximates both initial observation and additional hover energy."
+  ],
+  "baseline_retune": "not started",
+  "owner_stop": "coverage gate failed",
+  "analysis_id": "5796952a3a671506"
+}

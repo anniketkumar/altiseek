@@ -69,12 +69,13 @@ copies of their reports; do not edit them by hand.
 
 Small JSON files in `m10-deployment/` are the integration-check records the reviews cite.
 
-## M12: PPO revisit (Phase 1 authorized)
+## M12: PPO revisit (Phase 1 at coverage stop)
 
 | Document | What it covers |
 |---|---|
 | [handoff.md](m12-ppo-revisit/handoff.md) | Work plan: B-fitted energy correction, B5 warm start, test-v2 worlds, owner stop points |
 | [energy-protocol.md](m12-ppo-revisit/energy-protocol.md) | D63: predeclared B-only overhead estimator, diagnostics, coverage gate and baseline retune |
+| [energy-correction.md](m12-ppo-revisit/energy-correction.md), [numeric report](m12-ppo-revisit/energy-correction.json) | B overhead, uncertainty and calibration diagnostics; coverage failed, owner decision needed before baseline retuning |
 
 ## Archive
 

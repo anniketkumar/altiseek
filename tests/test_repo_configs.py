@@ -28,6 +28,7 @@ SCHEMAS: dict[str, type[Config]] = {
     "data": DataConfig,
     "detector": DetectorConfig,
     "env/energy": EnergyModel,
+    "env/energy_live": EnergyModel,
     "env/search": SearchConfig,
     "env": SearchConfig,
     "eval": EvaluationProtocol,

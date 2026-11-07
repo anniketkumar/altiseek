@@ -5,14 +5,19 @@ decision log (D1–D63). Read it in full before changing anything. This file cov
 work stands and how the owner wants you to work. The full history of earlier hand-off notes is in
 [docs/archive/agents-history.md](docs/archive/agents-history.md).
 
-## Status (2026-11-06)
+## Status (2026-11-07)
 
-**All milestones M0–M11 are complete.** M12 Phase 1 is authorized (D63); no training or flight is queued.
+**All milestones M0–M11 are complete.** M12 Phase 1 is stopped at its coverage gate (D63).
+Nothing is running or queued.
 
-**Current work:** M12 Phase 1, the B-fitted energy correction. Follow
+**Owner input needed:** B overhead is 6.42 s [3.31, 7.16], giving 8.42 s candidate dwell.
+L5 coverage costs 135.78 s, above the existing 125 s (25% of 500 s) limit. See
+[energy-correction.md](docs/m12-ppo-revisit/energy-correction.md). The new energy config is
+an unused candidate. Do not retune baselines until the owner approves a battery or
+coverage-rule decision, recorded prospectively under D65. Follow
 [docs/m12-ppo-revisit/energy-protocol.md](docs/m12-ppo-revisit/energy-protocol.md) and the
 [handoff](docs/m12-ppo-revisit/handoff.md), including the coverage and Phase 1 owner stop points.
-Later phases are not yet authorized.
+Baseline retuning has not started; B5's AUC change is unmeasured. Later phases are not authorized.
 
 - Results and acceptance reviews: [docs/README.md](docs/README.md) indexes everything.
 - Write-up: [docs/paper.md](docs/paper.md).
@@ -39,7 +44,7 @@ Later phases are not yet authorized.
 - **Tell the owner** where their input is needed and give factual progress updates. Background
   jobs are not alerts; do not promise unsolicited notifications.
 - **Test before committing.** On Windows use `uv run python -m pytest` (`pytest.exe` is blocked).
-  Baseline on 2026-11-06: 378 passed, 2 skipped (`fcntl` unavailable); ruff format/lint included.
+  D63 on 2026-11-07: 393 passed, 2 skipped (`fcntl` unavailable); ruff format/lint included.
 
 ## Environment
 
