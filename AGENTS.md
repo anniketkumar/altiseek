@@ -5,18 +5,21 @@ decision log (D1–D63, D65; D64 reserved). Read it in full before changing anyt
 work stands and how the owner wants you to work. The full history of earlier hand-off notes is in
 [docs/archive/agents-history.md](docs/archive/agents-history.md).
 
-## Status (2026-11-07)
+## Status (2026-11-08)
 
-**All milestones M0–M11 are complete.** M12 Phase 1 continuation is authorized (D65).
+**All milestones M0–M11 are complete.** M12 Phase 1 is complete, pending owner review (D65).
+Nothing is running or queued.
 
-**Current work:** the owner authorized relaxing the coverage rule to finish Phase 1.
-D65 gives M12 a 30% coarse allowance, retaining the 500 s battery and D63 dwell.
-The original 25% coverage failure remains in [energy-correction.md](docs/m12-ppo-revisit/energy-correction.md).
-Follow [baseline-protocol.md](docs/m12-ppo-revisit/baseline-protocol.md),
-[docs/m12-ppo-revisit/energy-protocol.md](docs/m12-ppo-revisit/energy-protocol.md) and the
-[handoff](docs/m12-ppo-revisit/handoff.md), including the coverage and Phase 1 owner stop points.
-Complete the corrected-cost baseline retune and report every result honestly, then stop
-for Phase 1 owner review. Later phases are not authorized.
+**Owner review:** [baseline-results.md](docs/m12-ppo-revisit/baseline-results.md) records
+all 3,520 verified B episodes (`634beeb0cc8f4664`) and the new `selected_live.yaml`.
+B overhead remains 6.42 s [3.31, 7.16], dwell 8.42 s, battery 500 s. D65 explicitly
+relaxed M12's L5 allowance to 30%; the original 25% failure remains in
+[energy-correction.md](docs/m12-ppo-revisit/energy-correction.md).
+V3 B5 AUC changed from 0.887557 to 0.817166, paired difference -0.070391
+[-0.099328, -0.046556]. All four variants decreased; no parameter was changed to reverse it.
+The historical B5 episodes were read and checksummed, not rerun.
+The Phase 1 owner stop remains in force. Phase 2 (B5 warm start and V3 CPU pilot)
+has not started; wait for authorization. Follow the [handoff](docs/m12-ppo-revisit/handoff.md).
 
 - Results and acceptance reviews: [docs/README.md](docs/README.md) indexes everything.
 - Write-up: [docs/paper.md](docs/paper.md).
@@ -43,7 +46,8 @@ for Phase 1 owner review. Later phases are not authorized.
 - **Tell the owner** where their input is needed and give factual progress updates. Background
   jobs are not alerts; do not promise unsolicited notifications.
 - **Test before committing.** On Windows use `uv run python -m pytest` (`pytest.exe` is blocked).
-  D63 on 2026-11-07: 393 passed, 2 skipped (`fcntl` unavailable); ruff format/lint included.
+  Final Phase 1 on 2026-11-08: 406 passed, 2 skipped (`fcntl` unavailable),
+  including the selected config and ruff format/lint.
 
 ## Environment
 
