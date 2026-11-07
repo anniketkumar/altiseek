@@ -1,14 +1,14 @@
 # AGENTS.md: hand-off for coding agents
 
 **CLAUDE.md is the source of truth** for goals, design, data contracts, working rules and the
-decision log (D1–D63, D65; D64 reserved). Read it in full before changing anything. This file covers only where the
+decision log (D1–D63, D65–D66; D64 reserved). Read it in full before changing anything. This file covers only where the
 work stands and how the owner wants you to work. The full history of earlier hand-off notes is in
 [docs/archive/agents-history.md](docs/archive/agents-history.md).
 
 ## Status (2026-11-08)
 
-**All milestones M0–M11 are complete.** M12 Phase 1 is complete, pending owner review (D65).
-Nothing is running or queued.
+**All milestones M0–M11 are complete.** M12 Phase 1 is complete (D65).
+The owner authorized Phase 2 (D66): B5 warm start and V3 CPU pilot.
 
 **Owner review:** [baseline-results.md](docs/m12-ppo-revisit/baseline-results.md) records
 all 3,520 verified B episodes (`634beeb0cc8f4664`) and the new `selected_live.yaml`.
@@ -18,8 +18,9 @@ relaxed M12's L5 allowance to 30%; the original 25% failure remains in
 V3 B5 AUC changed from 0.887557 to 0.817166, paired difference -0.070391
 [-0.099328, -0.046556]. All four variants decreased; no parameter was changed to reverse it.
 The historical B5 episodes were read and checksummed, not rerun.
-The Phase 1 owner stop remains in force. Phase 2 (B5 warm start and V3 CPU pilot)
-has not started; wait for authorization. Follow the [handoff](docs/m12-ppo-revisit/handoff.md).
+Follow [pilot-protocol.md](docs/m12-ppo-revisit/pilot-protocol.md) for Phase 2's
+predeclared demonstration, imitation and pilot settings. Stop after Phase 2 for
+the full-run go/no-go and budget decision. DAgger needs a separate owner decision.
 
 - Results and acceptance reviews: [docs/README.md](docs/README.md) indexes everything.
 - Write-up: [docs/paper.md](docs/paper.md).
@@ -42,7 +43,7 @@ has not started; wait for authorization. Follow the [handoff](docs/m12-ppo-revis
   go in `docs/figures/`.
 - **Log deviations.** When the implementation must deviate from CLAUDE.md, update the section and
   add a Decision Log row (§24) in the same commit. **D64** is reserved for M12's evaluation freeze;
-  use **D66** for the next intervening new decision.
+  use **D67** for the next intervening new decision.
 - **Tell the owner** where their input is needed and give factual progress updates. Background
   jobs are not alerts; do not promise unsolicited notifications.
 - **Test before committing.** On Windows use `uv run python -m pytest` (`pytest.exe` is blocked).

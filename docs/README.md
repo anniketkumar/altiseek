@@ -69,7 +69,7 @@ copies of their reports; do not edit them by hand.
 
 Small JSON files in `m10-deployment/` are the integration-check records the reviews cite.
 
-## M12: PPO revisit (Phase 1 complete, pending owner review)
+## M12: PPO revisit (Phase 2 authorized)
 
 | Document | What it covers |
 |---|---|
@@ -78,6 +78,7 @@ Small JSON files in `m10-deployment/` are the integration-check records the revi
 | [energy-correction.md](m12-ppo-revisit/energy-correction.md), [numeric report](m12-ppo-revisit/energy-correction.json) | D63 B overhead, uncertainty and calibration diagnostics; original 25% coverage failure retained |
 | [baseline-protocol.md](m12-ppo-revisit/baseline-protocol.md) | D65: owner-authorized M12 coverage relaxation to 30%, unchanged battery/dwell, fixed B baseline retune and honest paired reporting |
 | [baseline-results.md](m12-ppo-revisit/baseline-results.md), [numeric report](m12-ppo-revisit/baseline-results.json) | 3,520 verified B episodes, retuned settings, all-variant B5 decreases under corrected costs; Phase 1 owner review |
+| [pilot-protocol.md](m12-ppo-revisit/pilot-protocol.md) | D66: B5 demonstrations, actor/critic pretraining and V3 CPU pilot; fixed fallback and owner stop |
 
 ## Archive
 
