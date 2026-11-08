@@ -1,0 +1,15 @@
+{
+  "decision": "D66",
+  "run_id": "4ca904b5491c28e5",
+  "steps": 0,
+  "episodes": 120,
+  "sampled_auc": 0.7086870462952994,
+  "sampled_found_fraction": 0.8680555555555555,
+  "mean_family_normalised_auc": 1.071521257805982,
+  "argmax_auc": 0.7503470239140443,
+  "b5_auc": 0.817165973214872,
+  "clone_minus_b5_auc": -0.10847892691957262,
+  "substantial_clone_deficit": false,
+  "evaluation_sha256": "4389b71191a59c7c1ed9475adc38c2da22148d609f7b78ac7cb94baa5b658cb4",
+  "phase2_status": "PPO pilot in progress; no completed pilot result yet"
+}

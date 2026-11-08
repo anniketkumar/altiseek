@@ -24,6 +24,9 @@ completed stages. The controller pauses at 262,144 to apply the fixed fallback,
 then completes the declared 1M pilot and generates its report. Exact resume:
 `uv run python -u scripts/ppo/run_m12_pilot.py runs/m12/imitation/7d1d5230779c2ec2/best`.
 Run only when the original controller has exited. The laptop must stay awake.
+Step-zero clone evaluation is saved: sampled AUC 0.708687 versus corrected-cost
+B5 0.817166 (difference -0.108479), 120 B episodes. This is before PPO updates;
+it is not the pilot's final result. See `docs/m12-ppo-revisit/clone-step-zero.json`.
 
 **Owner review:** [baseline-results.md](docs/m12-ppo-revisit/baseline-results.md) records
 all 3,520 verified B episodes (`634beeb0cc8f4664`) and the new `selected_live.yaml`.
