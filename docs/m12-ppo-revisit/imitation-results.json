@@ -1,0 +1,197 @@
+{
+  "decision": "D66",
+  "pretrain_id": "7d1d5230779c2ec2",
+  "collection_id": "540b64d3e59305a4",
+  "epochs": 10,
+  "selected": {
+    "epoch": 5,
+    "train": {
+      "loss": 1.1667123786626605,
+      "actor_ce": 1.1410273259645756,
+      "critic_mse": 0.05137010075331216,
+      "accuracy": 0.5390825721348097,
+      "transitions": 5450
+    },
+    "holdout": {
+      "loss": 1.2074423559843541,
+      "actor_ce": 1.171465299236822,
+      "critic_mse": 0.07195413020751515,
+      "accuracy": 0.5433790046874791,
+      "transitions": 438
+    }
+  },
+  "weights_sha256": "1fc2ade610c78eefdd8260da1d6c897851ab480658f471f5ea85b31b87cbff11",
+  "curve": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 1.5158366945577324,
+        "actor_ce": 1.4743194025481512,
+        "critic_mse": 0.08303459195163018,
+        "accuracy": 0.3111926628553539,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.3946486750966338,
+        "actor_ce": 1.3321268299262818,
+        "critic_mse": 0.12504367222835375,
+        "accuracy": 0.45205479962368533,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 1.3206646660735848,
+        "actor_ce": 1.28435198840745,
+        "critic_mse": 0.07262535418414374,
+        "accuracy": 0.46238532410028876,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.2620076791948924,
+        "actor_ce": 1.2247731631204961,
+        "critic_mse": 0.07446903080190957,
+        "accuracy": 0.5273972679967205,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 1.2414515506729074,
+        "actor_ce": 1.213641089194138,
+        "critic_mse": 0.05562091718351293,
+        "accuracy": 0.49614679236477666,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.305099539093027,
+        "actor_ce": 1.281649884738062,
+        "critic_mse": 0.04689930525013693,
+        "accuracy": 0.49086758630460803,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 1.195019540374569,
+        "actor_ce": 1.168375982871843,
+        "critic_mse": 0.05328711457377672,
+        "accuracy": 0.5278899120054114,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.2274126425836251,
+        "actor_ce": 1.1959536265854014,
+        "critic_mse": 0.06291801653157633,
+        "accuracy": 0.5479452108547568,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 1.1667123786626605,
+        "actor_ce": 1.1410273259645756,
+        "critic_mse": 0.05137010075331216,
+        "accuracy": 0.5390825721348097,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.2074423559843541,
+        "actor_ce": 1.171465299236822,
+        "critic_mse": 0.07195413020751515,
+        "accuracy": 0.5433790046874791,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 6,
+      "train": {
+        "loss": 1.1172437719163408,
+        "actor_ce": 1.0911459807414186,
+        "critic_mse": 0.052195591170328966,
+        "accuracy": 0.5699082604187344,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.2254175306956994,
+        "actor_ce": 1.1925586848413428,
+        "critic_mse": 0.06571771898455187,
+        "accuracy": 0.5365296897550696,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 7,
+      "train": {
+        "loss": 1.0824293797759663,
+        "actor_ce": 1.0554769791717376,
+        "critic_mse": 0.053904799376377904,
+        "accuracy": 0.5862385355031818,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.316534943840377,
+        "actor_ce": 1.2772138850044747,
+        "critic_mse": 0.07864211064761506,
+        "accuracy": 0.5251141586532332,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 8,
+      "train": {
+        "loss": 1.0423390793276164,
+        "actor_ce": 1.018022497861535,
+        "critic_mse": 0.04863316269948068,
+        "accuracy": 0.6001834895386609,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.3070590351282971,
+        "actor_ce": 1.2772845432893734,
+        "critic_mse": 0.05954899291718404,
+        "accuracy": 0.5022831126435162,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 9,
+      "train": {
+        "loss": 1.00766139168649,
+        "actor_ce": 0.981802406356106,
+        "critic_mse": 0.051717962562932436,
+        "accuracy": 0.6170642228137463,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.3304965022529291,
+        "actor_ce": 1.302239921265048,
+        "critic_mse": 0.056513166699686604,
+        "accuracy": 0.5251141627357431,
+        "transitions": 438
+      }
+    },
+    {
+      "epoch": 10,
+      "train": {
+        "loss": 0.9597757714547093,
+        "actor_ce": 0.9355567372177189,
+        "critic_mse": 0.048438070061597956,
+        "accuracy": 0.633027525932417,
+        "transitions": 5450
+      },
+      "holdout": {
+        "loss": 1.3140161942454591,
+        "actor_ce": 1.2826590520498815,
+        "critic_mse": 0.06271429238288098,
+        "accuracy": 0.5593607381802715,
+        "transitions": 438
+      }
+    }
+  ],
+  "complete_sha256": "312fef36a793ee494fa6ffaaa9445c6eebed04bba0b5cc965534b1d65135822f"
+}

@@ -10,12 +10,20 @@ work stands and how the owner wants you to work. The full history of earlier han
 **All milestones M0–M11 are complete.** M12 Phase 1 is complete (D65).
 The owner authorized Phase 2 (D66): B5 warm start and V3 CPU pilot.
 
-**Phase 2 progress:** implementation is tested and pushed. The inventory saved
-1,431 transitions from 160 episodes (about 143 MB). Collection
-`540b64d3e59305a4` is expanding to the declared four resets/world, reusing completed
-episodes. Inspect `data/m12/demos/collection.log` and `collection.err`; do not restart
-or discard the collection. Subsequent outputs go under `runs/m12/imitation/` and
-`runs/m12/pilot/`, with complete markers and resumable state. All stages use CPU.
+**Phase 2 progress:** collection `540b64d3e59305a4` is complete: 640 episodes,
+5,888 transitions (5,450 training / 438 holdout), about 586 MB. Pretraining
+`7d1d5230779c2ec2` is complete: 10 epochs, epoch 5 selected; holdout loss 1.207442,
+masked accuracy 0.543379 and critic MSE 0.071954. See the numeric records in
+`docs/m12-ppo-revisit/demonstrations.json` and `imitation-results.json`.
+
+The detached V3 CPU pilot controller is PID 4456 (verify it is still the same
+process before relying on that PID). Primary run `4ca904b5491c28e5` is under
+`runs/m12/pilot/`. Inspect `status.json`, `primary-early.log`, `launcher.err` and
+the per-run eval/checkpoint markers. Do not launch a second controller or restart
+completed stages. The controller pauses at 262,144 to apply the fixed fallback,
+then completes the declared 1M pilot and generates its report. Exact resume:
+`uv run python -u scripts/ppo/run_m12_pilot.py runs/m12/imitation/7d1d5230779c2ec2/best`.
+Run only when the original controller has exited. The laptop must stay awake.
 
 **Owner review:** [baseline-results.md](docs/m12-ppo-revisit/baseline-results.md) records
 all 3,520 verified B episodes (`634beeb0cc8f4664`) and the new `selected_live.yaml`.
@@ -54,8 +62,8 @@ the full-run go/no-go and budget decision. DAgger needs a separate owner decisio
 - **Tell the owner** where their input is needed and give factual progress updates. Background
   jobs are not alerts; do not promise unsolicited notifications.
 - **Test before committing.** On Windows use `uv run python -m pytest` (`pytest.exe` is blocked).
-  Final Phase 1 on 2026-11-08: 406 passed, 2 skipped (`fcntl` unavailable),
-  including the selected config and ruff format/lint.
+  Phase 2 implementation on 2026-11-08: 415 passed, 2 skipped (`fcntl` unavailable),
+  including mask/return guards, warm-start continuation, config identities and ruff.
 
 ## Environment
 

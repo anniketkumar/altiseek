@@ -80,6 +80,7 @@ Small JSON files in `m10-deployment/` are the integration-check records the revi
 | [baseline-results.md](m12-ppo-revisit/baseline-results.md), [numeric report](m12-ppo-revisit/baseline-results.json) | 3,520 verified B episodes, retuned settings, all-variant B5 decreases under corrected costs; Phase 1 owner review |
 | [pilot-protocol.md](m12-ppo-revisit/pilot-protocol.md) | D66: B5 demonstrations, actor/critic pretraining and V3 CPU pilot; fixed fallback and owner stop |
 | [demonstration-inventory.json](m12-ppo-revisit/demonstration-inventory.json), [config fingerprints](m12-ppo-revisit/config-identities-before-phase2.json) | Initial B5 transition/storage measurement and canonical identity checks before Phase 2 code changes |
+| [demonstrations.json](m12-ppo-revisit/demonstrations.json), [imitation-results.json](m12-ppo-revisit/imitation-results.json) | Completed corpus, world-disjoint actor/critic pretraining curve and selected clone; V3 CPU pilot in progress |
 
 ## Archive
 
