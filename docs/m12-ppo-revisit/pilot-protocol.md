@@ -39,7 +39,8 @@ in its partition. No rl-val world is used for gradient updates or early stopping
 
 Seed 17, CPU with two torch threads, existing SearchFeatures CNN, actor and critic
 architecture. Adam at 3e-4, batch 32, maximum 40 epochs, no augmentation, no class
-reweighting. Each epoch visits every training transition once: seeded shuffle of
+reweighting. Clip gradient norm at 0.5, as in the existing PPO optimizer.
+Each epoch visits every training transition once: seeded shuffle of
 episode shards, then seeded shuffle of transitions within each shard; a short
 last batch is retained. Keep one compressed shard in memory at a time.
 

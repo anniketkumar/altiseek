@@ -1,0 +1,11 @@
+seed: 17
+reset_seed_base: 20261108
+repeats: 4
+holdout_per_family: 2
+batch_size: 32
+max_epochs: 40
+patience: 5
+min_improvement: 0.0001
+learning_rate: 0.0003
+value_weight: 0.5
+threads: 2

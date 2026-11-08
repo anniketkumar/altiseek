@@ -1,0 +1,135 @@
+{
+  "before_code_commit": "5b9d2ad",
+  "configs": {
+    "cache/default.yaml": {
+      "schema": "CacheConfig",
+      "resolved_id": "0f7eb10c329e9368"
+    },
+    "camera/default.yaml": {
+      "schema": "CameraSpec",
+      "resolved_id": "0b47ed7c2da5b79d"
+    },
+    "data/default.yaml": {
+      "schema": "DataConfig",
+      "resolved_id": "c33c33c08d28409d"
+    },
+    "detector/default.yaml": {
+      "schema": "DetectorConfig",
+      "resolved_id": "744ea2390a9d1358"
+    },
+    "env/ablation_declare.yaml": {
+      "schema": "SearchConfig",
+      "resolved_id": "6490a3c1eb6913ee"
+    },
+    "env/ablation_egocentric.yaml": {
+      "schema": "SearchConfig",
+      "resolved_id": "1ce8423e8d671482"
+    },
+    "env/ablation_relook.yaml": {
+      "schema": "SearchConfig",
+      "resolved_id": "821eef43fd373304"
+    },
+    "env/ablation_shaping.yaml": {
+      "schema": "SearchConfig",
+      "resolved_id": "81b97e00e7e6de20"
+    },
+    "env/ablation_unknown_k.yaml": {
+      "schema": "SearchConfig",
+      "resolved_id": "0013be861ba1cba1"
+    },
+    "env/energy.yaml": {
+      "schema": "EnergyModel",
+      "resolved_id": "1875956d6dec46db"
+    },
+    "env/energy_live.yaml": {
+      "schema": "EnergyModel",
+      "resolved_id": "6158a63b6ad5285d"
+    },
+    "env/search.yaml": {
+      "schema": "SearchConfig",
+      "resolved_id": "004f4ee5296234ff"
+    },
+    "env/search_live.yaml": {
+      "schema": "SearchConfig",
+      "resolved_id": "02f7f8085d110b45"
+    },
+    "eval/protocol_v1.yaml": {
+      "schema": "EvaluationProtocol",
+      "resolved_id": "ec7a037a582762f5"
+    },
+    "eval/protocol_v2.yaml": {
+      "schema": "ExtensionProtocol",
+      "resolved_id": "4991285bbdef3eed"
+    },
+    "levels/default.yaml": {
+      "schema": "LevelTable",
+      "resolved_id": "40308e36255052d6"
+    },
+    "levels/design.yaml": {
+      "schema": "LevelDesign",
+      "resolved_id": "e3bd30fc6a33ef59"
+    },
+    "levels/design_live.yaml": {
+      "schema": "LevelDesign",
+      "resolved_id": "f6fd1f9a228120a3"
+    },
+    "policy/baselines.yaml": {
+      "schema": "BaselineRun",
+      "resolved_id": "4f56ea6bd7b59e0d"
+    },
+    "policy/m9_ablations.yaml": {
+      "schema": "PPOConfig",
+      "resolved_id": "df32295546384880"
+    },
+    "policy/m9_appearance.yaml": {
+      "schema": "PPOConfig",
+      "resolved_id": "e3d226f9ff42818b"
+    },
+    "policy/m9_appearance_control.yaml": {
+      "schema": "PPOConfig",
+      "resolved_id": "790ffcff56286612"
+    },
+    "policy/ppo.yaml": {
+      "schema": "PPOConfig",
+      "resolved_id": "6e1b1d3942e425fd"
+    },
+    "policy/ppo_auc.yaml": {
+      "schema": "PPOConfig",
+      "resolved_id": "2debbf3215ac9d81"
+    },
+    "policy/selected.yaml": {
+      "schema": "SelectedBaselines",
+      "resolved_id": "8c15bae10fb2d9a6"
+    },
+    "policy/selected_live.yaml": {
+      "schema": "SelectedBaselines",
+      "resolved_id": "d1479f199428a618"
+    },
+    "sensor/default.yaml": {
+      "schema": "SensorConfig",
+      "resolved_id": "842ec8f598fd045b"
+    },
+    "world/default.yaml": {
+      "schema": "WorldConfig",
+      "resolved_id": "b3dc20e83e7df1aa"
+    },
+    "world/library.yaml": {
+      "schema": "LibraryConfig",
+      "resolved_id": "0aedbd48f725936a"
+    },
+    "world/render.yaml": {
+      "schema": "RenderConfig",
+      "resolved_id": "24da565a173117b3"
+    }
+  },
+  "historical_plan_ids": {
+    "data\\baselines\\8cd76bdb72f965a1\\plan.json": {
+      "id": "8cd76bdb72f965a1",
+      "sha256": "b4047cffcad240e9c014e89ddc58b823292890580892bf0a33705551af3c1c36"
+    },
+    "data\\m12\\baselines\\634beeb0cc8f4664\\plan.json": {
+      "id": "634beeb0cc8f4664",
+      "sha256": "765d90f272e59498666033926c08ab67ec2375400f0aca50703ede6da187eff4"
+    }
+  }
+}

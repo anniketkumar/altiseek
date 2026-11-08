@@ -1,0 +1,5 @@
+_base_: ppo_auc.yaml
+seeds: [17]
+variants: [V3]
+total_steps: 1048576
+eval_every: 65536

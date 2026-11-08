@@ -18,6 +18,7 @@ from altiseek.geometry.level_design import coverage_energy_s
 from altiseek.geometry.levels import LevelTable
 from altiseek.imaging.config import CameraSpec
 from altiseek.policies.config import BaselineRun, SelectedBaselines
+from altiseek.policies.imitation import ImitationConfig
 from altiseek.policies.ppo import PPOConfig
 from altiseek.world.config import LibraryConfig, RenderConfig, WorldConfig
 
@@ -42,6 +43,9 @@ SCHEMAS: dict[str, type[Config]] = {
     "policy/selected_live": SelectedBaselines,
     "policy/ppo": PPOConfig,
     "policy/ppo_auc": PPOConfig,
+    "policy/ppo_live_pilot": PPOConfig,
+    "policy/ppo_live_pilot_low_lr": PPOConfig,
+    "policy/imitation_live": ImitationConfig,
     "policy/m9_ablations": PPOConfig,
     "policy/m9_appearance": PPOConfig,
     "policy/m9_appearance_control": PPOConfig,

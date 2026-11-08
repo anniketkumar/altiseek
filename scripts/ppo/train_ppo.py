@@ -5,12 +5,14 @@ import json
 import time
 from pathlib import Path
 
+import numpy as np
 from stable_baselines3.common.logger import configure
 
 from altiseek.cache.jobs import write_json
 from altiseek.calibration.model import digest
 from altiseek.config import load_config
 from altiseek.env.config import SearchConfig
+from altiseek.policies.imitation import load_weights
 from altiseek.policies.ppo import PPOConfig
 from altiseek.policies.training import (
     evaluate,
@@ -33,6 +35,9 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path("runs/ppo"))
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--benchmark", action="store_true")
+    parser.add_argument("--warm-start", type=Path, help="verified imitation weights directory")
+    parser.add_argument("--baseline-report", type=Path, help="matching-cost B baseline report")
+    parser.add_argument("--selected-baselines", type=Path, help="matching-cost selected settings")
     parser.add_argument("--n-envs", type=int)
     parser.add_argument("--threads", type=int)
     parser.add_argument("--vectorization", choices=("dummy", "subproc"))
@@ -61,10 +66,16 @@ def main() -> None:
     search = load_config(args.search_config, SearchConfig).model_copy(
         update={"sensor_variant": args.variant, "discount": cfg.gamma}
     )
-    cache, sensor, worlds, paths = inputs()
+    cache, sensor, worlds, paths = inputs(
+        baseline_path=args.baseline_report,
+        selected_path=args.selected_baselines,
+    )
     worlds = training_worlds(worlds, cfg)
     paths.update({"config": args.config, "search": args.search_config})
     paths["lockfile"] = Path("uv.lock")
+    if args.warm_start is not None:
+        paths["warm_start_weights"] = args.warm_start / "policy.pt"
+        paths["warm_start_manifest"] = args.warm_start / "complete.json"
     sources = [
         Path("scripts/ppo/train_ppo.py"),
         *Path("src/altiseek/policies").glob("*.py"),
@@ -99,6 +110,11 @@ def main() -> None:
         if checkpoints
         else make_model(env, cfg, args.seed)
     )
+    if not checkpoints and args.warm_start is not None:
+        load_weights(model, args.warm_start)
+        model._last_obs = env.reset()
+        model._last_episode_starts = np.ones(env.num_envs, dtype=bool)
+        save_checkpoint(model, root / "step-000000000")
     logger = configure(str(root / f"logs-{model.num_timesteps:09d}"), ["csv", "tensorboard"])
     model.set_logger(logger)
     write_metadata(
@@ -123,6 +139,7 @@ def main() -> None:
                     search,
                     action_rule=cfg.evaluation_actions,
                     repeats=cfg.evaluation_repeats,
+                    baseline_path=args.baseline_report,
                 )
                 write_json(evaluation, result)
                 logger.record("validation/auc", result["mean_auc"])
@@ -137,7 +154,15 @@ def main() -> None:
                 argmax_path = root / f"argmax-{step:09d}.json"
                 if not argmax_path.exists():
                     write_json(
-                        argmax_path, evaluate(model, validation_worlds, cache, sensor, search)
+                        argmax_path,
+                        evaluate(
+                            model,
+                            validation_worlds,
+                            cache,
+                            sensor,
+                            search,
+                            baseline_path=args.baseline_report,
+                        ),
                     )
             if args.stop_after is not None and step >= args.stop_after and step < cfg.total_steps:
                 write_json(root / "paused.json", {"run_id": root.name, "steps": step})
@@ -186,6 +211,7 @@ def main() -> None:
                 zero_belief=True,
                 action_rule=cfg.evaluation_actions,
                 repeats=cfg.evaluation_repeats,
+                baseline_path=args.baseline_report,
             )
             write_json(root / "zero-belief.json", zero)
             result = {

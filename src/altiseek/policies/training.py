@@ -63,7 +63,11 @@ def training_worlds(
     return selected
 
 
-def inputs() -> tuple[CacheConfig, SensorModel, dict[str, list[WorldSpec]], dict[str, Path]]:
+def inputs(
+    *,
+    baseline_path: Path | None = None,
+    selected_path: Path | None = None,
+) -> tuple[CacheConfig, SensorModel, dict[str, list[WorldSpec]], dict[str, Path]]:
     cache = load_config("configs/cache/default.yaml", CacheConfig)
     sensor = SensorModel.load(
         SENSOR_PATH,
@@ -73,8 +77,10 @@ def inputs() -> tuple[CacheConfig, SensorModel, dict[str, list[WorldSpec]], dict
     worlds = {split: load_worlds(cache, split) for split in ("rl-train", "rl-val")}
     paths = {
         "sensor": SENSOR_PATH,
-        "baselines": BASELINE_PATH,
-        "selected": Path("configs/policy/selected.yaml"),
+        "baselines": BASELINE_PATH if baseline_path is None else baseline_path,
+        "selected": Path("configs/policy/selected.yaml")
+        if selected_path is None
+        else selected_path,
     }
     for split, specs in worlds.items():
         for world in specs:
@@ -185,6 +191,7 @@ def evaluate(
     zero_belief: bool = False,
     action_rule: str = "deterministic",
     repeats: int = 1,
+    baseline_path: Path | None = None,
 ) -> dict[str, Any]:
     """Masked B validation with independent seeded action draws; never changes training RNGs."""
     if any(w.world_set != "rl-val" for w in worlds):
@@ -262,7 +269,9 @@ def evaluate(
             )
     finally:
         extractor.zero_belief = old_zero
-    baseline = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+    baseline = json.loads(
+        (BASELINE_PATH if baseline_path is None else baseline_path).read_text(encoding="utf-8")
+    )
     ref = {
         (r["family"], r["method"]): r["auc"]
         for r in baseline["family_results"]
