@@ -178,6 +178,7 @@ def main() -> None:
                 f"accuracy={holdout['accuracy']:.3f} stale={stale}",
                 flush=True,
             )
+        write_json(root / "learning-curve.json", history)
         best_record = json.loads((root / "best/complete.json").read_text(encoding="utf-8"))
         write_json(
             root / "complete.json",

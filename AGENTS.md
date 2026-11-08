@@ -10,6 +10,13 @@ work stands and how the owner wants you to work. The full history of earlier han
 **All milestones M0–M11 are complete.** M12 Phase 1 is complete (D65).
 The owner authorized Phase 2 (D66): B5 warm start and V3 CPU pilot.
 
+**Phase 2 progress:** implementation is tested and pushed. The inventory saved
+1,431 transitions from 160 episodes (about 143 MB). Collection
+`540b64d3e59305a4` is expanding to the declared four resets/world, reusing completed
+episodes. Inspect `data/m12/demos/collection.log` and `collection.err`; do not restart
+or discard the collection. Subsequent outputs go under `runs/m12/imitation/` and
+`runs/m12/pilot/`, with complete markers and resumable state. All stages use CPU.
+
 **Owner review:** [baseline-results.md](docs/m12-ppo-revisit/baseline-results.md) records
 all 3,520 verified B episodes (`634beeb0cc8f4664`) and the new `selected_live.yaml`.
 B overhead remains 6.42 s [3.31, 7.16], dwell 8.42 s, battery 500 s. D65 explicitly

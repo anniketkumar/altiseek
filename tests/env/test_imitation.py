@@ -12,6 +12,7 @@ from stable_baselines3.common.vec_env import DummyVecEnv
 from altiseek.cache.build import header_for
 from altiseek.calibration.model import digest
 from altiseek.config import load_config
+from altiseek.eval.pilot_review import collapsed
 from altiseek.policies.imitation import (
     ARRAY_FIELDS,
     collect_episode,
@@ -29,6 +30,14 @@ from tests.env.test_search import built, cfg, env, library, sensor
 from tests.test_repo_configs import CONFIG_DIR, SCHEMAS
 
 __all__ = ["built", "cfg", "env", "library", "sensor"]
+
+
+def test_collapse_requires_two_consecutive_declared_early_evaluations():
+    assert collapsed([0.69, 0.69, 0.9, 0.9], 0.8)
+    assert not collapsed([0.69, 0.9, 0.69, 0.9], 0.8)
+    assert not collapsed([0.71, 0.71, 0.71, 0.71], 0.8)
+    with pytest.raises(ValueError, match="four finite"):
+        collapsed([0.5, float("nan"), 0.5, 0.5], 0.8)
 
 
 def test_existing_configs_keep_their_canonical_identities():
