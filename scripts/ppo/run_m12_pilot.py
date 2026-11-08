@@ -120,6 +120,22 @@ def main() -> None:
         completion_sha256=sha256_file(selected / "complete.json"),
     )
     write_json(status_path, state)
+    with (args.out / "report.log").open("a", encoding="utf-8") as log:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "scripts/ppo/report_m12_pilot.py",
+                str(args.out),
+                str(args.warm_start.parent),
+            ],
+            stdout=log,
+            stderr=log,
+            check=False,
+        )
+    if result.returncode:
+        state["stage"] = "reporting_failed"
+        write_json(status_path, state)
+        raise RuntimeError("Pilot completed but reporting failed; inspect report.log")
     print(json.dumps(state, indent=2), flush=True)
 
 

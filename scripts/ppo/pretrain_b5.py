@@ -38,7 +38,7 @@ def main() -> None:
         raise ValueError("Collection identity mismatch")
     cache = load_config("configs/cache/default.yaml", CacheConfig)
     sensor = SensorModel.load(
-        "data/sensor_models/fcf8cdae58ca3947.json",
+        Path("data/sensor_models/fcf8cdae58ca3947.json"),
         detector_id=cache.detector_id,
         fit_world_set_id=cache.world_set_ids["sensor-fit"],
     )
